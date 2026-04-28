@@ -7,7 +7,7 @@
 // assets
 // 3D models
 #include "iwatodaiDorm_256x256_bin.h"
-#include "character_16x16_bin.h"
+#include "character_32x32_bin.h"
 
 // textures
 #include "character.h"
@@ -30,7 +30,7 @@ void DrawEnvironmentModel() {
 void DrawPlayerModel() {
     // bind texture before drawing
     glBindTexture(GL_TEXTURE_2D, characterTextureId);
-    glCallList((u32*)character_16x16_bin);
+    glCallList((u32*)character_32x32_bin);
 }
 
 void IwatodaiDormView::Init() {
@@ -77,7 +77,7 @@ void IwatodaiDormView::Init() {
     glTexImage2D(
         GL_TEXTURE_2D, 0,
         GL_RGBA,
-        TEXTURE_SIZE_16, TEXTURE_SIZE_16,
+        TEXTURE_SIZE_32, TEXTURE_SIZE_32,
         0,
         TEXGEN_TEXCOORD | GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T,
         characterBitmap  // from character.h
