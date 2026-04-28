@@ -42,7 +42,7 @@ Iwatodai Dorm (WIP)
 
 ---
 
-Key changes made:
+Key changes made (v0.2):
 - **State Machine** — added Disclaimers as the first scene
 - **Dialogue Controller** — added auto word-wrapping and Markdown sourcing
 - **Audio** — updated from mp3/libmad to PCM streaming with loop points and Maxmod SFX
