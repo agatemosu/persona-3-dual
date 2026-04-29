@@ -12,16 +12,18 @@ Location: File > Export > NDS Environment (.h)
 HOW TO USE
 ──────────
 1. Install this add-on (Edit > Preferences > Add-ons > Install).
-2. Set up your scene:
+2. Go to Edit > Preferences > Add-ons, find "NDS Environment Exporter".
+3. Expand the add-on details and set the "Converter Script" path.
+4. Set up your scene:
    - Each material slot must have exactly ONE Image Texture node connected
      to the Base Color of the Principled BSDF (or any node with label/name
      containing "Base Color" or "Albedo").
    - Textures must be power-of-two (8, 16, 32, 64, 128, 256, 512, 1024).
    - All meshes must have UVs unwrapped.
-3. Optionally apply all transforms: Ctrl+A > All Transforms.
-4. File > Export > NDS Environment (.h).
-5. Fill in the panel options, then click Export NDS Environment.
-6. Two files are written to the output directory:
+5. Optionally apply all transforms: Ctrl+A > All Transforms.
+6. File > Export > NDS Environment (.h).
+7. Fill in the panel options, then click Export NDS Environment.
+8. Two files are written to the output directory:
      modelName_env.h          — include this in your NDS project
      modelName_textures.txt   — run GRIT on every PNG listed here
 
@@ -34,8 +36,6 @@ PANEL OPTIONS
 • Scale Factor  (Manual)    : explicit multiplier. Default 0.054.
 • Centre Model  : translate so model is centred at X=0, Z=0, sits on Y=0.
 • Selection Only: export only selected objects (default: all mesh objects).
-• Converter Script: path to obj2nds_environment.py on your machine.
-  If left blank the add-on just writes the OBJ+MTL and skips conversion.
 """
 
 bl_info = {
@@ -86,6 +86,29 @@ def get_mesh_objects(context, selection_only):
     if selection_only:
         return [o for o in context.selected_objects if o.type == 'MESH']
     return [o for o in context.scene.objects if o.type == 'MESH']
+
+
+# ── Add-on Preferences ─────────────────────────────────────────────────────────
+
+class NDS_Environment_Preferences(bpy.types.AddonPreferences):
+    bl_idname = __name__
+
+    converter_script: StringProperty(
+        name="Converter Script",
+        description="Path to obj2nds_environment.py (or nds_build_environment.py wrapper)",
+        default="",
+        subtype='FILE_PATH',
+    )
+
+    def draw(self, context):
+        layout = self.layout
+        
+        row = layout.row()
+        row.prop(self, "converter_script")
+        
+        if not self.converter_script:
+            row = layout.row()
+            row.label(text="Please select the path to the Python script to enable auto-conversion!", icon='ERROR')
 
 
 # ── Export logic ───────────────────────────────────────────────────────────────
@@ -275,12 +298,6 @@ class NDS_OT_ExportEnvironment(bpy.types.Operator, ExportHelper):
         description="Export only selected mesh objects (default: all meshes in scene)",
         default=False,
     )
-    converter_script: StringProperty(
-        name="Converter Script",
-        description="Path to obj2nds_environment.py. Leave blank to only write OBJ+MTL.",
-        default="",
-        subtype='FILE_PATH',
-    )
 
     def draw(self, context):
         layout = self.layout
@@ -293,9 +310,6 @@ class NDS_OT_ExportEnvironment(bpy.types.Operator, ExportHelper):
         layout.separator()
         layout.prop(self, "centre_model")
         layout.prop(self, "selection_only")
-        layout.separator()
-        layout.label(text="Converter")
-        layout.prop(self, "converter_script")
 
     def execute(self, context):
         depsgraph = context.evaluated_depsgraph_get()
@@ -325,11 +339,14 @@ class NDS_OT_ExportEnvironment(bpy.types.Operator, ExportHelper):
             return {'CANCELLED'}
 
         # ── Run converter ─────────────────────────────────────────────────────
-        script = self.converter_script.strip()
+        
+        # Retrieve the script path from Add-on Preferences
+        prefs = context.preferences.addons[__name__].preferences
+        script = prefs.converter_script.strip()
+        
         if not script:
             self.report({'WARNING'},
-                "No converter script set — OBJ+MTL written but not converted. "
-                "Run obj2nds_environment.py manually.")
+                "No converter script set in Preferences — OBJ+MTL written but not converted.")
             return {'FINISHED'}
 
         script = bpy.path.abspath(script)
@@ -372,14 +389,21 @@ def menu_func_export(self, context):
                          text="NDS Environment (.h)")
 
 
+classes = (
+    NDS_Environment_Preferences,
+    NDS_OT_ExportEnvironment,
+)
+
 def register():
-    bpy.utils.register_class(NDS_OT_ExportEnvironment)
+    for cls in classes:
+        bpy.utils.register_class(cls)
     bpy.types.TOPBAR_MT_file_export.append(menu_func_export)
 
 
 def unregister():
-    bpy.utils.unregister_class(NDS_OT_ExportEnvironment)
     bpy.types.TOPBAR_MT_file_export.remove(menu_func_export)
+    for cls in reversed(classes):
+        bpy.utils.unregister_class(cls)
 
 
 if __name__ == "__main__":

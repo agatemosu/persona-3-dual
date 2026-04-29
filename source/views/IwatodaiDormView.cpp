@@ -8,7 +8,6 @@
 // 3D models
 #include "character.h"
 // environment
-#include "environments/iwatodai_dorm_env.h"
 #include "environments/texture.h"
 // collision
 #include "IwatodaiDormCollision.h"

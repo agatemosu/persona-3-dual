@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """
 obj2nds_environment.py  —  Multi-texture OBJ -> NDS C Header Converter
 For the Persona 3 Dual project.
@@ -14,6 +15,7 @@ Usage:
     python obj2nds_environment.py input.obj output_dir/ --scale 0.054
     python obj2nds_environment.py input.obj output_dir/ --target-size 4.0
     python obj2nds_environment.py input.obj output_dir/ --scale 0.054 --no-center
+    python obj2nds_environment.py input.obj output_dir/ --tiles 0 0 64 64
 
 Options:
     --scale FLOAT       Explicit scale factor applied to all vertex coordinates.
@@ -25,6 +27,8 @@ Options:
     --mapping FILE      JSON file mapping material names to PNG paths, for cases
                         where the MTL has no map_Kd entries (e.g. XPS exports).
                         Format: {"MaterialName": "path/to/texture.png", ...}
+    --tiles X Z W H     Injects world bounds & collision macros into the header.
+                        Takes 4 values: start_x, start_z, columns, rows.
 """
 
 import sys
@@ -231,7 +235,7 @@ def nearest_valid_tex_size(n):
 # ── Main ───────────────────────────────────────────────────────────────────────
 
 def convert(obj_path, output_dir, scale=None, target_size=4.0,
-            center=True, extra_mapping=None):
+            center=True, extra_mapping=None, tiles=None):
 
     obj_path   = os.path.abspath(obj_path)
     output_dir = os.path.abspath(output_dir)
@@ -283,6 +287,17 @@ def convert(obj_path, output_dir, scale=None, target_size=4.0,
 
     offset = (ox, oy, oz)
     print(f"  Centering offset: ({ox:.3f}, {oy:.3f}, {oz:.3f})")
+
+    # ── Compute transformed bounds for Collision ──────────────────────────────
+    trans_min_x = (xmin - ox) * scale
+    trans_max_x = (xmax - ox) * scale
+    trans_min_z = (zmin - oz) * scale
+    trans_max_z = (zmax - oz) * scale
+
+    base_world_offset_x = -trans_min_x
+    base_world_offset_z = -trans_min_z
+    world_width         = trans_max_x - trans_min_x
+    world_depth         = trans_max_z - trans_min_z
 
     # ── Merge groups that share the same texture ───────────────────────────────
     # Key: resolved texture filename (basename)
@@ -343,6 +358,30 @@ def convert(obj_path, output_dir, scale=None, target_size=4.0,
         h.write(f"// Scale:  {scale:.6f}  |  Centred: {center}\n")
         h.write(f"// DO NOT EDIT — regenerate from source instead.\n\n")
         h.write(f"#include <nds.h>\n\n")
+
+        # ── Injected Collision & World Bounds ─────────────────────────
+        h.write(f"// --- World Bounds & Collision ---\n")
+        if tiles and len(tiles) == 4:
+            start_x, start_z, cols, rows = tiles
+            tile_size_x = world_width / cols if cols else 0.0
+            tile_size_z = world_depth / rows if rows else 0.0
+
+            # Shift the base offset by the manual start coordinates (in grid tiles)
+            final_offset_x = base_world_offset_x - (start_x * tile_size_x)
+            final_offset_z = base_world_offset_z - (start_z * tile_size_z)
+
+            h.write(f"#define {base_name.upper()}_WORLD_OFFSET_X {final_offset_x:.6f}f\n")
+            h.write(f"#define {base_name.upper()}_WORLD_OFFSET_Z {final_offset_z:.6f}f\n")
+            h.write(f"#define {base_name.upper()}_TILE_SIZE_X    {tile_size_x:.6f}f\n")
+            h.write(f"#define {base_name.upper()}_TILE_SIZE_Z    {tile_size_z:.6f}f\n")
+            h.write(f"#define {base_name.upper()}_MAP_COLS       {int(cols)}\n")
+            h.write(f"#define {base_name.upper()}_MAP_ROWS       {int(rows)}\n")
+        else:
+            h.write(f"#define {base_name.upper()}_WORLD_OFFSET_X {base_world_offset_x:.6f}f\n")
+            h.write(f"#define {base_name.upper()}_WORLD_OFFSET_Z {base_world_offset_z:.6f}f\n")
+            h.write(f"#define {base_name.upper()}_WORLD_WIDTH    {world_width:.6f}f\n")
+            h.write(f"#define {base_name.upper()}_WORLD_DEPTH    {world_depth:.6f}f\n")
+        h.write(f"\n")
 
         n_groups = len(dl_groups)
 
@@ -429,7 +468,7 @@ def convert(obj_path, output_dir, scale=None, target_size=4.0,
 Next steps:
 
 1. Convert each texture PNG with GRIT:
-   grit texture.png -ftb -fh -gb -gB16 -pu16
+   grit texture.png -ftc -fh -gb -gB16 -pu16
    (Do this for all {n_groups} textures listed in {os.path.basename(tex_list_path)})
 
 2. In your NDS project, include the generated header and bitmaps:
@@ -446,7 +485,7 @@ Next steps:
    static int {base_name}TextureIds[{base_name.upper()}_TEX_COUNT];
 
 4. In Init():
-   const u8* bitmaps[{base_name.upper()}_TEX_COUNT] = {{""")
+   const unsigned int* bitmaps[{base_name.upper()}_TEX_COUNT] = {{""")
     for i, (tex_key, _, _, _) in enumerate(dl_groups):
         var_name = sanitize(os.path.splitext(tex_key)[0])
         print(f"       {var_name}Bitmap,")
@@ -481,6 +520,9 @@ if __name__ == '__main__':
                         help='Do not translate model to origin')
     parser.add_argument('--mapping',    type=str, default=None,
                         help='JSON file: {"MaterialName": "texture.png"} for MTLs with no map_Kd')
+    parser.add_argument('--tiles',      type=float, nargs=4, metavar=('START_X', 'START_Z', 'COLS', 'ROWS'),
+                        default=None,
+                        help='Injects collision macros into header (e.g. --tiles 0 0 64 64)')
     args = parser.parse_args()
 
     extra = None
@@ -495,4 +537,5 @@ if __name__ == '__main__':
         target_size=args.target_size,
         center=not args.no_center,
         extra_mapping=extra,
+        tiles=args.tiles,
     )

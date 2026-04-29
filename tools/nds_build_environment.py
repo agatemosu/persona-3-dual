@@ -80,6 +80,8 @@ def main():
     parser.add_argument('--grit-flags', type=str,
                         default='-ftc -fh -gb -gB16 -pu16',
                         help='GRIT command-line flags (default: -ftc -fh -gb -gB16 -pu16)')
+    parser.add_argument('--tiles',      type=float, nargs=4, metavar=('START_X', 'START_Z', 'COLS', 'ROWS'),
+                        default=None, help='Injects collision macros into header (e.g. --tiles 0 0 64 64)')
     args = parser.parse_args()
 
     obj_path   = os.path.abspath(args.input)
@@ -96,6 +98,8 @@ def main():
         cmd += ['--no-center']
     if args.mapping:
         cmd += ['--mapping', args.mapping]
+    if args.tiles:
+        cmd += ['--tiles'] + [str(t) for t in args.tiles]
 
     run(cmd, 'Converting OBJ to NDS display list header')
 
