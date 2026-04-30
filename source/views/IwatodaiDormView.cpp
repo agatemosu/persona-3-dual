@@ -5,12 +5,13 @@
 #include "IwatodaiDormView.h" 
 
 // 3D models
+#include "controllers/AnimationController.h"
 #include "models/character_32x32.h"
 #include "character.h"
 // environment
 #include "environments/iwatodai_dorm/texture.h"
 // collision (deprecated)
-#include "maps/iwatodaiDorm_0_0_44_33.h"
+#include "maps/iwatodaiDorm.h"
 // dialogue
 #include "dialogue/demo_dialogue.h"
 
@@ -82,9 +83,8 @@ void IwatodaiDormView::Init() {
     musicCtrl.init("nitro:/music/changing_seasons.pcm", 0.0f, -1.0f);
 
     // setup character model
-    LoadModel_character_32x32(myCharacter); 
+    myCharacter.loadModel("nitro:/models/character_32x32.bin");
     myCharacter.set(MODEL_CHARACTER_32X32_WALK, true);
-    // TODO: play/pause animation on walk
     myCharacter.play();
 
     // setup environment model
@@ -126,8 +126,6 @@ ViewState IwatodaiDormView::Update() {
         }
     }
 
-    myCharacter.update();
-
     // update camera position
     gluLookAt(camPos.cameraX, camPos.cameraY, camPos.cameraZ,
         camPos.targetX, camPos.targetY, camPos.targetZ,
@@ -163,6 +161,7 @@ ViewState IwatodaiDormView::Update() {
     // update controllers
     dialogueCtrl.update(keys);
     musicCtrl.update();
+    myCharacter.update();
 
     return ViewState::KEEP_CURRENT;
 }

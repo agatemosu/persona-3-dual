@@ -1,25 +1,86 @@
 #include "controllers/AnimationController.h"
+#include <stdio.h>
+#include <string.h>
 
 AnimationController::AnimationController() {}
 
-void AnimationController::loadModel(const vector<AnimNode>& nodes, const vector<Animation>& anims) {
-    modelNodes = nodes;
-    animations = anims;
-    
-    // auto-link children and find root nodes
-    rootNodes.clear();
-    for (int i = 0; i < (int)modelNodes.size(); i++) {
-        modelNodes[i].children.clear(); // safety clear
+bool AnimationController::loadModel(const char* filepath) {
+    FILE* file = fopen(filepath, "rb");
+    if (!file) return false;
+
+    char magic[4];
+    fread(magic, 1, 4, file);
+    if (strncmp(magic, "MDL1", 4) != 0) {
+        fclose(file);
+        return false;
     }
 
-    for (int i = 0; i < (int)modelNodes.size(); i++) {
-        if (modelNodes[i].parentId == -1) {
+    u32 numNodes, numAnims;
+    fread(&numNodes, sizeof(u32), 1, file);
+    fread(&numAnims, sizeof(u32), 1, file);
+
+    modelNodes.resize(numNodes);
+    rootNodes.clear();
+
+    for (u32 i = 0; i < numNodes; i++) {
+        AnimNode& node = modelNodes[i];
+        node.id = i;
+        node.children.clear();
+
+        s32 pid, px, py, pz;
+        u32 dlSize;
+        
+        fread(&pid, sizeof(s32), 1, file);
+        fread(&px, sizeof(s32), 1, file);
+        fread(&py, sizeof(s32), 1, file);
+        fread(&pz, sizeof(s32), 1, file);
+        fread(&dlSize, sizeof(u32), 1, file);
+
+        node.parentId = pid;
+        node.pivotX = px;
+        node.pivotY = py;
+        node.pivotZ = pz;
+        node.displayListSize = dlSize;
+
+        node.displayList.resize(dlSize + 1);
+        node.displayList[0] = dlSize;
+
+        if (dlSize > 0) {
+            fread(&node.displayList[1], sizeof(u32), dlSize, file);
+        }
+
+        if (pid == -1) {
             rootNodes.push_back(i);
-        } else if (modelNodes[i].parentId >= 0 && modelNodes[i].parentId < (int)modelNodes.size()) {
-            // register as child to its parent
-            modelNodes[modelNodes[i].parentId].children.push_back(i);
+        } else if (pid >= 0 && pid < (int)numNodes) {
+            modelNodes[pid].children.push_back(i);
         }
     }
+
+    animations.resize(numAnims);
+    for (u32 i = 0; i < numAnims; i++) {
+        Animation& anim = animations[i];
+        
+        // skip the 32-byte string name saved by Python
+        fseek(file, 32, SEEK_CUR);
+        
+        fread(&anim.duration, sizeof(u32), 1, file);
+
+        anim.nodeTracks.resize(numNodes);
+        for (u32 n = 0; n < numNodes; n++) {
+            AnimTrack& track = anim.nodeTracks[n];
+            u32 numFrames;
+            fread(&numFrames, sizeof(u32), 1, file);
+            
+            track.frames.resize(numFrames);
+            if (numFrames > 0) {
+                fread(track.frames.data(), sizeof(Keyframe), numFrames, file);
+            }
+        }
+    }
+
+    fclose(file);
+    trackIndices.assign(modelNodes.size(), 0);
+    return true;
 }
 
 void AnimationController::set(int animIndex, bool loop) {
@@ -28,17 +89,16 @@ void AnimationController::set(int animIndex, bool loop) {
     currentFrame = 0;
     isFinishing = false;
     isLooping = loop;
+    fill(trackIndices.begin(), trackIndices.end(), 0);
 }
 
 void AnimationController::play() {
     if (currentAnimIndex == -1) return;
     isPlaying = true;
     isFinishing = false;
-    
-    // only reset the frame if the animation is fully stopped or finished
-    // this allows play() to act as resume if it was hard-paused mid-animation
     if (currentFrame >= animations[currentAnimIndex].duration - 1) {
         currentFrame = 0;
+        fill(trackIndices.begin(), trackIndices.end(), 0);
     }
 }
 
@@ -46,10 +106,10 @@ void AnimationController::stop() {
     isPlaying = false;
     isFinishing = false;
     currentFrame = 0;
+    fill(trackIndices.begin(), trackIndices.end(), 0);
 }
 
 void AnimationController::pause() {
-    // flags the animation to stop looping once it hits its maximum duration
     isFinishing = true;
 }
 
@@ -62,40 +122,45 @@ void AnimationController::update() {
         if (isFinishing || !isLooping) {
             isPlaying = false;
             isFinishing = false;
-            
-            // if it's a 1-shot animation, hold on the final frame
-            // if it was gracefully paused while looping, snap cleanly to 0
             if (!isLooping) {
                 currentFrame = animations[currentAnimIndex].duration - 1;
             } else {
                 currentFrame = 0; 
+                fill(trackIndices.begin(), trackIndices.end(), 0);
             }
         } else {
-            currentFrame = 0; // Loop seamlessly
+            currentFrame = 0; 
+            fill(trackIndices.begin(), trackIndices.end(), 0);
         }
     }
 }
 
-Keyframe AnimationController::getInterpolatedFrame(const AnimTrack& track, int time) {
+Keyframe AnimationController::getInterpolatedFrame(const AnimTrack& track, int time, int nodeId) {
     if (track.frames.empty()) return {0, 0,0,0, 0,0,0};
     if (track.frames.size() == 1) return track.frames[0];
 
-    Keyframe k1 = track.frames[0];
-    Keyframe k2 = track.frames[track.frames.size() - 1];
-
-    for (size_t i = 0; i < track.frames.size() - 1; i++) {
-        if (time >= track.frames[i].time && time < track.frames[i+1].time) {
-            k1 = track.frames[i];
-            k2 = track.frames[i+1];
-            break;
-        }
+    int& cacheIdx = trackIndices[nodeId];
+    
+    if (cacheIdx >= (int)track.frames.size() - 1 || time < track.frames[cacheIdx].time) {
+        cacheIdx = 0; 
     }
 
-    if (k1.time == k2.time) return k1;
+    while (cacheIdx < (int)track.frames.size() - 1 && time >= track.frames[cacheIdx + 1].time) {
+        cacheIdx++;
+    }
+
+    Keyframe k1 = track.frames[cacheIdx];
+    if (cacheIdx >= (int)track.frames.size() - 1) return k1; 
+    
+    Keyframe k2 = track.frames[cacheIdx + 1];
 
     int range = k2.time - k1.time;
+    if (range == 0) return k1; 
+
     int progress = time - k1.time;
-    int t = (progress << 12) / range; // fixed point lerp
+    if (progress == 0) return k1; 
+
+    int t = (progress << 12) / range; 
 
     Keyframe result;
     result.time = time;
@@ -120,27 +185,21 @@ void AnimationController::render() {
 
 void AnimationController::renderNode(int nodeId) {
     AnimNode& node = modelNodes[nodeId];
-    
     glPushMatrix();
 
     if (currentAnimIndex != -1) {
         AnimTrack& track = animations[currentAnimIndex].nodeTracks[nodeId];
-        Keyframe current = getInterpolatedFrame(track, currentFrame);
+        Keyframe current = getInterpolatedFrame(track, currentFrame, nodeId);
 
-        // move to the joint's pivot point + the animation's position offset
         glTranslatef32(node.pivotX + current.posX, node.pivotY + current.posY, node.pivotZ + current.posZ);
-        
-        // rotate around the pivot point
         glRotateZi(current.rotZ);
         glRotateYi(current.rotY);
         glRotateXi(current.rotX);
-        
-        // move back from the pivot point so the geometry aligns
         glTranslatef32(-node.pivotX, -node.pivotY, -node.pivotZ);
     }
 
     if (node.displayListSize > 0) {
-        glCallList(node.displayList);
+        glCallList(node.displayList.data());
     }
 
     for (int childId : node.children) {

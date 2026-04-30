@@ -160,7 +160,7 @@ help:
 assets: dirs dialogue music video environments maps models
 
 dirs:
-	@mkdir -p $(CURDIR)/source/dialogue $(CURDIR)/source/maps $(CURDIR)/source/models $(CURDIR)/source/environments $(NITRO_MUSIC) $(NITRO_VIDEO)
+	@mkdir -p $(CURDIR)/source/dialogue $(CURDIR)/source/maps $(CURDIR)/source/models $(CURDIR)/source/environments $(NITRO_MUSIC) $(NITRO_VIDEO) $(CURDIR)/nitrofiles/models
 
 #---------------------------------------------------------------------------------
 $(CURDIR)/source/dialogue/%_dialogue.cpp: $(ASSETS_DIALOGUE)/%.dlg $(wildcard $(ASSETS_DIALOGUE)/%.build.json)
@@ -197,16 +197,16 @@ $(foreach file,$(ENV_OBJ_FILES),$(eval $(call ENV_TEMPLATE,$(file))))
 environments: $(ENVIRONMENT_OUT)
 
 #---------------------------------------------------------------------------------
-# Prerequisites use .SECONDEXPANSION: % matches the directory stem, $$* gives
-# the stem in the second pass for the filename, enabling wildcard to correctly
-# locate the optional sidecar or parent-level .build.json at match time.
-$(CURDIR)/source/models/%.h: $(ASSETS_MODELS)/%/$$*.json \
-        $$(wildcard $(ASSETS_MODELS)/%/$$*.build.json) \
-        $$(wildcard $(ASSETS_MODELS)/$$*.build.json)
-	@echo "  MODEL $(notdir $<)"
-	@mkdir -p $(dir $@)
-	@$(VENV_PYTHON) $(TOOLS_DIR)/build_asset.py $< $@
-	@touch $@
+define MODEL_TEMPLATE
+$$(CURDIR)/source/models/$$(notdir $(1:.json=.h)): $(1) $$(wildcard $(1:.json=.build.json)) $$(wildcard $$(patsubst %/,%,$$(dir $(1))).build.json) $$(TOOLS_DIR)/build_asset.py
+	@echo "  MODEL $$(notdir $$<)"
+	@mkdir -p $$(dir $$@) $$(CURDIR)/nitrofiles/models
+	@$$(VENV_PYTHON) $$(TOOLS_DIR)/build_asset.py $$< $$(CURDIR)/nitrofiles/models/$$(notdir $(1:.json=.bin))
+	@mv $$(CURDIR)/nitrofiles/models/$$(notdir $(1:.json=.h)) $$@
+	@touch $$@
+endef
+
+$(foreach file,$(MODEL_JSON_FILES),$(eval $(call MODEL_TEMPLATE,$(file))))
 models: $(MODEL_OUT)
 
 #---------------------------------------------------------------------------------
@@ -222,7 +222,7 @@ clean:
 	@echo clean ...
 	@rm -fr $(BUILD) $(TARGET).elf $(TARGET).nds $(TARGET).ds.gba
 	@rm -f $(DIALOGUE_OUT) $(MUSIC_OUT) $(VIDEO_OUT) $(MAP_OUT) $(MODEL_OUT) $(CURDIR)/source/dialogue/*_dialogue.cpp $(CURDIR)/source/dialogue/*_dialogue.h
-	@rm -rf $(CURDIR)/source/environments/*
+	@rm -rf $(CURDIR)/source/environments/* $(CURDIR)/nitrofiles/models/*
 
 #---------------------------------------------------------------------------------
 else
