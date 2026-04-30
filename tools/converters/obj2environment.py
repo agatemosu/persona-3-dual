@@ -210,8 +210,8 @@ def convert(obj_path, output_dir, config):
         words = build_display_list(faces, vertices, texcoords, scale, offset, tw, th, flip_winding=blender_source, blender_source=blender_source)
         dl_groups.append((tex_key, words, tw, th))
 
-    bin_path      = os.path.join(output_dir, f'{base_name}_env.bin')
-    header_path   = os.path.join(output_dir, f'{base_name}_env.h')
+    bin_path      = os.path.join(output_dir, f'{base_name}.bin')
+    header_path   = os.path.join(output_dir, f'{base_name}.h')
     tex_list_path = os.path.join(output_dir, f'{base_name}_textures.txt')
     n = len(dl_groups)
     safe_n = max(n, 1)

@@ -9,7 +9,7 @@
 #include "models/character_32x32.h"
 #include "character.h"
 // environment
-#include "environments/iwatodai_dorm/iwatodai_dorm_env.h"
+#include "environments/iwatodai_dorm.h"
 #include "texture.h"
 // collision (deprecated)
 #include "maps/iwatodaiDorm.h"

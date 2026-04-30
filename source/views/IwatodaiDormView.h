@@ -2,7 +2,7 @@
 #include "core/View.h"
 #include "controllers/DialogueController.h"
 #include "controllers/CharacterController.h"
-#include "environments/iwatodai_dorm/iwatodai_dorm_env.h"
+#include "environments/iwatodai_dorm.h"
 
 // implementing from View
 class IwatodaiDormView : public View {

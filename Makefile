@@ -71,7 +71,7 @@ MODEL_OUT    := $(foreach file,$(MODEL_JSON_FILES),$(CURDIR)/source/models/$(not
 
 # Keep track of environment directories so Make knows where to find the generated .s files later
 ENV_OUT_DIRS    := $(foreach file,$(ENV_OBJ_FILES),source/environments/$(notdir $(patsubst %/,%,$(dir $(file)))))
-ENVIRONMENT_OUT := $(foreach file,$(ENV_OBJ_FILES),$(CURDIR)/source/environments/$(notdir $(patsubst %/,%,$(dir $(file))))/$(notdir $(file:.obj=_env.h)))
+ENVIRONMENT_OUT := $(foreach file,$(ENV_OBJ_FILES),$(CURDIR)/source/environments/$(notdir $(file:.obj=.h)))
 
 #---------------------------------------------------------------------------------
 # options for code generation
@@ -184,11 +184,11 @@ video: $(VIDEO_OUT)
 
 #---------------------------------------------------------------------------------
 define ENV_TEMPLATE
-$$(CURDIR)/source/environments/$$(notdir $$(patsubst %/,%,$$(dir $(1))))/$$(notdir $(1:.obj=_env.h)): $(1) $$(wildcard $$(dir $(1))/*.png) $$(wildcard $$(dir $(1))/*.mtl) $$(wildcard $(1:.obj=.build.json)) $$(wildcard $$(patsubst %/,%,$$(dir $(1))).build.json) $$(TOOLS_DIR)/build_asset.py
+$$(CURDIR)/source/environments/$$(notdir $(1:.obj=.h)): $(1) $$(wildcard $$(dir $(1))/*.png) $$(wildcard $$(dir $(1))/*.mtl) $$(wildcard $(1:.obj=.build.json)) $$(wildcard $$(patsubst %/,%,$$(dir $(1))).build.json) $$(TOOLS_DIR)/build_asset.py
 	@echo "  ENV   $$(notdir $$<)"
-	@mkdir -p $$(dir $$@) $$(CURDIR)/nitrofiles/environments/$$(notdir $$(patsubst %/,%,$$(dir $(1))))
-	@$$(VENV_PYTHON) $$(TOOLS_DIR)/build_asset.py $$< $$(CURDIR)/nitrofiles/environments/$$(notdir $$(patsubst %/,%,$$(dir $(1))))
-	@mv $$(CURDIR)/nitrofiles/environments/$$(notdir $$(patsubst %/,%,$$(dir $(1))))/$$(notdir $(1:.obj=_env.h)) $$@
+	@mkdir -p $$(dir $$@) $$(CURDIR)/nitrofiles/environments
+	@$$(VENV_PYTHON) $$(TOOLS_DIR)/build_asset.py $$< $$(CURDIR)/nitrofiles/environments
+	@mv $$(CURDIR)/nitrofiles/environments/$$(notdir $(1:.obj=.h)) $$@
 	@touch $$@
 endef
 
