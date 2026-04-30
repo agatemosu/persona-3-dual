@@ -3,7 +3,7 @@
 nds_build_environment.py  —  One-command NDS environment build pipeline
 For the Persona 3 Dual project.
 
-  1. obj2nds_environment.py  ->  model_env.h + model_textures.txt
+  1. obj2environment.py  ->  model_env.h + model_textures.txt
   2. GRIT on every texture   ->  texture.h  + texture.s
 
 Usage:
@@ -16,7 +16,7 @@ Usage:
 import subprocess, sys, os, re, argparse, shutil
 
 HERE      = os.path.dirname(os.path.abspath(__file__))
-CONVERTER = os.path.join(HERE, 'obj2nds_environment.py')
+CONVERTER = os.path.join(HERE, 'obj2environment.py')
 
 
 def run(cmd, desc):

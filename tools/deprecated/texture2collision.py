@@ -28,7 +28,7 @@ Usage:
     python3 texture2collision.py --print-palette
 
 How scale matching works:
-    obj2nds_environment.py writes defines such as:
+    obj2environment.py writes defines such as:
         #define MAP_WORLD_OFFSET_X  2.000000f
         #define MAP_WORLD_OFFSET_Z  2.000000f
         #define MAP_WORLD_WIDTH     4.000000f
@@ -106,7 +106,7 @@ _DEF_RE = re.compile(
 
 def parse_env_header(env_path):
     """
-    Read an _env.h produced by obj2nds_environment.py and return a dict of
+    Read an _env.h produced by obj2environment.py and return a dict of
     world-bound defines. Keys that may be present:
         WORLD_OFFSET_X, WORLD_OFFSET_Z   — always written
         WORLD_WIDTH, WORLD_DEPTH         — written when --tiles was NOT used
@@ -231,7 +231,7 @@ def convert(input_path, output_path, palette, raw_palette_data,
         img = img.crop((cx, cy, cx + cw, cy + ch))
         print(f"  Crop: x={cx}, y={cy}, w={cw}, h={ch}  →  {cw}x{ch} tile grid")
 
-    # ROTATE_180 matches the UV flip in obj2nds_environment.py.
+    # ROTATE_180 matches the UV flip in obj2environment.py.
     # The NDS display list uses bottom-left as UV origin; PNG uses top-left.
     img = img.transpose(Image.ROTATE_180)
     map_cols, map_rows = img.size
@@ -243,7 +243,7 @@ def convert(input_path, output_path, palette, raw_palette_data,
 
     if env_path and not bounds:
         print(f"  [WARN] Could not read world bounds from {env_path}.")
-        print(f"         Check that the file exists and was produced by obj2nds_environment.py.")
+        print(f"         Check that the file exists and was produced by obj2environment.py.")
 
     if not env_path:
         print()
@@ -343,7 +343,7 @@ def main():
     parser.add_argument('output',          nargs='?',
                         help='Output .h header file')
     parser.add_argument('--env',           default=None,
-                        help='Path to the _env.h from obj2nds_environment.py. '
+                        help='Path to the _env.h from obj2environment.py. '
                              'Required for correct scale matching with the 3D model.')
     parser.add_argument('--palette',       default=None,
                         help='Path to collision_palette.json '

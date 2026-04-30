@@ -176,7 +176,7 @@ Before exporting, apply all transforms:
 
 **Coordinate space**
 
-Blender uses Z-up, Y-forward. The NDS uses a different convention. The Blender exporter now converts coordinates automatically from Blender Z-up into NDS Y-up when it calls the converter. If you export a raw OBJ manually, pass `--source-blender` to `obj2nds_environment.py`.
+Blender uses Z-up, Y-forward. The NDS uses a different convention. The Blender exporter now converts coordinates automatically from Blender Z-up into NDS Y-up when it calls the converter. If you export a raw OBJ manually, pass `--source-blender` to `obj2environment.py`.
 
 ---
 
