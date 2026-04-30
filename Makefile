@@ -70,7 +70,7 @@ MODEL_JSON_FILES := $(wildcard $(ASSETS_MODELS)/*/*.json)
 #---------------------------------------------------------------------------------
 # Derive output paths & dynamically add environment output dirs to SOURCES
 #---------------------------------------------------------------------------------
-DIALOGUE_OUT := $(DLG_FILES:$(ASSETS_DIALOGUE)/%.dlg=$(CURDIR)/source/dialogue/%.h)
+DIALOGUE_OUT := $(DLG_FILES:$(ASSETS_DIALOGUE)/%.dlg=$(CURDIR)/source/dialogue/%_dialogue.cpp)
 MUSIC_OUT    := $(MP3_FILES:$(ASSETS_MUSIC)/%.mp3=$(NITRO_MUSIC)/%.pcm)
 VIDEO_OUT    := $(MP4_FILES:$(ASSETS_VIDEO)/%.mp4=$(NITRO_VIDEO)/%.vid)
 MAP_OUT      := $(MAP_FILES:$(ASSETS_MAPS)/%.png=$(CURDIR)/source/maps/%.h)
@@ -154,6 +154,9 @@ endif
 ENV_S_OFILES    :=  $(foreach file,$(ENV_OBJ_FILES),$(notdir $(file:.obj=_env.o))) \
                     $(foreach file,$(wildcard $(ASSETS_ENVIRONMENTS)/*/*.png),$(notdir $(file:.png=.o)))
 
+# Filter the generated files out of the wildcard SFILES so they aren't counted twice
+SFILES          :=  $(filter-out $(ENV_S_OFILES:.o=.s),$(SFILES))
+
 export OFILES   :=  $(addsuffix .o,$(BINFILES)) \
                     $(PNGFILES:.png=.o) \
                     $(CPPFILES:.cpp=.o) $(CFILES:.c=.o) $(SFILES:.s=.o) \
@@ -222,7 +225,7 @@ dirs:
 # Output:  source/dialogue/<name>_dialogue.h  +  source/dialogue/<name>_dialogue.cpp
 # Flags:   DLG_FLAGS  (e.g. --stdout for debug)
 #---------------------------------------------------------------------------------
-$(CURDIR)/source/dialogue/%.h: $(ASSETS_DIALOGUE)/%.dlg | dirs
+$(CURDIR)/source/dialogue/%_dialogue.cpp: $(ASSETS_DIALOGUE)/%.dlg | dirs
 	@echo "  DLG   $(notdir $<)"
 	@cd $(CURDIR)/source/dialogue && \
 		$(VENV_PYTHON) $(TOOLS_DIR)/dlg2dialogue.py $< -o $* $(DLG_FLAGS)
