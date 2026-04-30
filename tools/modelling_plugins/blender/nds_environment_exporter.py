@@ -1,6 +1,6 @@
 """
 NDS Environment Exporter for Blender
-Author: Taha Rashid / Persona 3 Dual project
+Author: Taha Rashid
 
 Exports a scene to NDS display list.
 """
@@ -19,7 +19,7 @@ import bpy, os, re, subprocess, shutil
 from bpy.props import (StringProperty, FloatProperty, BoolProperty, EnumProperty)
 from bpy_extras.io_utils import ExportHelper
 
-# ── Helpers ────────────────────────────────────────────────────────────────────
+# Helpers
 
 def sanitize(name):
     return re.sub(r'[^a-zA-Z0-9_]', '_', name)
@@ -35,7 +35,7 @@ def get_mesh_objects(context, selection_only):
     src = context.selected_objects if selection_only else context.scene.objects
     return [o for o in src if o.type == 'MESH']
 
-# ── Preferences ────────────────────────────────────────────────────────────────
+# Preferences
 
 class NDS_Environment_Preferences(bpy.types.AddonPreferences):
     bl_idname = __name__
@@ -58,7 +58,7 @@ class NDS_Environment_Preferences(bpy.types.AddonPreferences):
         if not self.converter_script:
             layout.label(text="Set build script path to enable export!", icon='ERROR')
 
-# ── OBJ export ─────────────────────────────────────────────────────────────────
+# OBJ export
 
 def export_obj_mtl(mesh_objects, obj_path, depsgraph):
     import bmesh
@@ -146,7 +146,7 @@ def export_obj_mtl(mesh_objects, obj_path, depsgraph):
 
     return mat_to_png
 
-# ── Export operator ─────────────────────────────────────────────────────────────
+# Export operator
 
 class NDS_OT_ExportEnvironment(bpy.types.Operator, ExportHelper):
     bl_idname  = "export_scene.nds_environment"
@@ -231,7 +231,7 @@ class NDS_OT_ExportEnvironment(bpy.types.Operator, ExportHelper):
         self.report({'INFO'}, f"Done — {out_dir}")
         return {'FINISHED'}
 
-# ── Registration ───────────────────────────────────────────────────────────────
+# Registration 
 
 def menu_func_export(self, context):
     self.layout.operator(NDS_OT_ExportEnvironment.bl_idname,

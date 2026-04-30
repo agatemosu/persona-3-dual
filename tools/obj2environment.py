@@ -20,7 +20,7 @@ Usage:
 import sys, os, re, json, struct, argparse
 from collections import defaultdict
 
-# ── NDS GPU constants ──────────────────────────────────────────────────────────
+# NDS GPU constants 
 FIFO_TEXCOORD = 0x22
 FIFO_BEGIN    = 0x40
 FIFO_VERTEX16 = 0x23
@@ -29,7 +29,7 @@ GL_TRIANGLES  = 0
 GL_QUADS      = 1
 VALID_TEX_SIZES = {8, 16, 32, 64, 128, 256, 512, 1024}
 
-# ── Shared helpers ─────────────────────────────────────────────────────────────
+# Shared helpers 
 
 def sanitize(name):
     return re.sub(r'[^a-zA-Z0-9_]', '_', name)
@@ -43,7 +43,7 @@ def floattot16(f):
 def pack_cmds(c1, c2=FIFO_NOP, c3=FIFO_NOP, c4=FIFO_NOP):
     return struct.pack('<I', (c4 << 24) | (c3 << 16) | (c2 << 8) | c1)
 
-# ── OBJ / MTL parser ──────────────────────────────────────────────────────────
+# OBJ / MTL parser 
 
 def parse_mtl(mtl_path, extra_mapping=None):
     mapping = {}
@@ -91,7 +91,7 @@ def parse_obj(obj_path):
     flush()
     return vertices, texcoords, groups
 
-# ── Geometry ───────────────────────────────────────────────────────────────────
+# Geometry 
 
 def compute_bounds(vertices):
     xs = [v[0] for v in vertices]; ys = [v[1] for v in vertices]; zs = [v[2] for v in vertices]
@@ -131,7 +131,7 @@ def build_display_list(faces, vertices, texcoords, scale, offset, tex_w, tex_h, 
             words.append(struct.pack('<I', floattov16(sz)))
     return words
 
-# ── Texture helpers ────────────────────────────────────────────────────────────
+# Texture helpers 
 
 def find_texture_size(png_path):
     """Return (w, h) of a PNG using stdlib fallback."""
@@ -150,7 +150,7 @@ def nearest_valid_tex_size(n):
         if s >= n: return s
     return 1024
 
-# ── Main convert ───────────────────────────────────────────────────────────────
+# Main convert 
 
 def convert(obj_path, output_dir, scale=None, target_size=4.0, center=True,
             extra_mapping=None, blender_source=False):
@@ -237,7 +237,7 @@ def convert(obj_path, output_dir, scale=None, target_size=4.0, center=True,
         dl_groups.append((tex_key, words, tw, th))
         print(f"  [{tex_key}] {len(faces)} faces, {tw}x{th}, {len(words)} words")
 
-    # ── Write Assembly (.s) & env header ───────────────────────────────────────
+    # Write Assembly (.s) & env header 
     header_path   = os.path.join(output_dir, f'{base_name}_env.h')
     s_path        = os.path.join(output_dir, f'{base_name}_env.s')
     tex_list_path = os.path.join(output_dir, f'{base_name}_textures.txt')
@@ -323,8 +323,8 @@ def convert(obj_path, output_dir, scale=None, target_size=4.0, center=True,
                     f"{abs_path}\n\n")
     print(f"Wrote: {tex_list_path}")
 
-    # ── Usage summary ─────────────────────────────────────────────────────────
-    print(f"\n{'─'*60}")
+    # Usage summary 
+    print(f"\n{''*60}")
     print(f"  Include in your NDS project:")
     print(f"    #include \"{base_name}_env.h\"")
     for tex_key, _, _, _ in dl_groups:
@@ -340,12 +340,12 @@ def convert(obj_path, output_dir, scale=None, target_size=4.0, center=True,
     print(f"    Load_{base_name}({base_name}Ids, bitmaps);")
     print(f"\n  Draw(): Draw_{base_name}({base_name}Ids);")
     print(f"  Cleanup(): Delete_{base_name}({base_name}Ids);")
-    print(f"{'─'*60}\n")
+    print(f"{''*60}\n")
 
     return header_path, tex_list_path
 
 
-# ── CLI ────────────────────────────────────────────────────────────────────────
+# CLI 
 
 if __name__ == '__main__':
     p = argparse.ArgumentParser(

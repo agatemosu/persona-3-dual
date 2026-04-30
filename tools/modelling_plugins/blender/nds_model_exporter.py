@@ -57,9 +57,7 @@ from bpy.props import StringProperty, BoolProperty
 from bpy_extras.io_utils import ExportHelper
 
 
-# ---------------------------------------------------------------------------
 # Helpers
-# ---------------------------------------------------------------------------
 
 def sanitize(name: str) -> str:
     return re.sub(r'[^a-zA-Z0-9]', '_', name)
@@ -92,9 +90,7 @@ def parent_index(bone, bone_list: list) -> int:
     return bone_index(None, bone.parent.name, bone_list)
 
 
-# ---------------------------------------------------------------------------
 # OBJ export per bone
-# ---------------------------------------------------------------------------
 
 def export_bone_obj(arm_obj, mesh_objects, bone, bone_list, depsgraph) -> str:
     """
@@ -194,9 +190,7 @@ def export_bone_obj(arm_obj, mesh_objects, bone, bone_list, depsgraph) -> str:
     return "\n".join(lines) + "\n"
 
 
-# ---------------------------------------------------------------------------
 # Animation export
-# ---------------------------------------------------------------------------
 
 def get_bone_transforms_at_frame(arm_obj, bone_name, frame, scene):
     """
@@ -308,9 +302,7 @@ def collect_animations(arm_obj, bone_list, scene, fps):
     return animations
 
 
-# ---------------------------------------------------------------------------
 # Main export operator
-# ---------------------------------------------------------------------------
 
 class NDS_OT_ExportModel(bpy.types.Operator, ExportHelper):
     bl_idname  = "export_scene.nds_model"
@@ -324,7 +316,7 @@ class NDS_OT_ExportModel(bpy.types.Operator, ExportHelper):
         scene      = context.scene
         depsgraph  = context.evaluated_depsgraph_get()
 
-        # --- Find armature ---
+        # Find armature
         arm_obj = None
         for obj in scene.objects:
             if obj.type == 'ARMATURE' and obj.select_get():
@@ -339,7 +331,7 @@ class NDS_OT_ExportModel(bpy.types.Operator, ExportHelper):
             self.report({'ERROR'}, "No armature found in scene.")
             return {'CANCELLED'}
 
-        # --- Find mesh objects parented to armature ---
+        # Find mesh objects parented to armature
         mesh_objects = [
             o for o in scene.objects
             if o.type == 'MESH' and (
@@ -352,20 +344,20 @@ class NDS_OT_ExportModel(bpy.types.Operator, ExportHelper):
             self.report({'ERROR'}, "No mesh objects found parented/bound to the armature.")
             return {'CANCELLED'}
 
-        # --- Build bone list (ordered, flat) ---
+        # Build bone list (ordered, flat)
         # Use edit bones for a stable order; pose bones have same names
         arm_obj.data.pose_position = 'REST'
         bone_list = list(arm_obj.data.bones)  # bpy.types.Bone, not edit bone
 
-        # --- Detect texture ---
+        # Detect texture
         tex_w, tex_h = detect_texture_size(mesh_objects)
 
-        # --- Build model name ---
+        # Build model name
         base_name = sanitize(arm_obj.name or "model")
         tex_suffix = f"_{tex_w}x{tex_h}" if (tex_w and tex_h) else ""
         model_name = base_name + tex_suffix
 
-        # --- Build ZIP ---
+        # Build ZIP
         zip_buffer = io.BytesIO()
 
         with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zf:
@@ -413,9 +405,7 @@ class NDS_OT_ExportModel(bpy.types.Operator, ExportHelper):
         return {'FINISHED'}
 
 
-# ---------------------------------------------------------------------------
 # Menu registration
-# ---------------------------------------------------------------------------
 
 def menu_func_export(self, context):
     self.layout.operator(NDS_OT_ExportModel.bl_idname, text="NDS Model (.zip)")

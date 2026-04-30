@@ -58,7 +58,7 @@ def main():
     base_name  = re.sub(r'[^a-zA-Z0-9_]', '_',
                         os.path.splitext(os.path.basename(obj_path))[0])
 
-    # ── Step 1: OBJ → env header ───────────────
+    # OBJ to env header
     cmd = [sys.executable, CONVERTER, obj_path, output_dir]
     if args.scale is not None: cmd += ['--scale',       str(args.scale)]
     else:                      cmd += ['--target-size', str(args.target_size)]
@@ -68,7 +68,7 @@ def main():
 
     run(cmd, 'OBJ → NDS display list header')
 
-    # ── Step 2: GRIT ─────────────────────────────────────────────────────────
+    # GRIT
     if args.skip_grit:
         print("\n[SKIP] GRIT (--skip-grit)")
         return
