@@ -5,7 +5,7 @@
         title: 'NDS Model Exporter for Blockbench',
         author: 'Taha Rashid',
         description: 'Automates exporting Hierarchical JSON and isolated OBJs to a ZIP file. Auto-detects texture size. Built for the Persona 3 Dual project.',
-        version: '1.0.7',
+        version: '1.0.8',
         variant: 'both', 
         
         onload() {
@@ -27,13 +27,11 @@
         // auto-detect texture dimensions
         let texSuffix = "";
         if (typeof Texture !== 'undefined' && Texture.all.length > 0) {
-            // grab the resolution of the first texture applied to the model
             let texW = Texture.all[0].width;
             let texH = Texture.all[0].height;
             texSuffix = `_${texW}x${texH}`;
         }
         
-        // combine them (e.g., "player" + "_64x64" = "player_64x64")
         let modelName = baseName + texSuffix;
 
         let zip = new window.JSZip(); 
@@ -120,7 +118,9 @@
             dsJson.animations[animName] = animData;
         });
 
-        zip.file(`${modelName}.json`, JSON.stringify(dsJson, null, 2));
+        let jsonString = JSON.stringify(dsJson, null, 2);
+        zip.file(`${modelName}.json`, jsonString);
+
         zip.generateAsync({type: "blob"}).then(content => {
             Blockbench.export({
                 type: 'Zip Archive',
@@ -128,7 +128,9 @@
                 name: `${modelName}`,
                 content: content,
                 savetype: 'zip'
-            }, () => Blockbench.showQuickMessage(`Exported ${modelName}`));
+            }, () => {
+                Blockbench.showQuickMessage(`Exported ${modelName}.zip`);
+            });
         });
     }
 })();

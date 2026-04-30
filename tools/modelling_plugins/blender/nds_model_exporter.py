@@ -1,7 +1,7 @@
 """
 NDS Model Exporter for Blender
 Author: Taha Rashid
-Version: 1.0.0
+Version: 1.0.1
 Blender: 3.x / 4.x
 
 Exports a rig to the same ZIP format as the Blockbench plugin:
@@ -9,7 +9,7 @@ Exports a rig to the same ZIP format as the Blockbench plugin:
   - modelName.json    (hierarchy + animation data)
 
 The output ZIP is fully compatible with the existing Python converter
-(obj2nds.py / convert_model_json).
+(obj2model.py / convert_model_json).
 
 ------- HOW TO USE -------
 1.  Install: Edit > Preferences > Add-ons > Install > pick this file > enable it.
@@ -18,25 +18,13 @@ The output ZIP is fully compatible with the existing Python converter
       via vertex groups named after the bones).
     - Texture must be a single image in the active material of your mesh(es).
 3.  File > Export > NDS Model (.zip)
-4.  Choose output path and click Export NDS Model.
-
-------- CONVENTIONS -------
-- One bone  =  one NDS node.
-- Geometry is assigned to a bone via vertex groups (group name == bone name).
-  Vertices with no group, or groups that don't match a bone, are ignored.
-- Bone parent chain maps directly to NDS parentId (-1 = root).
-- Armature rest pose = bind pose used for static geometry export.
-- Animations: all NLA-baked or Action animations are exported.
-  The active Action on the armature object is exported if present;
-  all stashed NLA tracks are exported as separate animations.
-- Frame rate is read from the scene (default 60 fps assumed for NDS timing).
-- Texture size is auto-detected from the first image texture node found.
+4.  Choose output path and export.
 """
 
 bl_info = {
     "name": "NDS Model Exporter",
     "author": "Taha Rashid",
-    "version": (1, 0, 0),
+    "version": (1, 0, 1),
     "blender": (3, 0, 0),
     "location": "File > Export > NDS Model (.zip)",
     "description": "Exports armature + mesh to NDS ZIP format (JSON + per-bone OBJs)",
@@ -45,19 +33,19 @@ bl_info = {
 
 import bpy
 import bmesh
-import mathutils
 import os
 import io
 import json
 import zipfile
 import re
-import struct
 
-from bpy.props import StringProperty, BoolProperty
+from bpy.props import StringProperty
 from bpy_extras.io_utils import ExportHelper
 
 
+# -----------------------------------------------------------------------------
 # Helpers
+# -----------------------------------------------------------------------------
 
 def sanitize(name: str) -> str:
     return re.sub(r'[^a-zA-Z0-9]', '_', name)
@@ -90,39 +78,31 @@ def parent_index(bone, bone_list: list) -> int:
     return bone_index(None, bone.parent.name, bone_list)
 
 
+# -----------------------------------------------------------------------------
 # OBJ export per bone
+# -----------------------------------------------------------------------------
 
 def export_bone_obj(arm_obj, mesh_objects, bone, bone_list, depsgraph) -> str:
-    """
-    Build an OBJ string containing only the geometry weighted to `bone`.
-    Works with vertex groups: group name must match bone name.
-    """
     lines = ["# NDS OBJ export", f"# bone: {bone.name}", ""]
-
     vert_lines = []
     uv_lines   = []
     face_lines = []
 
-    global_v_offset = 1   # OBJ indices are 1-based and global across meshes
+    global_v_offset = 1
 
-    # We export in the armature's local space so origins make sense for the NDS
     arm_mat_inv = arm_obj.matrix_world.inverted()
 
     for mesh_obj in mesh_objects:
         if bone.name not in [vg.name for vg in mesh_obj.vertex_groups]:
-            continue  # this mesh has no verts for this bone
+            continue 
 
         vg_index = mesh_obj.vertex_groups[bone.name].index
 
-        # Evaluate the mesh (apply modifiers)
         eval_obj  = mesh_obj.evaluated_get(depsgraph)
         eval_mesh = eval_obj.to_mesh()
 
-        # Triangulate a bmesh copy so we handle n-gons / quads cleanly
         bm = bmesh.new()
         bm.from_mesh(eval_mesh)
-        # Don't triangulate — keep quads for NDS GL_QUADS; only triangulate n-gons
-        # We'll handle faces below based on vert count.
         bmesh.ops.triangulate(bm, faces=[f for f in bm.faces if len(f.verts) > 4])
         bm.to_mesh(eval_mesh)
         bm.free()
@@ -130,7 +110,6 @@ def export_bone_obj(arm_obj, mesh_objects, bone, bone_list, depsgraph) -> str:
         eval_mesh.calc_loop_triangles()
         uv_layer = eval_mesh.uv_layers.active
 
-        # Build a map of vertex index -> weight for this bone's group
         bone_verts = {}
         for v in eval_mesh.vertices:
             for g in v.groups:
@@ -142,8 +121,7 @@ def export_bone_obj(arm_obj, mesh_objects, bone, bone_list, depsgraph) -> str:
             eval_obj.to_mesh_clear()
             continue
 
-        # Collect unique positions
-        local_verts = {}  # mesh vert index -> global OBJ vert index
+        local_verts = {}
         for vi, _w in bone_verts.items():
             world_co  = mesh_obj.matrix_world @ eval_mesh.vertices[vi].co
             local_co  = arm_mat_inv @ world_co
@@ -151,19 +129,17 @@ def export_bone_obj(arm_obj, mesh_objects, bone, bone_list, depsgraph) -> str:
             local_verts[vi] = global_v_offset
             global_v_offset += 1
 
-        # Collect UVs per loop and faces
-        uv_map = {}  # loop_index -> global UV index
+        uv_map = {} 
         uv_counter = len(uv_lines) + 1
 
         for poly in eval_mesh.polygons:
-            if not all(eval_mesh.loops[li].vertex_index in bone_verts
-                       for li in poly.loop_indices):
-                continue  # face not fully assigned to this bone — skip
+            if not all(eval_mesh.loops[li].vertex_index in bone_verts for li in poly.loop_indices):
+                continue
 
             face_v  = []
             for li in poly.loop_indices:
-                loop     = eval_mesh.loops[li]
-                vi       = loop.vertex_index
+                loop = eval_mesh.loops[li]
+                vi = loop.vertex_index
                 if uv_layer:
                     uv = uv_layer.data[li].uv
                     key = (round(uv.x, 5), round(uv.y, 5))
@@ -190,83 +166,50 @@ def export_bone_obj(arm_obj, mesh_objects, bone, bone_list, depsgraph) -> str:
     return "\n".join(lines) + "\n"
 
 
+# -----------------------------------------------------------------------------
 # Animation export
+# -----------------------------------------------------------------------------
 
 def get_bone_transforms_at_frame(arm_obj, bone_name, frame, scene):
-    """
-    Return (rot_xyz_deg, pos_xyz) of a pose bone at a given frame,
-    relative to its rest pose / parent, in armature local space.
-    """
     scene.frame_set(frame)
     pose_bone = arm_obj.pose.bones.get(bone_name)
     if pose_bone is None:
         return (0, 0, 0), (0, 0, 0)
 
-    # Local matrix relative to parent (or armature root)
-    if pose_bone.parent:
-        mat = pose_bone.parent.matrix.inverted() @ pose_bone.matrix
-    else:
-        mat = pose_bone.matrix
+    if pose_bone.parent: mat = pose_bone.parent.matrix.inverted() @ pose_bone.matrix
+    else:                mat = pose_bone.matrix
 
-    # Decompose
     loc, rot_q, _scale = mat.decompose()
     rot_e = rot_q.to_euler('XYZ')
 
     import math
-    rx = math.degrees(rot_e.x)
-    ry = math.degrees(rot_e.y)
-    rz = math.degrees(rot_e.z)
-
-    return (rx, ry, rz), (loc.x, loc.y, loc.z)
+    return (math.degrees(rot_e.x), math.degrees(rot_e.y), math.degrees(rot_e.z)), (loc.x, loc.y, loc.z)
 
 
 def collect_animations(arm_obj, bone_list, scene, fps):
-    """
-    Returns a dict compatible with the JSON format:
-    {
-      "anim_name": {
-        "duration": <frames>,
-        "tracks": {
-          "<bone_id>": [ {time, rot:[x,y,z], pos:[x,y,z]}, ... ]
-        }
-      }
-    }
-    Exports the active Action if present, plus all NLA tracks (baked per strip).
-    """
     animations = {}
     original_frame = scene.frame_current
 
     def export_action(action, anim_name):
-        # Determine frame range
         frame_start = int(action.frame_range[0])
         frame_end   = int(action.frame_range[1])
         duration    = frame_end - frame_start + 1
 
-        anim_data = {
-            "duration": duration,
-            "tracks": {}
-        }
-
-        # Gather keyframe times per bone from the action's fcurves
+        anim_data = {"duration": duration, "tracks": {}}
         bone_frames = {}
+        
         for fcurve in action.fcurves:
-            # data_path like 'pose.bones["Bone"].rotation_euler'
-            if not fcurve.data_path.startswith('pose.bones'):
-                continue
-            # Extract bone name
-            try:
-                bname = fcurve.data_path.split('"')[1]
-            except IndexError:
-                continue
-            if bname not in bone_frames:
-                bone_frames[bname] = set()
+            if not fcurve.data_path.startswith('pose.bones'): continue
+            try: bname = fcurve.data_path.split('"')[1]
+            except IndexError: continue
+            
+            if bname not in bone_frames: bone_frames[bname] = set()
             for kp in fcurve.keyframe_points:
                 bone_frames[bname].add(int(round(kp.co[0])))
 
         for bone in bone_list:
             bname = bone.name
-            if bname not in bone_frames:
-                continue
+            if bname not in bone_frames: continue
 
             bid = bone_index(None, bname, bone_list)
             frames = sorted(bone_frames[bname])
@@ -275,23 +218,16 @@ def collect_animations(arm_obj, bone_list, scene, fps):
             for f in frames:
                 rel_frame = f - frame_start
                 rot, pos  = get_bone_transforms_at_frame(arm_obj, bname, f, scene)
-                track.append({
-                    "time": rel_frame,
-                    "rot":  list(rot),
-                    "pos":  list(pos)
-                })
+                track.append({"time": rel_frame, "rot": list(rot), "pos": list(pos)})
 
-            if track:
-                anim_data["tracks"][str(bid)] = track
+            if track: anim_data["tracks"][str(bid)] = track
 
         animations[sanitize(anim_name)] = anim_data
 
-    # Active action
     if arm_obj.animation_data and arm_obj.animation_data.action:
         action = arm_obj.animation_data.action
         export_action(action, action.name)
 
-    # NLA strips
     if arm_obj.animation_data and arm_obj.animation_data.nla_tracks:
         for nla_track in arm_obj.animation_data.nla_tracks:
             for strip in nla_track.strips:
@@ -302,7 +238,9 @@ def collect_animations(arm_obj, bone_list, scene, fps):
     return animations
 
 
-# Main export operator
+# -----------------------------------------------------------------------------
+# Operator
+# -----------------------------------------------------------------------------
 
 class NDS_OT_ExportModel(bpy.types.Operator, ExportHelper):
     bl_idname  = "export_scene.nds_model"
@@ -316,87 +254,51 @@ class NDS_OT_ExportModel(bpy.types.Operator, ExportHelper):
         scene      = context.scene
         depsgraph  = context.evaluated_depsgraph_get()
 
-        # Find armature
-        arm_obj = None
-        for obj in scene.objects:
-            if obj.type == 'ARMATURE' and obj.select_get():
-                arm_obj = obj
-                break
+        arm_obj = next((o for o in scene.objects if o.type == 'ARMATURE' and o.select_get()), None)
         if arm_obj is None:
-            for obj in scene.objects:
-                if obj.type == 'ARMATURE':
-                    arm_obj = obj
-                    break
+            arm_obj = next((o for o in scene.objects if o.type == 'ARMATURE'), None)
+            
         if arm_obj is None:
             self.report({'ERROR'}, "No armature found in scene.")
             return {'CANCELLED'}
 
-        # Find mesh objects parented to armature
-        mesh_objects = [
-            o for o in scene.objects
-            if o.type == 'MESH' and (
-                o.parent == arm_obj or
-                any(m.type == 'ARMATURE' and m.object == arm_obj
-                    for m in o.modifiers)
-            )
-        ]
+        mesh_objects = [o for o in scene.objects if o.type == 'MESH' and (
+            o.parent == arm_obj or any(m.type == 'ARMATURE' and m.object == arm_obj for m in o.modifiers))]
+            
         if not mesh_objects:
             self.report({'ERROR'}, "No mesh objects found parented/bound to the armature.")
             return {'CANCELLED'}
 
-        # Build bone list (ordered, flat)
-        # Use edit bones for a stable order; pose bones have same names
         arm_obj.data.pose_position = 'REST'
-        bone_list = list(arm_obj.data.bones)  # bpy.types.Bone, not edit bone
+        bone_list = list(arm_obj.data.bones) 
 
-        # Detect texture
         tex_w, tex_h = detect_texture_size(mesh_objects)
-
-        # Build model name
         base_name = sanitize(arm_obj.name or "model")
         tex_suffix = f"_{tex_w}x{tex_h}" if (tex_w and tex_h) else ""
         model_name = base_name + tex_suffix
 
         # Build ZIP
         zip_buffer = io.BytesIO()
-
         with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zf:
-
-            # 1. Per-bone OBJs
             nodes = []
             for i, bone in enumerate(bone_list):
                 pid       = parent_index(bone, bone_list)
                 obj_fname = f"{model_name}_n{i}.obj"
 
-                # Export geometry for this bone
                 arm_obj.data.pose_position = 'REST'
-                obj_content = export_bone_obj(
-                    arm_obj, mesh_objects, bone, bone_list, depsgraph
-                )
+                obj_content = export_bone_obj(arm_obj, mesh_objects, bone, bone_list, depsgraph)
                 zf.writestr(obj_fname, obj_content)
 
-                # Bone head in armature local space = origin
-                origin = list(bone.head_local)  # [x, y, z]
+                origin = list(bone.head_local) 
+                nodes.append({"id": i, "parent": pid, "name": bone.name, "obj": obj_fname, "origin": origin})
 
-                nodes.append({
-                    "id":     i,
-                    "parent": pid,
-                    "name":   bone.name,
-                    "obj":    obj_fname,
-                    "origin": origin
-                })
-
-            # 2. Animations
             arm_obj.data.pose_position = 'POSE'
-            fps   = scene.render.fps
-            anims = collect_animations(arm_obj, bone_list, scene, fps)
+            anims = collect_animations(arm_obj, bone_list, scene, scene.render.fps)
             arm_obj.data.pose_position = 'REST'
 
-            # 3. JSON
             ds_json = {"nodes": nodes, "animations": anims}
             zf.writestr(f"{model_name}.json", json.dumps(ds_json, indent=2))
 
-        # Write ZIP to disk
         zip_buffer.seek(0)
         with open(self.filepath, 'wb') as f:
             f.write(zip_buffer.read())
@@ -405,21 +307,20 @@ class NDS_OT_ExportModel(bpy.types.Operator, ExportHelper):
         return {'FINISHED'}
 
 
-# Menu registration
+# -----------------------------------------------------------------------------
+# Registration
+# -----------------------------------------------------------------------------
 
 def menu_func_export(self, context):
     self.layout.operator(NDS_OT_ExportModel.bl_idname, text="NDS Model (.zip)")
-
 
 def register():
     bpy.utils.register_class(NDS_OT_ExportModel)
     bpy.types.TOPBAR_MT_file_export.append(menu_func_export)
 
-
 def unregister():
     bpy.utils.unregister_class(NDS_OT_ExportModel)
     bpy.types.TOPBAR_MT_file_export.remove(menu_func_export)
-
 
 if __name__ == "__main__":
     register()

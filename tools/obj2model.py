@@ -33,11 +33,10 @@ def to_s16(val):
     val = int(val) & 0xFFFF
     return val if val <= 32767 else val - 65536
 
-def create_display_list(input_file, tex_width=None, tex_height=None, vertex_color=None):
+def parse_obj(input_file):
     vertices = []
     texcoords = []
     faces = []
-
     with open(input_file, 'r') as f:
         for line in f:
             parts = line.split()
@@ -54,7 +53,9 @@ def create_display_list(input_file, tex_width=None, tex_height=None, vertex_colo
                     vt_idx = int(components[1]) - 1 if len(components) > 1 and components[1] != '' else None
                     face.append((v_idx, vt_idx))
                 faces.append(face)
+    return vertices, texcoords, faces
 
+def build_display_list(vertices, texcoords, faces, tex_width, tex_height, vertex_color, scale, offset, blender_source):
     has_uvs = any(vt is not None for face in faces for _, vt in face)
     words = []
 
@@ -63,7 +64,12 @@ def create_display_list(input_file, tex_width=None, tex_height=None, vertex_colo
         words.append(pack_cmds(FIFO_COLOR))
         words.append(struct.pack('<I', rgb_to_rgb15(r, g, b)))
 
+    ox, oy, oz = offset
+
     for face in faces:
+        if blender_source and len(face) >= 2:
+            face = [face[1], face[0]] + face[2:]
+            
         if len(face) == 4: prim_type = GL_QUADS
         elif len(face) == 3: prim_type = GL_TRIANGLES
         else: continue
@@ -72,30 +78,51 @@ def create_display_list(input_file, tex_width=None, tex_height=None, vertex_colo
         words.append(struct.pack('<I', prim_type))
 
         for v_idx, vt_idx in face:
-            if has_uvs and vt_idx is not None:
+            if has_uvs and vt_idx is not None and tex_width and tex_height:
                 u, v = texcoords[vt_idx]
                 u16   = floattot16(u * tex_width)
                 v16   = floattot16((1.0 - v) * tex_height)
                 words.append(pack_cmds(FIFO_TEXCOORD))
                 words.append(struct.pack('<I', (u16 & 0xFFFF) | ((v16 & 0xFFFF) << 16)))
 
-            vert = vertices[v_idx]
+            vx, vy, vz = vertices[v_idx]
+            sx = (vx - ox) * scale
+            sy = (vy - oy) * scale
+            sz = (vz - oz) * scale
+            
             words.append(pack_cmds(FIFO_VERTEX16))
-            words.append(struct.pack('<I', (floattov16(vert[1]) << 16) | floattov16(vert[0])))
-            words.append(struct.pack('<I', floattov16(vert[2])))
+            words.append(struct.pack('<I', (floattov16(sy) << 16) | floattov16(sx)))
+            words.append(struct.pack('<I', floattov16(sz)))
 
     return words
 
-def convert_obj(input_file, output_file, tex_width=None, tex_height=None, vertex_color=None):
-    words = create_display_list(input_file, tex_width, tex_height, vertex_color)
+def convert_obj(input_file, output_file, tex_width=None, tex_height=None, vertex_color=None, scale=None, target_size=4.0, center=True, blender_source=False):
+    v, vt, f = parse_obj(input_file)
+    
+    if blender_source:
+        v = [(x, z, y) for x, y, z in v]
+        
+    xs = [pt[0] for pt in v]
+    ys = [pt[1] for pt in v]
+    zs = [pt[2] for pt in v]
+    
+    max_dim = max(max(xs)-min(xs), max(ys)-min(ys), max(zs)-min(zs)) if v else 1.0
+    
+    if scale is None:
+        scale = (target_size / max_dim) if max_dim > 0 else 1.0
+        
+    if center and v:
+        offset = ((min(xs)+max(xs))/2.0, min(ys), (min(zs)+max(zs))/2.0)
+    else:
+        offset = (0.0, 0.0, 0.0)
+
+    words = build_display_list(v, vt, f, tex_width, tex_height, vertex_color, scale, offset, blender_source)
     with open(output_file, 'wb') as out:
         out.write(struct.pack('<I', len(words)))
         for w in words: out.write(w)
 
-def convert_model_json(input_file, output_file, tex_width=None, tex_height=None, vertex_color=None):
+def convert_model_json(input_file, output_file, tex_width=None, tex_height=None, vertex_color=None, scale=None, target_size=4.0, center=True, blender_source=False):
     base_dir = os.path.dirname(input_file)
-    
-    # Strip off the _WxH if it exists so the enums and functions are clean (e.g., player_64x64 -> player)
     raw_name = os.path.splitext(os.path.basename(input_file))[0].replace('-', '_')
     if 'x' in raw_name:
         parts = raw_name.rsplit('_', 1)
@@ -109,10 +136,40 @@ def convert_model_json(input_file, output_file, tex_width=None, tex_height=None,
     
     header_out = output_file.replace('.bin', '.h')
     
+    # 1. Pre-pass: calculate unified scale and offset
+    all_verts = []
+    obj_data = {}
+    for node in data['nodes']:
+        obj_path = os.path.join(base_dir, node['obj'])
+        v, vt, f = parse_obj(obj_path)
+        if blender_source:
+            v = [(x, z, y) for x, y, z in v]
+        obj_data[node['id']] = (v, vt, f)
+        all_verts.extend(v)
+
+    if not all_verts:
+        all_verts = [(0,0,0)]
+        
+    xs = [pt[0] for pt in all_verts]
+    ys = [pt[1] for pt in all_verts]
+    zs = [pt[2] for pt in all_verts]
+    
+    max_dim = max(max(xs)-min(xs), max(ys)-min(ys), max(zs)-min(zs))
+    if scale is None:
+        scale = (target_size / max_dim) if max_dim > 0 else 1.0
+        print(f"  Auto-scale: {scale:.6f}  (target {target_size}, max_dim {max_dim:.3f})")
+    else:
+        print(f"  Manual scale: {scale:.6f}")
+        
+    if center:
+        # NDS convention usually places the Y origin at the bottom min(ys)
+        offset = ((min(xs)+max(xs))/2.0, min(ys), (min(zs)+max(zs))/2.0)
+    else:
+        offset = (0.0, 0.0, 0.0)
+    print(f"  Center offset: {offset}")
+
     with open(header_out, 'w') as out:
         out.write(f"#pragma once\n#include <nds.h>\n#include \"controllers/AnimationController.h\"\n\n")
-        
-        # --- GENERATE ENUMS FOR TYPE SAFETY ---
         out.write(f"// Auto-generated Model Enums\n")
         out.write(f"enum Model_{model_name} {{\n")
         anim_names = list(data['animations'].keys())
@@ -122,32 +179,42 @@ def convert_model_json(input_file, output_file, tex_width=None, tex_height=None,
 
         node_count = len(data['nodes'])
         
-        # 1. Compile Display Lists
+        # 2. Compile Display Lists
         for node in data['nodes']:
-            obj_path = os.path.join(base_dir, node['obj'])
-            words = create_display_list(obj_path, tex_width, tex_height, vertex_color)
-            out.write(f"static const u32 {model_name}_dl_{node['id']}[] = {{\n    ")
+            nid = node['id']
+            v, vt, f = obj_data[nid]
+            words = build_display_list(v, vt, f, tex_width, tex_height, vertex_color, scale, offset, blender_source)
+            out.write(f"static const u32 {model_name}_dl_{nid}[] = {{\n    ")
             out.write(f"{len(words)}, ") 
             for w in words:
                 val = struct.unpack('<I', w)[0]
                 out.write(f"0x{val:08X}, ")
             out.write("\n};\n\n")
 
-        # 2. Compile Keyframes
+        # 3. Compile Keyframes
         for anim_name, anim_data in data['animations'].items():
             for node_id, keyframes in anim_data['tracks'].items():
                 out.write(f"static const Keyframe {model_name}_{anim_name}_n{node_id}[] = {{\n")
                 for kf in keyframes:
-                    rx = to_s16((kf['rot'][0] / 360.0) * 32768)
-                    ry = to_s16((kf['rot'][1] / 360.0) * 32768)
-                    rz = to_s16((kf['rot'][2] / 360.0) * 32768)
-                    px = to_s16(floattov16(kf['pos'][0] / 16.0))
-                    py = to_s16(floattov16(kf['pos'][1] / 16.0))
-                    pz = to_s16(floattov16(kf['pos'][2] / 16.0))
+                    rot = kf.get('rot', [0,0,0])
+                    pos = kf.get('pos', [0,0,0])
+                    
+                    if blender_source:
+                        rot = [rot[0], rot[2], rot[1]]
+                        pos = [pos[0], pos[2], pos[1]]
+
+                    rx = to_s16((rot[0] / 360.0) * 32768)
+                    ry = to_s16((rot[1] / 360.0) * 32768)
+                    rz = to_s16((rot[2] / 360.0) * 32768)
+                    
+                    # Scale positions (no offset because keyframe pos is a delta local transform)
+                    px = to_s16(floattov16(pos[0] * scale))
+                    py = to_s16(floattov16(pos[1] * scale))
+                    pz = to_s16(floattov16(pos[2] * scale))
                     out.write(f"    {{{kf['time']}, {rx}, {ry}, {rz}, {px}, {py}, {pz}}},\n")
                 out.write("};\n")
 
-        # 3. LOADER FUNCTION
+        # 4. LOADER FUNCTION
         out.write(f"\ninline void LoadModel_{model_name}(AnimationController& ctrl) {{\n")
         out.write(f"    std::vector<AnimNode> nodes({node_count});\n")
         
@@ -155,9 +222,14 @@ def convert_model_json(input_file, output_file, tex_width=None, tex_height=None,
             nid = node['id']
             pid = node['parent']
             origin = node.get('origin', [0, 0, 0])
-            ox = to_s16(floattov16(origin[0] / 16.0))
-            oy = to_s16(floattov16(origin[1] / 16.0))
-            oz = to_s16(floattov16(origin[2] / 16.0))
+            
+            if blender_source:
+                origin = [origin[0], origin[2], origin[1]]
+                
+            # Origin is absolute position in armature space, so apply offset AND scale
+            ox = to_s16(floattov16((origin[0] - offset[0]) * scale))
+            oy = to_s16(floattov16((origin[1] - offset[1]) * scale))
+            oz = to_s16(floattov16((origin[2] - offset[2]) * scale))
 
             out.write(f"    nodes[{nid}].id = {nid};\n")
             out.write(f"    nodes[{nid}].parentId = {pid};\n")
@@ -182,18 +254,32 @@ def convert_model_json(input_file, output_file, tex_width=None, tex_height=None,
         out.write(f"    ctrl.loadModel(nodes, anims);\n}}\n")
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Convert OBJ to NDS display list binary')
-    parser.add_argument('input',  help='Input .obj or .json file')
+    parser = argparse.ArgumentParser(description='Convert OBJ/JSON to NDS display list with scaling')
+    parser.add_argument('input', help='Input .obj or .json file')
     parser.add_argument('output', help='Output .bin file')
     parser.add_argument('--texsize', nargs=2, type=int, metavar=('W', 'H'))
     parser.add_argument('--color', nargs=3, type=int, metavar=('R', 'G', 'B'))
+    parser.add_argument('--scale', type=float, default=None)
+    parser.add_argument('--target-size', type=float, default=4.0)
+    parser.add_argument('--no-center', action='store_true')
+    parser.add_argument('--source-blender', action='store_true')
     args = parser.parse_args()
 
     tw, th = (args.texsize[0], args.texsize[1]) if args.texsize else (None, None)
     color  = tuple(args.color) if args.color else None
 
     if args.input.endswith('.json'):
-        convert_model_json(args.input, args.output, tex_width=tw, tex_height=th, vertex_color=color)
+        convert_model_json(
+            args.input, args.output,
+            tex_width=tw, tex_height=th, vertex_color=color,
+            scale=args.scale, target_size=args.target_size,
+            center=not args.no_center, blender_source=args.source_blender
+        )
     else:
-        convert_obj(args.input, args.output, tex_width=tw, tex_height=th, vertex_color=color)
+        convert_obj(
+            args.input, args.output,
+            tex_width=tw, tex_height=th, vertex_color=color,
+            scale=args.scale, target_size=args.target_size,
+            center=not args.no_center, blender_source=args.source_blender
+        )
         print(f"Converted {args.input} -> {args.output}")
