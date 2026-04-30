@@ -1,324 +1,132 @@
-# NDS Model Exporter — Pipeline README
+# Persona 3 Dual: Animated Model Pipeline
 
-**For the Persona 3 Dual project.**  
-Covers the Blockbench plugin, the Blender add-on, and the Python converter that consumes their output.
+This document details the automated workflow for converting rigged 3D models and their animations into Nintendo DS-compatible hierarchical display lists and keyframe arrays.
 
----
-
-## Table of Contents
-
-1. [How the Pipeline Works](#1-how-the-pipeline-works)
-2. [Blockbench Plugin](#2-blockbench-plugin)
-   - [Installation](#installation)
-   - [Model Setup Rules](#model-setup-rules-blockbench)
-   - [Exporting](#exporting-blockbench)
-3. [Blender Add-on](#3-blender-add-on)
-   - [Installation](#installation-1)
-   - [Model Setup Rules](#model-setup-rules-blender)
-   - [Animation Setup Rules](#animation-setup-rules-blender)
-   - [Exporting](#exporting-blender)
-4. [Python Converter](#4-python-converter-obj2ndspy)
-5. [Output Format Reference](#5-output-format-reference)
-6. [Constraints & Known Limitations](#6-constraints--known-limitations)
+Unlike static environments, animated models are exported as a collection of isolated `.obj` files (one per bone/node) tied together by a central `.json` file containing the skeletal hierarchy and animation tracks.
 
 ---
 
-## 1. How the Pipeline Works
+## 1. Project Structure & Naming Conventions
 
-Both the Blockbench plugin and the Blender add-on produce the **same ZIP file**. The Python converter then reads that ZIP and produces a C header (`.h`) ready for the NDS.
+The build system relies on a strict input-output mapping and a specific naming convention to auto-detect texture sizes.
 
-```
-Blockbench ──┐
-             ├──► modelName.zip ──► obj2nds.py ──► modelName.h
-Blender ─────┘
-```
+* **Input Directory:** `assets/models/<model_name>/`
+* **Required Files:** The extracted contents of your exporter's `.zip` file (the `.json` file and all `_nX.obj` files) MUST be placed here.
+* **Texture Scaling (CRITICAL):** The NDS requires texture sizes to be powers of two. To automatically pass the correct scale to the compiler, append the resolution to your filename: 
+  * `player_64x64.json`
+  * If omitted (e.g., `enemy.json`), the Makefile falls back to the default `MODEL_TEXSIZE` (32x32).
 
-The ZIP always contains:
-- `modelName.json` — node hierarchy + animation keyframes
-- `modelName_n0.obj`, `modelName_n1.obj`, … — one OBJ per node/bone
-
-The model name is derived automatically from the project/armature name and the detected texture size, e.g. `player_64x64`.
+**Output:** The pipeline parses the JSON and outputs a single lightweight header at `source/models/<model_name>.h`.
 
 ---
 
-## 2. Blockbench Plugin
+## 2. The Automated Make Workflow
 
-### Installation
+The `Makefile` watches your `assets/models/` directory and will automatically recompile headers if the `.json` or `.obj` files change.
 
-1. Open Blockbench.
-2. Go to **File → Plugins → Load Plugin from File**.
-3. Select `nds_model_exporter.js`.
-4. The export action appears under **File → Export → Export NDS Model (ZIP)**.
+### Make Commands
 
-### Model Setup Rules (Blockbench)
-
-**Groups = Nodes**
-
-Every exportable part of the model must be inside a **Group**. Groups map directly to NDS nodes. The group hierarchy (parent/child nesting) becomes the NDS parent/child hierarchy.
-
-- A group with no geometry children exports as an empty node (useful for pivot-only bones).
-- Geometry that is not inside any group is ignored.
-- Group names become the `name` field in the JSON. Avoid special characters — anything that isn't a letter or number is replaced with `_`.
-
-**Geometry**
-
-- Cubes and meshes are both supported.
-- A cube or mesh is assigned to whichever group directly contains it. There is no weight painting — every element belongs to exactly one group.
-- Elements can be toggled non-exportable in Blockbench's outliner; the plugin respects that flag.
-
-**Texture**
-
-- The plugin reads the resolution of the **first texture** in the texture list.
-- The texture dimensions are appended to the model name (e.g. `player_64x64`).
-- Only power-of-two sizes are valid for NDS: 8, 16, 32, 64, 128, 256, 512, 1024.
-- If no texture is present, no suffix is added.
-
-**Pivot / Origin**
-
-- Each group's **pivot point** in Blockbench becomes the `origin` field in the JSON, which the converter uses as the NDS bone pivot.
-- Set pivots carefully — they directly affect how the node rotates at runtime.
-
-### Exporting (Blockbench)
-
-1. Name your project (the base of the model name comes from here).
-2. Go to **File → Export → Export NDS Model (ZIP)**.
-3. Choose a save location. The file is named `modelName.zip` automatically.
+| Command | Action |
+| :--- | :--- |
+| `make` | Builds the entire ROM, triggering model conversion if any JSON files have been modified. |
+| `make models` | Runs the conversion pipeline strictly for the animated models without building the rest of the ROM. |
+| `make clean` | Wipes the generated `source/models/` directory. |
 
 ---
 
-## 3. Blender Add-on
+## 3. Authoring Tools
 
-### Installation
+You can build and animate your models using either Blender or Blockbench. Both plugins output a standardized `.zip` file containing your `.json` and per-node `.obj` files. **You must extract this `.zip` into your `assets/models/<name>/` folder before building.**
 
-1. Go to **Edit → Preferences → Add-ons → Install**.
-2. Select `nds_model_exporter_blender.py`.
-3. Enable the add-on (search for "NDS").
-4. The export option appears under **File → Export → NDS Model (.zip)**.
+### A. Blender Plugin (`nds_model_exporter.py`)
+Best for complex armatures, weighted meshes, and NLA-track animations.
 
-### Model Setup Rules (Blender)
+**Setup:**
+1. Go to **Edit > Preferences > Add-ons > Install**.
+2. Select `nds_model_exporter.py` and enable it.
 
-The add-on uses **standard Blender rigging conventions** with a few specific constraints described below.
+**Modeling Conventions:**
+* **Bones = Nodes:** One armature bone becomes one NDS node.
+* **Vertex Groups:** Geometry is bound to a bone via Vertex Groups. The vertex group name **must exactly match** the bone name. Unassigned vertices are ignored.
+* **Animations:** The plugin automatically exports the active Action, plus all stashed NLA tracks as separate animations.
+* **Textures:** Apply your single texture image to the active material. The plugin will attempt to auto-detect its size to append to the filename.
 
----
+**Exporting:**
+* Select your Armature.
+* Go to **File > Export > NDS Model (.zip)**.
 
-**Scene structure**
+### B. Blockbench Plugin (`nds_model_exporter.js`)
+Best for rigid, low-poly, Minecraft-style modeling and strict hierarchical animations.
 
-Your scene needs:
-- One **Armature** object — this is the skeleton. Its name becomes the base model name.
-- One or more **Mesh** objects that are either:
-  - Parented to the armature with an **Armature modifier**, or
-  - Directly parented to the armature object.
+**Setup:**
+1. Go to **File > Plugins > Load Plugin from File**.
+2. Select `nds_model_exporter.js`.
 
-If there are multiple armatures in the scene, select the one you want to export before running the exporter. If nothing is selected, it picks the first armature it finds.
+**Modeling Conventions:**
+* **Groups = Nodes:** Every Group/Folder in your outliner becomes an NDS node. Nested groups become child nodes.
+* **Geometry:** Any Cubes or Meshes inside a Group belong to that node.
+* **Animations:** All animations in the Blockbench Animation tab are exported. Time is automatically converted from seconds to 60 FPS keyframes.
 
----
-
-**Bones = Nodes**
-
-Every bone in the armature becomes one NDS node. The bone's parent in the armature hierarchy becomes its `parentId` in the JSON (-1 for root bones).
-
-- Bone names become node names. Avoid special characters — they are replaced with `_`.
-- The **bone head position** (in armature local space) is used as the node's `origin`/pivot.
-- Bone ordering in the JSON matches the order bones were created in the armature. This order is stable but not alphabetical. The NDS node IDs (0, 1, 2, …) follow this creation order.
-- Empty bones (no geometry assigned to them) export as empty nodes — this is fine and useful for pivot hierarchies.
-
----
-
-**Vertex groups — the critical rule**
-
-Geometry is assigned to bones through **vertex groups**. The vertex group name must **exactly match the bone name**.
-
-> **This is the most important setup requirement.** Without correct vertex groups, geometry will be silently missing from the export.
-
-Rules the exporter enforces:
-- A vertex is assigned to a bone only if its weight in that bone's vertex group is **greater than 0.5**.
-- Each vertex is assigned to at most one bone (the one with weight > 0.5). Blended weights across multiple bones are not supported — the NDS has no concept of smooth skinning.
-- A polygon (face) is only exported into a bone's OBJ if **all of its vertices** are assigned to that bone. Faces that cross a bone boundary are dropped entirely.
-
-**Practical implication:** You must paint weights in a "rigid" style — each vertex fully belongs to one bone. Do not use Blender's automatic weights or smooth weight painting as-is, since those spread weight across multiple bones.
-
-**How to set up rigid weights quickly:**
-
-1. In Object Mode, select your mesh, then Shift-click the armature, and press `Ctrl+P → Armature Deform` (this creates the vertex groups automatically from bone names).
-2. Go into Weight Paint mode.
-3. For each bone, paint its region with weight = 1.0, and ensure no vertex is painted on more than one bone with weight > 0.5.
-4. Alternatively, use `Ctrl+P → Armature Deform with Envelope Weights` and clean up the result, or assign vertex groups manually in Edit Mode using the vertex group panel.
+**Exporting:**
+* Go to **File > Export > Export NDS Model (ZIP)**.
 
 ---
 
-**Faces: triangles and quads only**
+## 4. Command Line Interface (CLI)
 
-- Triangles and quads are exported natively (the NDS supports both `GL_TRIANGLES` and `GL_QUADS`).
-- N-gons (5+ vertices) are automatically triangulated during export.
-- For best results, keep your mesh as quads and tris only.
+The pipeline is powered by `obj2model.py`. You can run it manually for debugging or custom automation.
 
----
-
-**Texture**
-
-- The exporter searches all materials on all mesh objects for the first **Image Texture node** in the node tree.
-- That image's pixel dimensions are appended to the model name (e.g. `player_64x64`).
-- Only one texture is supported. Multi-texture models are not supported.
-- The texture image must be loaded in Blender (not just referenced by path). Packed images work fine.
-- Only power-of-two sizes are valid for NDS: 8, 16, 32, 64, 128, 256, 512, 1024.
-
----
-
-**Scale — must be applied**
-
-The exporter reads geometry in world space and transforms it into armature local space. If your mesh or armature has a non-unit scale (i.e. the scale shown in the N panel is not 1, 1, 1), the exported geometry will be wrong.
-
-Before exporting, apply all transforms:
-1. Select all objects (armature + meshes).
-2. Press `Ctrl+A → All Transforms`.
-
----
-
-**Coordinate space**
-
-Blender uses Z-up, Y-forward. The NDS uses a different convention. The Blender exporter now converts coordinates automatically from Blender Z-up into NDS Y-up when it calls the converter. If you export a raw OBJ manually, pass `--source-blender` to `obj2environment.py`.
-
----
-
-### Animation Setup Rules (Blender)
-
-The exporter reads keyframe data from Blender Actions. It does **not** bake — it reads only frames where you have explicitly placed keyframes.
-
-**What is exported:**
-- The **active Action** on the armature object (the one currently shown in the Action Editor or Dope Sheet).
-- All Actions stored as **NLA strips** on NLA tracks of the armature.
-- Each Action becomes one named animation in the JSON. The animation name is sanitized (special characters → `_`).
-
-**What is not exported:**
-- Motion produced by constraints (IK, Copy Rotation, etc.) unless you bake it first.
-- Motion produced by drivers.
-- Interpolated values between keyframes — only the keyframed frames are captured.
-
-**If you use constraints or IK:** Bake the action before exporting.
-1. With the armature selected in Pose Mode, go to **Pose → Animation → Bake Action**.
-2. Check "Only Selected Bones" if needed, set the frame range, enable "Clear Constraints", and bake.
-3. The result is a new action with explicit keyframes on every frame. Export that.
-
-**Rotation mode — important**
-
-The exporter decomposes bone rotations as **Euler XYZ**. If a bone uses Quaternion rotation mode, Blender converts it automatically, but you may see unexpected flipping between keyframes in complex rotations (gimbal lock). To avoid this, set all animated bones to **Euler XYZ** rotation mode before animating:
-1. Select all bones in Pose Mode (`A`).
-2. In the N panel (Item tab), set Rotation Mode to **XYZ Euler**.
-
-**Animation duration**
-
-The `duration` field in the JSON is the number of frames in the Action's frame range (end − start + 1). Set your Action's frame range in the Dope Sheet or Action Editor to exactly what you need.
-
-**Frame timing**
-
-The converter uses frame numbers directly as NDS timing units. The NDS runs at 60 fps. Set your scene frame rate to 60 fps (`Output Properties → Frame Rate`) so that keyframe numbers correspond directly to NDS frames.
-
-### Exporting (Blender)
-
-1. Name your armature object — this becomes the base model name.
-2. Apply all transforms (`Ctrl+A → All Transforms` on all objects).
-3. Make sure your scene frame rate is 60 fps.
-4. Select the armature (optional, but ensures the right one is picked if you have multiple).
-5. Go to **File → Export → NDS Model (.zip)**.
-6. Choose a save location and click **Export NDS Model**.
-
----
-
-## 4. Python Converter (`obj2nds.py`)
-
-The converter reads the ZIP output and produces a C++ header for the NDS.
-
-**Convert a model ZIP:**
+**Basic Usage:**
 ```bash
-python obj2nds.py model_64x64.json model_64x64.bin
-```
-The `.json` file must be extracted from the ZIP first, with all OBJ files in the same directory.
-
-Or pass options directly:
-```bash
-python obj2nds.py model_64x64.json model_64x64.bin --texsize 64 64
-python obj2nds.py model_64x64.json model_64x64.bin --texsize 64 64 --color 255 128 0
+python3 tools/obj2model.py assets/models/player/player_64x64.json source/models/player.bin [options]
 ```
 
-**Options:**
+**CLI Arguments:**
 
-| Flag | Description |
-|---|---|
-| `--texsize W H` | Override texture dimensions (used for UV scaling). If the model name includes `_WxH`, this is auto-parsed from the filename and you usually don't need this flag. |
-| `--color R G B` | Apply a flat vertex color (0–255 per channel) to all geometry. |
+| Argument | Action |
+| :--- | :--- |
+| `--texsize W H` | Explicitly defines the width and height of the texture (e.g., `--texsize 64 64`). |
+| `--color R G B` | Applies a flat vertex color (0-255) to the entire model (e.g., `--color 255 128 0`). |
 
-**Output:**
-
-The converter produces a `.h` file (same name as the output `.bin` with `.h` extension) containing:
-- An enum of animation names for type-safe indexing (`MODEL_PLAYER_IDLE`, etc.)
-- Inline display list arrays per bone (`static const u32 player_dl_0[]`)
-- Keyframe arrays per animation track
-- A `LoadModel_player(AnimationController& ctrl)` function to call at runtime
-
-Include the `.h` in your NDS project and call the load function once during initialization.
+*(Note: The script outputs a `.h` file despite the `.bin` output target name in the CLI, due to internal handling of the JSON conversion vs standard OBJ conversion).*
 
 ---
 
-## 5. Output Format Reference
+## 5. C++ Integration
 
-### JSON structure
+Once the build is complete, integrating the animated model into your C++ engine is entirely handled by the `AnimationController`.
 
-```json
-{
-  "nodes": [
-    {
-      "id": 0,
-      "parent": -1,
-      "name": "root",
-      "obj": "player_64x64_n0.obj",
-      "origin": [0.0, 0.0, 0.0]
-    },
-    {
-      "id": 1,
-      "parent": 0,
-      "name": "head",
-      "obj": "player_64x64_n1.obj",
-      "origin": [0.0, 8.0, 0.0]
-    }
-  ],
-  "animations": {
-    "idle": {
-      "duration": 60,
-      "tracks": {
-        "1": [
-          { "time": 0,  "rot": [0, 0, 0],   "pos": [0, 0, 0] },
-          { "time": 30, "rot": [0, 15, 0],  "pos": [0, 0, 0] },
-          { "time": 60, "rot": [0, 0, 0],   "pos": [0, 0, 0] }
-        ]
-      }
-    }
-  }
+**1. Include the Header**
+```cpp
+#include "models/player.h" // Matches your JSON filename without the _WxH suffix
+```
+
+**2. Initialize the Controller**
+```cpp
+AnimationController myPlayer;
+
+void MyView::Init() {
+    // Pass the controller to the auto-generated Load function
+    LoadModel_player(myPlayer);
+    
+    // Use the auto-generated Enums for type-safe animation triggering
+    myPlayer.set(MODEL_PLAYER_WALK, true); // true = loop
+    myPlayer.play();
 }
 ```
 
-- `id` — zero-based node index (matches the `_nX` suffix in the OBJ filename)
-- `parent` — `id` of parent node, or `-1` for root
-- `origin` — pivot point in model local space (Blockbench units or Blender units)
-- `duration` — animation length in frames (at 60 fps = NDS frames)
-- `tracks` — keyed by node `id` as a string; only animated nodes are included
-- `rot` — Euler XYZ rotation in degrees
-- `pos` — position offset in model units
-
----
-
-## 6. Constraints & Known Limitations
-
-| Constraint | Applies To | Notes |
-|---|---|---|
-| One texture per model | Both | First texture found is used; multi-texture not supported |
-| Power-of-two texture sizes only | Both | NDS hardware requirement |
-| Rigid weights only (no blend skinning) | Blender | Vertices with weight ≤ 0.5 on all bones are ignored |
-| Faces crossing bone boundaries are dropped | Blender | All verts of a face must belong to the same bone |
-| No constraint/IK/driver baking | Blender | Bake actions manually before export if used |
-| Euler XYZ rotation only | Blender | Set bone rotation mode to XYZ Euler to avoid gimbal issues |
-| Scale must be applied | Blender | Run `Ctrl+A → All Transforms` before export |
-| Blender Z-up → NDS Y-up conversion available | Blender | The Blender exporter passes `--source-blender` automatically; raw OBJ exports can use the same flag |
-| No scale keyframes | Both | NDS animation has no scale channel |
-| Bone ordering = creation order | Blender | Node IDs depend on the order bones were added to the armature |
-| N-gons are triangulated | Blender | Quads and tris are kept as-is; 5+ vert faces are split |
-| Active Action + NLA strips only | Blender | Actions not assigned to NLA and not active are not exported |
+**3. Update and Render**
+```cpp
+void MyView::Update() {
+    // Tick the animation forward
+    myPlayer.update();
+    
+    glPushMatrix();
+        // Bind the model's texture
+        glBindTexture(GL_TEXTURE_2D, playerTextureId);
+        
+        // Render the hierarchical display lists
+        myPlayer.render();
+    glPopMatrix(1);
+}
+```
