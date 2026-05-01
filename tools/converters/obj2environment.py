@@ -16,7 +16,6 @@ def floattov16(f):
     return max(-32768, min(32767, int(f * (1 << 12)))) & 0xFFFF
 
 def floattot16(f):
-    # FIX 3: Removed the min/max clamp!
     # Tiled textures MUST be allowed to infinitely modulo wrap using 16-bit overflow.
     return int(f * (1 << 4)) & 0xFFFF
 
@@ -94,7 +93,7 @@ def build_display_list(faces, vertices, texcoords, scale, offset, tex_w, tex_h, 
             if vti is not None and tex_w and tex_h:
                 u, v_orig = texcoords[vti]
                 
-                # FIX 2: Only flip the V axis if the user explicitly came from Blender.
+                # Only flip the V axis if the user explicitly came from Blender.
                 v = (1.0 - v_orig) if blender_source else v_orig
                 
                 u16 = floattot16(u * tex_w)
@@ -197,7 +196,7 @@ def convert(obj_path, output_dir, config):
         tex_abs = tex_paths.get(tex_key)
         tw, th  = find_texture_size(tex_abs) if tex_abs else (None, None)
         
-        # FIX 1: Fatal Error if texture file name inside the .mtl doesn't exist on disk
+        # Fatal Error if texture file name inside the .mtl doesn't exist on disk
         if tw is None or th is None:
             print(f"\n[FATAL ERROR] Could not find or read texture image: {tex_abs}")
             print(f"-> If you recently renamed your .png file, you MUST open your .mtl or .json file and rename the internal reference to match!")
