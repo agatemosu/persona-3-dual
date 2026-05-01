@@ -1,6 +1,7 @@
 import sys, os, re, json, struct, argparse
 from collections import defaultdict
 
+FIFO_COLOR    = 0x20
 FIFO_TEXCOORD = 0x22
 FIFO_BEGIN    = 0x40
 FIFO_VERTEX16 = 0x23
@@ -16,8 +17,10 @@ def floattov16(f):
     return max(-32768, min(32767, int(f * (1 << 12)))) & 0xFFFF
 
 def floattot16(f):
-    # Tiled textures MUST be allowed to infinitely modulo wrap using 16-bit overflow.
     return int(f * (1 << 4)) & 0xFFFF
+
+def rgb_to_rgb15(r, g, b):
+    return ((r >> 3) & 0x1F) | (((g >> 3) & 0x1F) << 5) | (((b >> 3) & 0x1F) << 10)
 
 def pack_cmds(c1, c2=FIFO_NOP, c3=FIFO_NOP, c4=FIFO_NOP):
     return struct.pack('<I', (c4 << 24) | (c3 << 16) | (c2 << 8) | c1)
@@ -74,9 +77,15 @@ def compute_bounds(vertices):
 def convert_blender_zup(vertices):
     return [(x, z, y) for x, y, z in vertices]
 
-def build_display_list(faces, vertices, texcoords, scale, offset, tex_w, tex_h, flip_winding=False, blender_source=False):
+def build_display_list(faces, vertices, texcoords, scale, offset, tex_w, tex_h, flip_winding=False, blender_source=False, vertex_color=None):
     words = []
     ox, oy, oz = offset
+    
+    if vertex_color is not None:
+        r, g, b = vertex_color
+        words.append(pack_cmds(FIFO_COLOR))
+        words.append(struct.pack('<I', rgb_to_rgb15(r, g, b)))
+        
     for face in faces:
         if flip_winding and len(face) >= 2:
             face = [face[1], face[0]] + face[2:]
@@ -85,17 +94,15 @@ def build_display_list(faces, vertices, texcoords, scale, offset, tex_w, tex_h, 
         elif n == 3: prim = GL_TRIANGLES
         else:
             for i in range(1, n - 1):
-                words += build_display_list([face[0], face[i], face[i+1]], vertices, texcoords, scale, offset, tex_w, tex_h, flip_winding, blender_source)
+                # Pass None for color on sub-faces to avoid redundant state commands
+                words += build_display_list([face[0], face[i], face[i+1]], vertices, texcoords, scale, offset, tex_w, tex_h, flip_winding, blender_source, None)
             continue
         words.append(pack_cmds(FIFO_BEGIN))
         words.append(struct.pack('<I', prim))
         for vi, vti in face:
             if vti is not None and tex_w and tex_h:
                 u, v_orig = texcoords[vti]
-                
-                # Only flip the V axis if the user explicitly came from Blender.
                 v = (1.0 - v_orig) if blender_source else v_orig
-                
                 u16 = floattot16(u * tex_w)
                 v16 = floattot16(v * tex_h)
                 words.append(pack_cmds(FIFO_TEXCOORD))
@@ -129,6 +136,21 @@ def convert(obj_path, output_dir, config):
     center = config.get("center", True)
     if config.get("no_center"): center = False
     blender_source = config.get("source_blender", False)
+    
+    rgba_all = config.get("rgba", False)
+    raw_rgba_list = config.get("rgba_list", [])
+    if isinstance(raw_rgba_list, str):
+        rgba_list = [x.strip() for x in raw_rgba_list.split(',') if x.strip()]
+    elif isinstance(raw_rgba_list, list):
+        rgba_list = [str(x).strip() for x in raw_rgba_list]
+    else:
+        rgba_list = []
+        
+    vertex_color = config.get("color", [255, 255, 255])
+    if isinstance(vertex_color, list) and len(vertex_color) == 3:
+        vertex_color = tuple(vertex_color)
+    elif vertex_color is None:
+        vertex_color = (255, 255, 255)
     
     extra_mapping = None
     if config.get("mapping"):
@@ -196,7 +218,6 @@ def convert(obj_path, output_dir, config):
         tex_abs = tex_paths.get(tex_key)
         tw, th  = find_texture_size(tex_abs) if tex_abs else (None, None)
         
-        # Fatal Error if texture file name inside the .mtl doesn't exist on disk
         if tw is None or th is None:
             print(f"\n[FATAL ERROR] Could not find or read texture image: {tex_abs}")
             print(f"-> If you recently renamed your .png file, you MUST open your .mtl or .json file and rename the internal reference to match!")
@@ -205,8 +226,7 @@ def convert(obj_path, output_dir, config):
         tw = nearest_valid_tex_size(tw)
         th = nearest_valid_tex_size(th)
         
-        # Added blender_source argument pass-through
-        words = build_display_list(faces, vertices, texcoords, scale, offset, tw, th, flip_winding=blender_source, blender_source=blender_source)
+        words = build_display_list(faces, vertices, texcoords, scale, offset, tw, th, flip_winding=blender_source, blender_source=blender_source, vertex_color=vertex_color)
         dl_groups.append((tex_key, words, tw, th))
 
     bin_path      = os.path.join(output_dir, f'{base_name}.bin')
@@ -278,10 +298,14 @@ def convert(obj_path, output_dir, config):
             for i, (tex_key, _, tw, th) in enumerate(dl_groups):
                 nw = f"TEXTURE_SIZE_{tw}" if tw else "TEXTURE_SIZE_8"
                 nh = f"TEXTURE_SIZE_{th}" if th else "TEXTURE_SIZE_8"
+                
+                is_rgba = rgba_all or any(req in tex_key for req in rgba_list)
+                gl_format = "GL_RGBA" if is_rgba else "GL_RGB"
+
                 h.write(f"        if (bitmaps[{i}]) {{\n")
                 h.write(f"            glGenTextures(1, &textureIDs[{i}]);\n")
                 h.write(f"            glBindTexture(GL_TEXTURE_2D, textureIDs[{i}]);\n")
-                h.write(f"            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, {nw}, {nh}, 0,\n")
+                h.write(f"            glTexImage2D(GL_TEXTURE_2D, 0, {gl_format}, {nw}, {nh}, 0,\n")
                 h.write(f"                TEXGEN_TEXCOORD | GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T, bitmaps[{i}]);\n")
                 h.write(f"        }}\n")
             h.write(f"        return true;\n")
@@ -324,6 +348,9 @@ if __name__ == '__main__':
     parser.add_argument('--no-center',      action='store_true')
     parser.add_argument('--source-blender', action='store_true')
     parser.add_argument('--mapping',        type=str,   default=None)
+    parser.add_argument('--rgba',           action='store_true', help='Use GL_RGBA for all textures.')
+    parser.add_argument('--rgba-list',      type=str,   default='', help='Comma-separated list of texture names to use GL_RGBA.')
+    parser.add_argument('--color',          nargs=3,    type=int, metavar=('R', 'G', 'B'), default=[255, 255, 255])
     args = parser.parse_args()
 
     cli_config = {
@@ -331,6 +358,9 @@ if __name__ == '__main__':
         "target_size": args.target_size,
         "no_center": args.no_center,
         "source_blender": args.source_blender,
-        "mapping": args.mapping
+        "mapping": args.mapping,
+        "rgba": args.rgba,
+        "rgba_list": args.rgba_list,
+        "color": args.color
     }
     convert(args.input, args.output_dir, cli_config)

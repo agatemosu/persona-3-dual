@@ -73,7 +73,7 @@ void unloadLevel() {
 
 ---
 
-## ⚙️ Quick Reference
+## Quick Reference
 
 ### Exporter Settings
 
@@ -84,6 +84,9 @@ void unloadLevel() {
 | `--source-blender` | Applies Blender's Z-up coordinate system to the NDS Y-up system and flips texture V-coordinates. | Auto via Plugin |
 | `Skip GRIT` / `--skip-grit` | Prevents the generation of `.grit` sidecar files next to the output textures. | Disabled |
 | `GRIT Flags` / `--grit-flags` | The pixel formatting flags written to the `.grit` sidecar files. | `-gb -gB16 -pu16` |
+| `Force RGBA` / `--rgba` | Forces `GL_RGBA` for all textures in the environment, allowing the hardware to read the alpha bit for transparency. | Disabled |
+| `RGBA List` / `--rgba-list` | A comma-separated list of specific texture filenames (e.g., `window.png,fence.png`) to selectively render using `GL_RGBA`. | Empty |
+| `Vertex Color` / `--color` | Injects a `FIFO_COLOR` command to set the base vertex color (R G B). Acts as a multiplier for texture colors and prevents geometry from rendering black in `GL_RGBA` mode. | `[255, 255, 255]` |
 
 ### Technical Notes & Quirks
 * **Texture Wrapping:** Tiled textures perfectly modulo wrap. The exporter uses 16-bit overflow (`floattot16`) to natively support infinite UV scrolling without clamping.

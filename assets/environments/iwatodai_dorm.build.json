@@ -4,5 +4,7 @@
     "source_blender": true,
     "center": true,
     "skip_grit": false,
-    "grit_flags": "-ftc -fh -gb -gB16 -pu16"
+    "grit_flags": "-gTT -gB16 -gb -ftb",
+    "rgba": true,
+    "color": [255, 255, 255]
 }

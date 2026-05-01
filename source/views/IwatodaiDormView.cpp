@@ -50,7 +50,7 @@ void IwatodaiDormView::Init() {
     glBindTexture(GL_TEXTURE_2D, characterTextureId);
     glTexImage2D(
         GL_TEXTURE_2D, 0,
-        GL_RGB,
+        GL_RGBA,
         TEXTURE_SIZE_32, TEXTURE_SIZE_32,
         0,
         TEXGEN_TEXCOORD | GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T,

@@ -65,7 +65,7 @@ public:
         if (bitmaps[0]) {
             glGenTextures(1, &textureIDs[0]);
             glBindTexture(GL_TEXTURE_2D, textureIDs[0]);
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, TEXTURE_SIZE_256, TEXTURE_SIZE_256, 0,
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, TEXTURE_SIZE_256, TEXTURE_SIZE_256, 0,
                 TEXGEN_TEXCOORD | GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T, bitmaps[0]);
         }
         return true;
