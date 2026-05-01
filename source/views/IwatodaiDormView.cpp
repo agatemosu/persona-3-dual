@@ -5,7 +5,7 @@
 #include "IwatodaiDormView.h" 
 
 // model
-#include "models/character_32x32.h"
+#include "models/character.h"
 #include "character.h"
 // environment
 #include "environments/iwatodai_dorm.h"
@@ -83,8 +83,8 @@ void IwatodaiDormView::Init() {
     musicCtrl.init("nitro:/music/changing_seasons.pcm", 0.0f, -1.0f);
 
     // setup character model
-    characterAnimationCtrl.loadModel("nitro:/models/character_32x32.bin");
-    characterAnimationCtrl.set(MODEL_CHARACTER_32X32_WALK, true);
+    characterAnimationCtrl.loadModel("nitro:/models/character.bin");
+    characterAnimationCtrl.set(MODEL_CHARACTER_WALK, true);
     characterAnimationCtrl.play();
 
     // setup environment model
@@ -140,7 +140,7 @@ ViewState IwatodaiDormView::Update() {
     glPushMatrix();
         // move character
         characterPosition charPos = playerCtrl->isCharacterAt();
-        glTranslatef(charPos.x, 0, charPos.z);
+        glTranslatef(charPos.x, 0.1, charPos.z);
         glRotatef(charPos.facingAngle, 0.0f, 1.0f, 0.0f);
         // draw character
         glBindTexture(GL_TEXTURE_2D, characterTextureId);
