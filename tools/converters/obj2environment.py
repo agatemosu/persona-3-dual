@@ -80,38 +80,50 @@ def convert_blender_zup(vertices):
 def build_display_list(faces, vertices, texcoords, scale, offset, tex_w, tex_h, flip_winding=False, blender_source=False, vertex_color=None):
     words = []
     ox, oy, oz = offset
-    
+
     if vertex_color is not None:
         r, g, b = vertex_color
         words.append(pack_cmds(FIFO_COLOR))
         words.append(struct.pack('<I', rgb_to_rgb15(r, g, b)))
-        
+
+    triangles = []
+    quads = []
     for face in faces:
         if flip_winding and len(face) >= 2:
             face = [face[1], face[0]] + face[2:]
-        n = len(face)
-        if n == 4:   prim = GL_QUADS
-        elif n == 3: prim = GL_TRIANGLES
+
+        if len(face) == 3:
+            triangles.append(face)
+        elif len(face) == 4:
+            quads.append(face)
         else:
-            for i in range(1, n - 1):
-                # Pass None for color on sub-faces to avoid redundant state commands
-                words += build_display_list([face[0], face[i], face[i+1]], vertices, texcoords, scale, offset, tex_w, tex_h, flip_winding, blender_source, None)
-            continue
+            for i in range(1, len(face) - 1):
+                triangles.append([face[0], face[i], face[i + 1]])
+
+    def emit_faces(face_list, prim_type):
+        if not face_list:
+            return
+
         words.append(pack_cmds(FIFO_BEGIN))
-        words.append(struct.pack('<I', prim))
-        for vi, vti in face:
-            if vti is not None and tex_w and tex_h:
-                u, v_orig = texcoords[vti]
-                v = (1.0 - v_orig) if blender_source else v_orig
-                u16 = floattot16(u * tex_w)
-                v16 = floattot16(v * tex_h)
-                words.append(pack_cmds(FIFO_TEXCOORD))
-                words.append(struct.pack('<I', (u16 & 0xFFFF) | ((v16 & 0xFFFF) << 16)))
-            vx, vy, vz = vertices[vi]
-            sx = (vx - ox) * scale; sy = (vy - oy) * scale; sz = (vz - oz) * scale
-            words.append(pack_cmds(FIFO_VERTEX16))
-            words.append(struct.pack('<I', (floattov16(sy) << 16) | floattov16(sx)))
-            words.append(struct.pack('<I', floattov16(sz)))
+        words.append(struct.pack('<I', prim_type))
+
+        for face in face_list:
+            for vi, vti in face:
+                if vti is not None and tex_w and tex_h:
+                    u, v_orig = texcoords[vti]
+                    v = (1.0 - v_orig) if blender_source else v_orig
+                    u16 = floattot16(u * tex_w)
+                    v16 = floattot16(v * tex_h)
+                    words.append(pack_cmds(FIFO_TEXCOORD))
+                    words.append(struct.pack('<I', (u16 & 0xFFFF) | ((v16 & 0xFFFF) << 16)))
+                vx, vy, vz = vertices[vi]
+                sx = (vx - ox) * scale; sy = (vy - oy) * scale; sz = (vz - oz) * scale
+                words.append(pack_cmds(FIFO_VERTEX16))
+                words.append(struct.pack('<I', (floattov16(sy) << 16) | floattov16(sx)))
+                words.append(struct.pack('<I', floattov16(sz)))
+
+    emit_faces(quads, GL_QUADS)
+    emit_faces(triangles, GL_TRIANGLES)
     return words
 
 def find_texture_size(png_path):

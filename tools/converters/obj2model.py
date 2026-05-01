@@ -63,24 +63,33 @@ def build_display_list(vertices, texcoords, faces, tex_width, tex_height, vertex
 
     ox, oy, oz = offset
 
-    triangles = [f for f in faces if len(f) == 3]
-    quads = [f for f in faces if len(f) == 4]
+    triangles = []
+    quads = []
+    for face in faces:
+        if len(face) == 3:
+            triangles.append(face)
+        elif len(face) == 4:
+            quads.append(face)
+        else:
+            for i in range(1, len(face) - 1):
+                triangles.append([face[0], face[i], face[i + 1]])
 
     def emit_faces(face_list, prim_type):
-        if not face_list: return
-        
+        if not face_list:
+            return
+
         words.append(pack_cmds(FIFO_BEGIN))
         words.append(struct.pack('<I', prim_type))
-        
+
         for face in face_list:
             if blender_source and len(face) >= 2:
                 face = [face[1], face[0]] + face[2:]
-                
+
             for v_idx, vt_idx in face:
                 if has_uvs and vt_idx is not None and tex_width and tex_height:
                     u, v = texcoords[vt_idx]
-                    u16   = floattot16(u * tex_width)
-                    v16   = floattot16((1.0 - v) * tex_height)
+                    u16 = floattot16(u * tex_width)
+                    v16 = floattot16((1.0 - v) * tex_height)
                     words.append(pack_cmds(FIFO_TEXCOORD))
                     words.append(struct.pack('<I', (u16 & 0xFFFF) | ((v16 & 0xFFFF) << 16)))
 
@@ -88,7 +97,7 @@ def build_display_list(vertices, texcoords, faces, tex_width, tex_height, vertex
                 sx = (vx - ox) * scale
                 sy = (vy - oy) * scale
                 sz = (vz - oz) * scale
-                
+
                 words.append(pack_cmds(FIFO_VERTEX16))
                 words.append(struct.pack('<I', (floattov16(sy) << 16) | floattov16(sx)))
                 words.append(struct.pack('<I', floattov16(sz)))
