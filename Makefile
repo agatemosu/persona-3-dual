@@ -183,29 +183,29 @@ $(NITRO_VIDEO)/%.vid: $(ASSETS_VIDEO)/%.mp4 $(wildcard $(ASSETS_VIDEO)/%.build.j
 video: $(VIDEO_OUT)
 
 #---------------------------------------------------------------------------------
-define ENV_TEMPLATE
-$$(CURDIR)/source/environments/$$(notdir $(1:.obj=.h)): $(1) $$(wildcard $$(dir $(1))/*.png) $$(wildcard $$(dir $(1))/*.mtl) $$(wildcard $(1:.obj=.build.json)) $$(wildcard $$(patsubst %/,%,$$(dir $(1))).build.json) $$(TOOLS_DIR)/build_asset.py
-	@echo "  ENV   $$(notdir $$<)"
-	@mkdir -p $$(dir $$@) $$(CURDIR)/nitrofiles/environments
-	@$$(VENV_PYTHON) $$(TOOLS_DIR)/build_asset.py $$< $$(CURDIR)/nitrofiles/environments
-	@mv $$(CURDIR)/nitrofiles/environments/$$(notdir $(1:.obj=.h)) $$@
-	@touch $$@
-endef
+$(CURDIR)/source/environments/%.h: $(ASSETS_ENVIRONMENTS)/%/$$*.obj \
+		$$(wildcard $(ASSETS_ENVIRONMENTS)/%/*.png) \
+		$$(wildcard $(ASSETS_ENVIRONMENTS)/%/*.mtl) \
+		$$(wildcard $(ASSETS_ENVIRONMENTS)/%/$$*.build.json) \
+		$$(wildcard $(ASSETS_ENVIRONMENTS)/$$*.build.json)
+	@echo "  ENV   $*"
+	@mkdir -p $(dir $@) $(CURDIR)/nitrofiles/environments
+	@$(VENV_PYTHON) $(TOOLS_DIR)/build_asset.py $< $(CURDIR)/nitrofiles/environments
+	@mv $(CURDIR)/nitrofiles/environments/$*.h $@
+	@touch $@
 
-$(foreach file,$(ENV_OBJ_FILES),$(eval $(call ENV_TEMPLATE,$(file))))
 environments: $(ENVIRONMENT_OUT)
 
 #---------------------------------------------------------------------------------
-define MODEL_TEMPLATE
-$$(CURDIR)/source/models/$$(notdir $(1:.json=.h)): $(1) $$(wildcard $(1:.json=.build.json)) $$(wildcard $$(patsubst %/,%,$$(dir $(1))).build.json) $$(TOOLS_DIR)/build_asset.py
-	@echo "  MODEL $$(notdir $$<)"
-	@mkdir -p $$(dir $$@) $$(CURDIR)/nitrofiles/models
-	@$$(VENV_PYTHON) $$(TOOLS_DIR)/build_asset.py $$< $$(CURDIR)/nitrofiles/models/$$(notdir $(1:.json=.bin))
-	@mv $$(CURDIR)/nitrofiles/models/$$(notdir $(1:.json=.h)) $$@
-	@touch $$@
-endef
+$(CURDIR)/source/models/%.h: $(ASSETS_MODELS)/%/$$*.json \
+		$$(wildcard $(ASSETS_MODELS)/%/$$*.build.json) \
+		$$(wildcard $(ASSETS_MODELS)/$$*.build.json)
+	@echo "  MODEL $*"
+	@mkdir -p $(dir $@) $(CURDIR)/nitrofiles/models
+	@$(VENV_PYTHON) $(TOOLS_DIR)/build_asset.py $< $(CURDIR)/nitrofiles/models/$*.bin
+	@mv $(CURDIR)/nitrofiles/models/$*.h $@
+	@touch $@
 
-$(foreach file,$(MODEL_JSON_FILES),$(eval $(call MODEL_TEMPLATE,$(file))))
 models: $(MODEL_OUT)
 
 #---------------------------------------------------------------------------------
