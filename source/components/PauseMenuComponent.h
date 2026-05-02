@@ -9,8 +9,6 @@
 #define STATS_OPTIONS 9
 #define S_LINK_OPTIONS 3
 #define SYSTEM_OPTIONS 6
-
-
 typedef struct
 {
     const char* name;
@@ -73,13 +71,23 @@ enum {
     RETURN_TO_TITLE = 5
 };
 
-// implementing from View
 class PauseMenuComponent {
     private:
+        // sfx
         mm_sfxhand sfxMenuHandle;
         mm_sfxhand sfxSelectHandle;
         mm_sfxhand sfxCancelHandle;
 
+        // backgrounds
+        int bgSlot = 0;
+        void (*bgLoaders[4])(int) = {
+            nullptr,
+            nullptr,
+            nullptr,
+            nullptr,
+        };
+
+        // options
         PauseOption *options;
         int optionCount;
         int selectedOption = 0;
@@ -169,6 +177,9 @@ class PauseMenuComponent {
             {"Save Data", false},
             {"Return to Title", false},
         };
+
+        void setBgLoaders();
+        void loadBg(int bgIndex);
     public:
         void init(int iBgSlot);
         void update(int keys);

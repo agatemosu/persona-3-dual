@@ -5,67 +5,68 @@
 // sfx
 #include "soundbank.h"
 
-// bg imports
+// backgrounds
 #include "bgYukiClose.h"
 #include "bgGuard.h"
 #include "bgAkihiko.h"
 #include "bgYuki.h"
 
-int bgSlot = 0;
-void (*bgLoaders[4])() = {
-    nullptr,
-    nullptr,
-    nullptr,
-    nullptr,
-};
-
-void setBgLoaders() {
-    bgLoaders[0] = [](){
-        dmaCopy(bgGuardTiles, bgGetGfxPtr(bgSlot), bgGuardTilesLen);
-        dmaCopy(bgGuardMap, bgGetMapPtr(bgSlot), bgGuardMapLen);
+// add background setup here, and assign the bgLoader index to the appropriate PauseOption in PauseMenuComponent.h
+void PauseMenuComponent::setBgLoaders()
+{
+    bgLoaders[0] = [](int slot)
+    {
+        dmaCopy(bgGuardTiles, bgGetGfxPtr(slot), bgGuardTilesLen);
+        dmaCopy(bgGuardMap, bgGetMapPtr(slot), bgGuardMapLen);
         vramSetBankH(VRAM_H_LCD);
         dmaCopy(bgGuardPal, &VRAM_H_EXT_PALETTE[0][0], bgGuardPalLen);
         vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
-        bgShow(bgSlot);
+        bgShow(slot);
     };
-    bgLoaders[1] = [](){
-        dmaCopy(bgYukiTiles, bgGetGfxPtr(bgSlot), bgYukiTilesLen);
-        dmaCopy(bgYukiMap, bgGetMapPtr(bgSlot), bgYukiMapLen);
+    bgLoaders[1] = [](int slot)
+    {
+        dmaCopy(bgYukiTiles, bgGetGfxPtr(slot), bgYukiTilesLen);
+        dmaCopy(bgYukiMap, bgGetMapPtr(slot), bgYukiMapLen);
         vramSetBankH(VRAM_H_LCD);
         dmaCopy(bgYukiPal, &VRAM_H_EXT_PALETTE[0][0], bgYukiPalLen);
         vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
-        bgShow(bgSlot);
+        bgShow(slot);
     };
-    bgLoaders[2] = [](){
-        dmaCopy(bgAkihikoTiles, bgGetGfxPtr(bgSlot), bgAkihikoTilesLen);
-        dmaCopy(bgAkihikoMap, bgGetMapPtr(bgSlot), bgAkihikoMapLen);
+    bgLoaders[2] = [](int slot)
+    {
+        dmaCopy(bgAkihikoTiles, bgGetGfxPtr(slot), bgAkihikoTilesLen);
+        dmaCopy(bgAkihikoMap, bgGetMapPtr(slot), bgAkihikoMapLen);
         vramSetBankH(VRAM_H_LCD);
         dmaCopy(bgAkihikoPal, &VRAM_H_EXT_PALETTE[0][0], bgAkihikoPalLen);
         vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
-        bgShow(bgSlot);
+        bgShow(slot);
     };
-    bgLoaders[3] = [](){
-        dmaCopy(bgYukiCloseTiles, bgGetGfxPtr(bgSlot), bgYukiCloseTilesLen);
-        dmaCopy(bgYukiCloseMap, bgGetMapPtr(bgSlot), bgYukiCloseMapLen);
+    bgLoaders[3] = [](int slot)
+    {
+        dmaCopy(bgYukiCloseTiles, bgGetGfxPtr(slot), bgYukiCloseTilesLen);
+        dmaCopy(bgYukiCloseMap, bgGetMapPtr(slot), bgYukiCloseMapLen);
         vramSetBankH(VRAM_H_LCD);
         dmaCopy(bgYukiClosePal, &VRAM_H_EXT_PALETTE[0][0], bgYukiClosePalLen);
         vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
-        bgShow(bgSlot);
+        bgShow(slot);
     };
 }
 
-void loadBg(int bgIndex) {
+void PauseMenuComponent::loadBg(int bgIndex)
+{
     if (bgIndex >= 0 && bgIndex < 4 && bgLoaders[bgIndex])
-        bgLoaders[bgIndex]();
+        bgLoaders[bgIndex](bgSlot);
 }
 
-void PauseMenuComponent::cancelSFX() {
+void PauseMenuComponent::cancelSFX()
+{
     musicCtrl.stopSFX(sfxMenuHandle);
     musicCtrl.stopSFX(sfxSelectHandle);
     musicCtrl.stopSFX(sfxCancelHandle);
 }
 
-void PauseMenuComponent::init(int iBgSlot) {
+void PauseMenuComponent::init(int iBgSlot)
+{
     // point to music
     musicCtrl.loadSFX(SFX_MENU);
     musicCtrl.loadSFX(SFX_SELECT);
@@ -105,6 +106,8 @@ void PauseMenuComponent::update(int keys)
     {
         sfxCancelHandle = musicCtrl.playSFX(SFX_CANCEL, 255, 128);
         options[selectedOption].selected = false;
+        selectedOption = 0;
+
         // if we're in a submenu, return to main menu
         if (options != menuOptions)
         {
@@ -193,6 +196,7 @@ void PauseMenuComponent::update(int keys)
         options = systemOptions;
         optionCount = SYSTEM_OPTIONS;
     }
+
     // SKILL OPTIONS
     else if (skillOptions[MAKOTO].selected)
     { // "Makoto"
@@ -248,6 +252,7 @@ void PauseMenuComponent::update(int keys)
         musicCtrl.playSFX(SFX_SELECT, 255, 128);
         return;
     }
+
     // ITEM OPTIONS
     else if (itemOptions[LIFE_STONE].selected)
     { // "Life Stone"
@@ -267,8 +272,10 @@ void PauseMenuComponent::update(int keys)
         musicCtrl.playSFX(SFX_SELECT, 255, 128);
         return;
     }
+
     // EQUIP OPTINS
     //...
+
     // PERSONA OPTIONS
     else if (personaOptions[JACK_FROST].selected)
     { // "Jack Frost"
@@ -288,8 +295,10 @@ void PauseMenuComponent::update(int keys)
         musicCtrl.playSFX(SFX_SELECT, 255, 128);
         return;
     }
+
     // STATS OPTIONS
     //...
+
     // SLINK OPTIONS
     else if (sLinkOptions[FOOL].selected)
     { // "Fool"
@@ -309,6 +318,7 @@ void PauseMenuComponent::update(int keys)
         musicCtrl.playSFX(SFX_SELECT, 255, 128);
         return;
     }
+    
     // SYSTEM OPTIONS
     else if (systemOptions[TUTORIAL].selected)
     { // "Tutorial"
@@ -350,9 +360,12 @@ void PauseMenuComponent::update(int keys)
     printf("\x1b[0;0H");
 
     // blink the "Pause" text
-    if (frame % 60 < 30) {
+    if (frame % 60 < 30)
+    {
         iprintf("Pause\n");
-    } else {
+    }
+    else
+    {
         iprintf("\n");
     }
 
@@ -364,10 +377,13 @@ void PauseMenuComponent::update(int keys)
 
     // load selectedOption's background
     int bgIndex = options[selectedOption].bgIndex;
-    if (bgIndex != -1) {
+    if (bgIndex != -1)
+    {
         loadBg(bgIndex);
         bgShow(bgSlot);
-    } else {
+    }
+    else
+    {
         bgHide(bgSlot);
     }
 
