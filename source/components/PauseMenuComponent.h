@@ -1,5 +1,6 @@
 #pragma once
 #include <calico/types.h>
+#include <stack>
 
 #define MENU_OPTIONS 7
 #define SKILL_OPTIONS 9
@@ -10,14 +11,24 @@
 #define S_LINK_OPTIONS 3
 #define SYSTEM_OPTIONS 6
 
+// dummy option for testing
+# define SKILLS 2
+
 class PauseMenuComponent;
 typedef struct
 {
     const char* name;
-    bool selected;
     int bgIndex = -1;
     void (PauseMenuComponent::*onSelect)();
 } PauseOption;
+
+typedef struct
+{
+    PauseOption *options;
+    int optionCount;
+    int selectedOption;
+} PauseState;
+
 
 // Menu options
 enum {
@@ -92,93 +103,102 @@ class PauseMenuComponent {
 
         // options
         PauseOption *options;
+        stack<PauseState> prevOptions;
         int optionCount;
         int selectedOption = 0;
 
+
         PauseOption menuOptions[MENU_OPTIONS] = 
         {
-            {"Skill", false, -1, &PauseMenuComponent::openSkillMenu},
-            {"Item", false, -1, &PauseMenuComponent::openItemMenu},
-            {"Persona", false, -1, &PauseMenuComponent::openPersonaMenu},
-            {"Equip", false, -1, &PauseMenuComponent::openEquipMenu},
-            {"Status", false, -1, &PauseMenuComponent::openStatusMenu},
-            {"S.Link", false, -1, &PauseMenuComponent::openSLinkMenu},
-            {"System", false, -1, &PauseMenuComponent::openSystemMenu},
+            {"Skill", -1, &PauseMenuComponent::openSkillMenu},
+            {"Item", -1, &PauseMenuComponent::openItemMenu},
+            {"Persona", -1, &PauseMenuComponent::openPersonaMenu},
+            {"Equip", -1, &PauseMenuComponent::openEquipMenu},
+            {"Status", -1, &PauseMenuComponent::openStatusMenu},
+            {"S.Link", -1, &PauseMenuComponent::openSLinkMenu},
+            {"System", -1, &PauseMenuComponent::openSystemMenu},
         };
 
         // TODO: go into submenus
         PauseOption skillOptions[SKILL_OPTIONS] = 
         {
-            {"Makoto", false, 0, &PauseMenuComponent::skillOptionSelected},
-            {"Yukari", false, 1, &PauseMenuComponent::skillOptionSelected},
-            {"Junpei", false, 3, &PauseMenuComponent::skillOptionSelected},
-            {"Akihiko", false, 2, &PauseMenuComponent::skillOptionSelected},
-            {"Mitsuru", false, -1, &PauseMenuComponent::skillOptionSelected},
-            {"Aigis", false, -1, &PauseMenuComponent::skillOptionSelected},
-            {"Ken", false, -1, &PauseMenuComponent::skillOptionSelected},
-            {"Koromaru", false, -1, &PauseMenuComponent::skillOptionSelected},
-            {"Shinjiro", false, -1, &PauseMenuComponent::skillOptionSelected},
+            {"Makoto", 0, &PauseMenuComponent::skillOptionSelected},
+            {"Yukari", 1, &PauseMenuComponent::skillOptionSelected},
+            {"Junpei", 3, &PauseMenuComponent::skillOptionSelected},
+            {"Akihiko", 2, &PauseMenuComponent::skillOptionSelected},
+            {"Mitsuru", -1, &PauseMenuComponent::skillOptionSelected},
+            {"Aigis", -1, &PauseMenuComponent::skillOptionSelected},
+            {"Ken", -1, &PauseMenuComponent::skillOptionSelected},
+            {"Koromaru", -1, &PauseMenuComponent::skillOptionSelected},
+            {"Shinjiro", -1, &PauseMenuComponent::skillOptionSelected},
         };
 
         PauseOption itemOptions[ITEM_OPTIONS] = 
         {
-            {"Life Stone", false, -1, &PauseMenuComponent::itemOptionSelected},
-            {"Medicine", false, -1, &PauseMenuComponent::itemOptionSelected},
-            {"Bead", false, -1, &PauseMenuComponent::itemOptionSelected},
+            {"Life Stone", -1, &PauseMenuComponent::itemOptionSelected},
+            {"Medicine", -1, &PauseMenuComponent::itemOptionSelected},
+            {"Bead", -1, &PauseMenuComponent::itemOptionSelected},
         };
 
         // TODO: go into submenus
         PauseOption equipOptions[EQUIP_OPTIONS] = 
         {
-            {"Makoto", false, -1, &PauseMenuComponent::equipOptionSelected},
-            {"Yukari", false, -1, &PauseMenuComponent::equipOptionSelected},
-            {"Junpei", false, -1, &PauseMenuComponent::equipOptionSelected},
-            {"Akihiko", false, -1, &PauseMenuComponent::equipOptionSelected},
-            {"Mitsuru", false, -1, &PauseMenuComponent::equipOptionSelected},
-            {"Aigis", false, -1, &PauseMenuComponent::equipOptionSelected},
-            {"Ken", false, -1, &PauseMenuComponent::equipOptionSelected},
-            {"Koromaru", false, -1, &PauseMenuComponent::equipOptionSelected},
-            {"Shinjiro", false, -1, &PauseMenuComponent::equipOptionSelected},
+            {"Makoto", -1, &PauseMenuComponent::equipOptionSelected},
+            {"Yukari", -1, &PauseMenuComponent::equipOptionSelected},
+            {"Junpei", -1, &PauseMenuComponent::equipOptionSelected},
+            {"Akihiko", -1, &PauseMenuComponent::equipOptionSelected},
+            {"Mitsuru", -1, &PauseMenuComponent::equipOptionSelected},
+            {"Aigis", -1, &PauseMenuComponent::equipOptionSelected},
+            {"Ken", -1, &PauseMenuComponent::equipOptionSelected},
+            {"Koromaru", -1, &PauseMenuComponent::equipOptionSelected},
+            {"Shinjiro", -1, &PauseMenuComponent::equipOptionSelected},
         };
 
         PauseOption personaOptions[PERSONA_OPTIONS] = 
         {
-            {"Jack Frot", false, -1, &PauseMenuComponent::personaOptionSelected},
-            {"Black Frost", false, -1, &PauseMenuComponent::personaOptionSelected},
-            {"King Frost", false, -1, &PauseMenuComponent::personaOptionSelected},
+            {"Jack Frost", -1, &PauseMenuComponent::personaOptionSelected},
+            {"Black Frost", -1, &PauseMenuComponent::personaOptionSelected},
+            {"King Frost", -1, &PauseMenuComponent::personaOptionSelected},
         };
 
         // TODO: go into submenus
         PauseOption statsOptions[STATS_OPTIONS] = 
         {
-            {"Makoto", false, -1, &PauseMenuComponent::statsOptionSelected},
-            {"Yukari", false, -1, &PauseMenuComponent::statsOptionSelected},
-            {"Junpei", false, -1, &PauseMenuComponent::statsOptionSelected},
-            {"Akihiko", false, -1, &PauseMenuComponent::statsOptionSelected},
-            {"Mitsuru", false, -1, &PauseMenuComponent::statsOptionSelected},
-            {"Aigis", false, -1, &PauseMenuComponent::statsOptionSelected},
-            {"Ken", false, -1, &PauseMenuComponent::statsOptionSelected},
-            {"Koromaru", false, -1, &PauseMenuComponent::statsOptionSelected},
-            {"Shinjiro", false, -1, &PauseMenuComponent::statsOptionSelected},
+            {"Makoto", -1, &PauseMenuComponent::statsOptionSelected},
+            {"Yukari", -1, &PauseMenuComponent::statsOptionSelected},
+            {"Junpei", -1, &PauseMenuComponent::statsOptionSelected},
+            {"Akihiko", -1, &PauseMenuComponent::statsOptionSelected},
+            {"Mitsuru", -1, &PauseMenuComponent::statsOptionSelected},
+            {"Aigis", -1, &PauseMenuComponent::statsOptionSelected},
+            {"Ken", -1, &PauseMenuComponent::statsOptionSelected},
+            {"Koromaru", -1, &PauseMenuComponent::statsOptionSelected},
+            {"Shinjiro", -1, &PauseMenuComponent::statsOptionSelected},
         };
 
         // TODO: go into submenus
         PauseOption sLinkOptions[S_LINK_OPTIONS] =
         {
-            {"Fool", false, -1, &PauseMenuComponent::sLinkOptionSelected},
-            {"Magician", false, -1, &PauseMenuComponent::sLinkOptionSelected},
-            {"Emperor", false, -1, &PauseMenuComponent::sLinkOptionSelected},
+            {"Fool", -1, &PauseMenuComponent::sLinkOptionSelected},
+            {"Magician", -1, &PauseMenuComponent::sLinkOptionSelected},
+            {"Emperor", -1, &PauseMenuComponent::sLinkOptionSelected},
         };
 
         // TODO: go into submenus
         PauseOption systemOptions[SYSTEM_OPTIONS] = 
         {
-            {"Tutorial", false, -1, &PauseMenuComponent::systemOptionSelected},
-            {"Config", false, -1, &PauseMenuComponent::systemOptionSelected},
-            {"Dictionary", false, -1, &PauseMenuComponent::systemOptionSelected},
-            {"Load Data", false, -1, &PauseMenuComponent::systemOptionSelected},
-            {"Save Data", false, -1, &PauseMenuComponent::systemOptionSelected},
-            {"Return to Title", false, -1, &PauseMenuComponent::systemOptionSelected},
+            {"Tutorial", -1, &PauseMenuComponent::systemOptionSelected},
+            {"Config", -1, &PauseMenuComponent::systemOptionSelected},
+            {"Dictionary", -1, &PauseMenuComponent::systemOptionSelected},
+            {"Load Data", -1, &PauseMenuComponent::systemOptionSelected},
+            {"Save Data", -1, &PauseMenuComponent::systemOptionSelected},
+            {"Return to Title", -1, &PauseMenuComponent::systemOptionSelected},
+        };
+
+        // dummy options for testing
+        PauseOption skills[SKILLS] = 
+        {
+            {"Skill 1", -1, nullptr},
+            {"Skill 2", -1, nullptr},
         };
 
         void setBgLoaders();

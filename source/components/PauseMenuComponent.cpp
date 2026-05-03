@@ -101,9 +101,13 @@ void PauseMenuComponent::update(int keys)
         cancelSFX();
         sfxSelectHandle = musicCtrl.playSFX(SFX_SELECT, 255, 128);
 
-        options[selectedOption].selected = true;
+        PauseState currentState = {options, optionCount, selectedOption};
+
         if (options[selectedOption].onSelect != nullptr) {
             (this->*(options[selectedOption].onSelect))();
+            if (options != currentState.options) { // if we changed options, push current state to stack
+                prevOptions.push(currentState);
+            }
         }
     }
 
@@ -112,14 +116,17 @@ void PauseMenuComponent::update(int keys)
         cancelSFX();
         musicCtrl.playSFX(SFX_CANCEL, 255, 128);
 
-        options[selectedOption].selected = false;
         selectedOption = 0;
 
         // if we're in a submenu, return to main menu
-        if (options != menuOptions)
+        if (!prevOptions.empty())
         {
-            options = menuOptions;
-            optionCount = MENU_OPTIONS;
+            PauseState prevState = prevOptions.top();
+            prevOptions.pop();
+
+            options = prevState.options;
+            optionCount = prevState.optionCount;
+            selectedOption = prevState.selectedOption;
         }
     }
 
@@ -162,83 +169,60 @@ void PauseMenuComponent::update(int keys)
 // menuOption handlers
 void PauseMenuComponent::openSkillMenu()
 {
-    menuOptions[SKILL].selected = false;
     selectedOption = 0;
-
     options = skillOptions;
     optionCount = SKILL_OPTIONS;
 }
 
 void PauseMenuComponent::openItemMenu()
 {
-    menuOptions[ITEM].selected = false;
     selectedOption = 0;
-
     options = itemOptions;
     optionCount = ITEM_OPTIONS;
 }
 
 void PauseMenuComponent::openPersonaMenu()
 {
-    menuOptions[PERSONA].selected = false;
     selectedOption = 0;
-
     options = personaOptions;
     optionCount = PERSONA_OPTIONS;
 }
 
 void PauseMenuComponent::openEquipMenu()
 {
-    cancelSFX();
-    musicCtrl.playSFX(SFX_SELECT, 255, 128);
-
-    menuOptions[EQUIP].selected = false;
     selectedOption = 0;
-
     options = equipOptions;
     optionCount = EQUIP_OPTIONS;
 }
 
 void PauseMenuComponent::openStatusMenu()
 {
-    cancelSFX();
-    musicCtrl.playSFX(SFX_SELECT, 255, 128);
-
-    menuOptions[STATUS].selected = false;
     selectedOption = 0;
-
     options = statsOptions;
     optionCount = STATS_OPTIONS;
 }
 
 void PauseMenuComponent::openSLinkMenu()
 {
-    cancelSFX();
-    musicCtrl.playSFX(SFX_SELECT, 255, 128);
-
-    menuOptions[S_LINK].selected = false;
     selectedOption = 0;
-
     options = sLinkOptions;
     optionCount = S_LINK_OPTIONS;
 }
 
 void PauseMenuComponent::openSystemMenu()
 {
-    cancelSFX();
-    musicCtrl.playSFX(SFX_SELECT, 255, 128);
-
-    menuOptions[SYSTEM].selected = false;
     selectedOption = 0;
-
     options = systemOptions;
     optionCount = SYSTEM_OPTIONS;
 }
 
 // generic handlers
+// this is where we would implement functionality for going into a sub-menu, or selecting a skill, item, etc.
 void PauseMenuComponent::skillOptionSelected()
 {
-    // ...
+    selectedOption = 0;
+    options = skills;
+    optionCount = SKILLS;
 }
 
 void PauseMenuComponent::itemOptionSelected()
