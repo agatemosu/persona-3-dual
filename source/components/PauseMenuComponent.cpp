@@ -12,6 +12,9 @@
 #include "bgYuki.h"
 
 // add background setup here, and assign the bgLoader index to the appropriate PauseOption in PauseMenuComponent.h
+// NOTE: we can easily pass in custom bgLoaders. The reason I'm not implementing this behaviour is because I don't 
+// think they need to be different across interactions. The PauseMenuComponent should remain the same between
+// different views
 void PauseMenuComponent::setBgLoaders()
 {
     bgLoaders[0] = [](int slot)
@@ -89,23 +92,24 @@ void PauseMenuComponent::update(int keys)
         sfxMenuHandle = musicCtrl.playSFX(SFX_MENU, 255, 128);
         selectedOption = (selectedOption + 1) % optionCount;
     }
-
-    if (keys & KEY_UP)
+    else if (keys & KEY_UP)
     {
         sfxMenuHandle = musicCtrl.playSFX(SFX_MENU, 255, 128);
         selectedOption = (selectedOption + optionCount - 1) % optionCount;
     }
-
-    if (keys & KEY_A)
+    else if (keys & KEY_A)
     {
         cancelSFX();
         sfxSelectHandle = musicCtrl.playSFX(SFX_SELECT, 255, 128);
 
         PauseState currentState = {options, optionCount, selectedOption};
 
-        if (options[selectedOption].onSelect != nullptr) {
+        if (options[selectedOption].onSelect != nullptr)
+        {
             (this->*(options[selectedOption].onSelect))();
-            if (options != currentState.options) { // if we changed options, push current state to stack
+            // if we changed options, push current state to stack
+            if (options != currentState.options)
+            {
                 prevOptions.push(currentState);
             }
         }
@@ -115,7 +119,6 @@ void PauseMenuComponent::update(int keys)
     {
         cancelSFX();
         musicCtrl.playSFX(SFX_CANCEL, 255, 128);
-
         selectedOption = 0;
 
         // if we're in a submenu, return to main menu
@@ -131,7 +134,6 @@ void PauseMenuComponent::update(int keys)
     }
 
     consoleClear();
-
     printf("\x1b[0;0H");
 
     // blink the "Pause" text

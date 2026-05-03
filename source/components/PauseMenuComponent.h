@@ -18,7 +18,7 @@ class PauseMenuComponent;
 typedef struct
 {
     const char* name;
-    int bgIndex = -1;
+    int bgIndex;
     void (PauseMenuComponent::*onSelect)();
 } PauseOption;
 
@@ -104,9 +104,8 @@ class PauseMenuComponent {
         // options
         PauseOption *options;
         stack<PauseState> prevOptions;
-        int optionCount;
+        int optionCount = 0;
         int selectedOption = 0;
-
 
         PauseOption menuOptions[MENU_OPTIONS] = 
         {

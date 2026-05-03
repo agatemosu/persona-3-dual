@@ -98,6 +98,7 @@ void IwatodaiDormView::Init() {
     iwatodaiDormEnv.load("nitro:/environments/iwatodai_dorm.bin", bitmaps);
 
     // setup pause menu
+    // use the same shared background slot as the demo dialogue
     pauseMenu.init(demo_dialogue_bg_slot);
 }
 
