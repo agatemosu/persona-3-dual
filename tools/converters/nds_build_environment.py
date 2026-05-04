@@ -43,7 +43,7 @@ if __name__ == '__main__':
     parser.add_argument('--color',       nargs=3, type=int, metavar=('R','G','B'), default=[255,255,255])
     args = parser.parse_args()
 
-    convert(args.input, args.output_dir, {
+    cli_config = {
         "scale":       args.scale,
         "target_size": args.target_size,
         "no_center":   args.no_center,
@@ -53,4 +53,5 @@ if __name__ == '__main__':
         "rgba":        args.rgba,
         "rgba_list":   args.rgba_list,
         "color":       args.color,
-    })
+    }
+    convert(args.input, args.output_dir, cli_config)
