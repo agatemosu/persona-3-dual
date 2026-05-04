@@ -268,7 +268,7 @@ class CodeGenerator:
             "",
             f"int {s}_dialogue_bg_slot = 0;",
             "",
-            "// ── BG imports ──────────────────────────────────────────────────────"
+            "// background import"
         ]
         bgSet = set()
         for ia in self.interactions:  

@@ -60,9 +60,9 @@ void IwatodaiDormView::Init() {
     glPolyFmt(POLY_ALPHA(31) | POLY_CULL_BACK);
     glColor3b(255, 255, 255);   // keep white so texture colors aren't tinted
 
-    // setup dialogue (sub screen)
-    demo_dialogue_bg_slot = bgInitSub(0, BgType_Text8bpp, BgSize_T_256x256, 0, 1);
-    dmaFillHalfWords(0, bgGetMapPtr(demo_dialogue_bg_slot), 2048);
+    // setup shared bg slot on sub screen
+    bgSharedSlot = bgInitSub(0, BgType_Text8bpp, BgSize_T_256x256, 0, 1);
+    dmaFillHalfWords(0, bgGetMapPtr(bgSharedSlot), 2048);
     
     // setup console
     consoleInit(&console, 1, BgType_Text4bpp, BgSize_T_256x256, 4, 5, false, true);
@@ -70,7 +70,7 @@ void IwatodaiDormView::Init() {
 
     // adjust sub screen image and console to sit correctly on each other
     bgSetPriority(console.bgId, 0);
-    bgSetPriority(demo_dialogue_bg_slot, 1);
+    bgSetPriority(bgSharedSlot, 1);
 
     bgUpdate();
 
@@ -92,6 +92,9 @@ void IwatodaiDormView::Init() {
         textureBitmap
     };
     iwatodaiDormEnv.load("nitro:/environments/iwatodai_dorm.bin", bitmaps);
+
+    // setup dialogue
+    demo_dialogue_bg_slot = bgSharedSlot;
 }
 
 ViewState IwatodaiDormView::Update() {
