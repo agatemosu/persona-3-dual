@@ -198,6 +198,10 @@ class DialogueParser:
                 self.interactions.append(ia)
                 continue
             raise ParseError(n, f"Expected [interaction: name] or @bg directive, got: '{s}'")
+        # sort interactions, and each interaction's bg_order for consistent code output
+        self.interactions.sort()
+        for ia in self.interactions:
+            ia.bg_order.sort()
         return self.interactions
 
 class CodeGenerator:
