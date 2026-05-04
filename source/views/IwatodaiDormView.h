@@ -13,12 +13,8 @@ class IwatodaiDormView : public View {
         ViewState Update() override;
         void Cleanup() override;
 
-        // Toggle whether billboards automatically face the camera
-        bool billboardsFaceCamera = true;
-
     private:
         // sub screen
-        // int bgAkihiko;
         PrintConsole console;
 
         // controllers
@@ -36,7 +32,7 @@ class IwatodaiDormView : public View {
             const float distance = 0.5f; 
             const float lookAhead = 0.3f;
             // set character initial translation position
-            const Point2D<float> characterTranslate = Point2D<float>(-1.3, -0.8);
+            const Point2D<float> characterTranslate = Point2D<float>(0, 0);
             const float angle = -1.6;
             const float characterFacingAngle = 91.67;
         DialogueController dialogueCtrl;

@@ -19,11 +19,6 @@
 int characterTextureId;
 iwatodai_dorm_Environment iwatodaiDormEnv;
 
-// Quick helper to safely inject floating values into fixed-point v16 parameters
-inline v16 floatToV16(float f) {
-    return (v16)(f * (1 << 12));
-}
-
 void IwatodaiDormView::Init() {
     videoSetMode(MODE_0_3D);
     videoSetModeSub(MODE_0_2D);
@@ -91,9 +86,7 @@ void IwatodaiDormView::Init() {
     characterAnimationCtrl.play();
 
     // setup environment model
-    const unsigned int* bitmaps[IWATODAI_DORM_TEX_COUNT] = {
-        textureBitmap,
-    };
+    const unsigned int* bitmaps[IWATODAI_DORM_TEX_COUNT] = { textureBitmap };
     iwatodaiDormEnv.load("nitro:/environments/iwatodai_dorm.bin", bitmaps);
 }
 
@@ -138,14 +131,8 @@ ViewState IwatodaiDormView::Update() {
     // draw environment
     glPushMatrix();
         iwatodaiDormEnv.draw();
-        
-        // Temporarily disable backface culling to ensure billboard visibility
-        glPolyFmt(POLY_ALPHA(31) | POLY_CULL_NONE);
-        
-        // Batch render all BB_ quads natively using fast v16 math!
-        // We pass the exact camera coordinates for Viewpoint Tracking
         iwatodaiDormEnv.drawBillboards(
-            billboardsFaceCamera, 
+            true,  // billboards face camera
             camPos.cameraX, camPos.cameraY, camPos.cameraZ
         );
     glPopMatrix(1);
