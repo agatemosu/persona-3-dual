@@ -12,7 +12,7 @@
 #define SYSTEM_OPTIONS 6
 
 // dummy option for testing
-#define DEBUG_OPTIONS 5
+#define DEBUG_OPTIONS 6
 # define SKILLS 2
 
 class PauseMenuComponent;
@@ -92,7 +92,8 @@ enum {
     INTRO_VIDEO_VIEW = 1,
     INTRO_VIEW = 2,
     MAIN_MENU_VIEW = 3,
-    IWATODAI_DORM_VIEW = 4
+    IWATODAI_DORM_VIEW = 4,
+    DEBUG_DIALOGUE = 5
 };
 
 class PauseMenuComponent {
@@ -137,6 +138,7 @@ class PauseMenuComponent {
             {"IntroView", -1, &PauseMenuComponent::debugOptionSelected},
             {"MainMenuView", -1, &PauseMenuComponent::debugOptionSelected},
             {"IwatodaiDormView", -1, &PauseMenuComponent::debugOptionSelected},
+            {"Debug Dialogue", -1, &PauseMenuComponent::debugOptionSelected},
         };
 
         // TODO: go into submenus

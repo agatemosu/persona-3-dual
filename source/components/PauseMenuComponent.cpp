@@ -4,12 +4,15 @@
 
 // sfx
 #include "soundbank.h"
-
 // backgrounds
 #include "bgYukiClose.h"
 #include "bgGuard.h"
 #include "bgAkihiko.h"
 #include "bgYuki.h"
+// dialogue
+#include "dialogue/demo_dialogue.h"
+
+DialogueController dialogueCtrl;
 
 // add background setup here, and assign the bgLoader index to the appropriate PauseOption in PauseMenuComponent.h
 // NOTE: we can easily pass in custom bgLoaders. The reason I'm not implementing this behaviour is because I don't 
@@ -90,6 +93,12 @@ void PauseMenuComponent::init(int iBgSlot)
 
 ViewState PauseMenuComponent::update(int keys)
 {
+    // added for debug testing of dialogue
+    if (dialogueCtrl.isActive()) {
+        dialogueCtrl.update(keys);
+        return ViewState::KEEP_CURRENT;
+    }
+
     // navigate options
     if (keys & KEY_DOWN)
     {
@@ -113,6 +122,8 @@ ViewState PauseMenuComponent::update(int keys)
             ViewState result = (this->*(options[selectedOption].onSelect))();
             if (result != ViewState::KEEP_CURRENT) {
                 nextViewState = result;
+            } else if (dialogueCtrl.isActive()) {   // added for debug testing of dialogue
+                 return ViewState::KEEP_CURRENT;
             }
             // if we changed options, push current state to stack
             if (options != currentState.options)
@@ -264,6 +275,13 @@ ViewState PauseMenuComponent::debugOptionSelected()
             break;
         case IWATODAI_DORM_VIEW:
             selectedView = ViewState::IWATODAI_DORM;
+            break;
+        case DEBUG_DIALOGUE:
+            consoleClear();
+            demo_yuki_guard_argument_load();
+            dialogueCtrl.setLoader(demo_yuki_guard_argument_load_bg);
+            dialogueCtrl.start(demo_yuki_guard_argument_first());
+            selectedView = ViewState::KEEP_CURRENT;
             break;
         default:
             selectedView = ViewState::KEEP_CURRENT;
