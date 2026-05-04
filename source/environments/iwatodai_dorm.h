@@ -22,14 +22,12 @@ enum iwatodai_dorm_TexSlot {
 class iwatodai_dorm_Environment {
 public:
     u32* displayLists[1];
-    u32 dlSizes[1];
-    int textureIDs[1];
+    u32  dlSizes[1];
+    int  textureIDs[1];
 
     iwatodai_dorm_Environment() {
         for (int i = 0; i < 1; i++) {
-            displayLists[i] = NULL;
-            dlSizes[i] = 0;
-            textureIDs[i] = 0;
+            displayLists[i] = NULL; dlSizes[i] = 0; textureIDs[i] = 0;
         }
     }
 
@@ -39,29 +37,21 @@ public:
 
         char magic[4];
         fread(magic, 1, 4, file);
-        if (magic[0] != 'E' || magic[1] != 'N' || magic[2] != 'V' || magic[3] != '1') {
-            fclose(file);
-            return false;
-        }
+        if (magic[0]!='E'||magic[1]!='N'||magic[2]!='V'||magic[3]!='1') { fclose(file); return false; }
 
         u32 groupCount;
         fread(&groupCount, sizeof(u32), 1, file);
-        if (groupCount != 1) {
-            fclose(file);
-            return false;
-        }
+        if (groupCount != 1) { fclose(file); return false; }
 
         for (u32 i = 0; i < groupCount; i++) {
             fread(&dlSizes[i], sizeof(u32), 1, file);
             displayLists[i] = (u32*)malloc((dlSizes[i] + 1) * sizeof(u32));
             displayLists[i][0] = dlSizes[i];
-            if (dlSizes[i] > 0) {
-                fread(&displayLists[i][1], sizeof(u32), dlSizes[i], file);
-            }
+            if (dlSizes[i] > 0) fread(&displayLists[i][1], sizeof(u32), dlSizes[i], file);
         }
         fclose(file);
 
-        // Bind Textures to VRAM
+        // Bind Textures
         if (bitmaps[0]) {
             glGenTextures(1, &textureIDs[0]);
             glBindTexture(GL_TEXTURE_2D, textureIDs[0]);
@@ -73,17 +63,12 @@ public:
 
     void draw() {
         glBindTexture(GL_TEXTURE_2D, textureIDs[0]);
-        if (displayLists[0]) {
-            glCallList(displayLists[0]);
-        }
+        if (displayLists[0]) glCallList(displayLists[0]);
     }
 
     void cleanup() {
         for (u32 i = 0; i < 1; i++) {
-            if (displayLists[i]) {
-                free(displayLists[i]);
-                displayLists[i] = NULL;
-            }
+            if (displayLists[i]) { free(displayLists[i]); displayLists[i] = NULL; }
         }
         glDeleteTextures(1, textureIDs);
     }

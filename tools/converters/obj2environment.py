@@ -74,10 +74,7 @@ def compute_bounds(vertices):
     xs = [v[0] for v in vertices]; ys = [v[1] for v in vertices]; zs = [v[2] for v in vertices]
     return (min(xs), max(xs)), (min(ys), max(ys)), (min(zs), max(zs))
 
-def convert_blender_zup(vertices):
-    return [(x, z, y) for x, y, z in vertices]
-
-def build_display_list(faces, vertices, texcoords, scale, offset, tex_w, tex_h, flip_winding=False, blender_source=False, vertex_color=None):
+def build_display_list(faces, vertices, texcoords, scale, offset, tex_w, tex_h, vertex_color=None):
     words = []
     ox, oy, oz = offset
 
@@ -86,10 +83,11 @@ def build_display_list(faces, vertices, texcoords, scale, offset, tex_w, tex_h, 
         words.append(pack_cmds(FIFO_COLOR))
         words.append(struct.pack('<I', rgb_to_rgb15(r, g, b)))
 
-    triangles = []
-    quads = []
+    triangles, quads = [], []
     for face in faces:
-        if flip_winding and len(face) >= 2:
+        # Always flip winding: the native Blender OBJ exporter with Z/Y axes
+        # produces a reflection (det=-1), which reverses CCW→CW. We flip back.
+        if len(face) >= 2:
             face = [face[1], face[0]] + face[2:]
 
         if len(face) == 3:
@@ -103,19 +101,18 @@ def build_display_list(faces, vertices, texcoords, scale, offset, tex_w, tex_h, 
     def emit_faces(face_list, prim_type):
         if not face_list:
             return
-
         words.append(pack_cmds(FIFO_BEGIN))
         words.append(struct.pack('<I', prim_type))
-
         for face in face_list:
             for vi, vti in face:
                 if vti is not None and tex_w and tex_h:
                     u, v_orig = texcoords[vti]
-                    v = (1.0 - v_orig) if blender_source else v_orig
-                    u16 = floattot16(u * tex_w)
-                    v16 = floattot16(v * tex_h)
+                    # Blender UV: V=0 at bottom. NDS: V=0 at top. Always flip.
+                    v = 1.0 - v_orig
                     words.append(pack_cmds(FIFO_TEXCOORD))
-                    words.append(struct.pack('<I', (u16 & 0xFFFF) | ((v16 & 0xFFFF) << 16)))
+                    words.append(struct.pack('<I',
+                        (floattot16(u * tex_w) & 0xFFFF) |
+                        ((floattot16(v * tex_h) & 0xFFFF) << 16)))
                 vx, vy, vz = vertices[vi]
                 sx = (vx - ox) * scale; sy = (vy - oy) * scale; sz = (vz - oz) * scale
                 words.append(pack_cmds(FIFO_VERTEX16))
@@ -129,7 +126,7 @@ def build_display_list(faces, vertices, texcoords, scale, offset, tex_w, tex_h, 
 def find_texture_size(png_path):
     try:
         with open(png_path, 'rb') as f:
-            f.read(16)
+            f.read(16)  # PNG sig (8) + IHDR length (4) + "IHDR" (4)
             w = struct.unpack('>I', f.read(4))[0]
             h = struct.unpack('>I', f.read(4))[0]
             return w, h
@@ -143,27 +140,19 @@ def nearest_valid_tex_size(n):
     return 1024
 
 def convert(obj_path, output_dir, config):
-    scale = config.get("scale", None)
+    scale       = config.get("scale", None)
     target_size = config.get("target_size", 4.0)
-    center = config.get("center", True)
+    center      = config.get("center", True)
     if config.get("no_center"): center = False
-    blender_source = config.get("source_blender", False)
-    
-    rgba_all = config.get("rgba", False)
+
+    rgba_all      = config.get("rgba", False)
     raw_rgba_list = config.get("rgba_list", [])
-    if isinstance(raw_rgba_list, str):
-        rgba_list = [x.strip() for x in raw_rgba_list.split(',') if x.strip()]
-    elif isinstance(raw_rgba_list, list):
-        rgba_list = [str(x).strip() for x in raw_rgba_list]
-    else:
-        rgba_list = []
-        
+    rgba_list     = ([x.strip() for x in raw_rgba_list.split(',') if x.strip()]
+                     if isinstance(raw_rgba_list, str) else [str(x).strip() for x in raw_rgba_list])
+
     vertex_color = config.get("color", [255, 255, 255])
-    if isinstance(vertex_color, list) and len(vertex_color) == 3:
-        vertex_color = tuple(vertex_color)
-    elif vertex_color is None:
-        vertex_color = (255, 255, 255)
-    
+    vertex_color = tuple(vertex_color) if isinstance(vertex_color, list) and len(vertex_color) == 3 else (255, 255, 255)
+
     extra_mapping = None
     if config.get("mapping"):
         try:
@@ -190,15 +179,11 @@ def convert(obj_path, output_dir, config):
 
     vertices, texcoords, groups = parse_obj(obj_path)
 
-    if blender_source:
-        vertices = convert_blender_zup(vertices)
-
     (xmin, xmax), (ymin, ymax), (zmin, zmax) = compute_bounds(vertices)
     max_dim = max(xmax - xmin, ymax - ymin, zmax - zmin)
-
     if scale is None:
         scale = (target_size / max_dim) if max_dim > 0 else 1.0
-    
+
     if center:
         ox = (xmin + xmax) / 2.0; oy = ymin; oz = (zmin + zmax) / 2.0
     else:
@@ -207,8 +192,7 @@ def convert(obj_path, output_dir, config):
 
     trans_min_x = (xmin - ox) * scale; trans_max_x = (xmax - ox) * scale
     trans_min_z = (zmin - oz) * scale; trans_max_z = (zmax - oz) * scale
-    world_offset_x = -trans_min_x
-    world_offset_z = -trans_min_z
+    world_offset_x = -trans_min_x;     world_offset_z = -trans_min_z
     world_width    = trans_max_x - trans_min_x
     world_depth    = trans_max_z - trans_min_z
 
@@ -229,22 +213,19 @@ def convert(obj_path, output_dir, config):
     for tex_key, faces in merged.items():
         tex_abs = tex_paths.get(tex_key)
         tw, th  = find_texture_size(tex_abs) if tex_abs else (None, None)
-        
         if tw is None or th is None:
-            print(f"\n[FATAL ERROR] Could not find or read texture image: {tex_abs}")
-            print(f"-> If you recently renamed your .png file, you MUST open your .mtl or .json file and rename the internal reference to match!")
+            print(f"\n[FATAL ERROR] Cannot read texture: {tex_abs}")
+            print(f"-> Ensure PNG exists and MTL references match filenames.")
             sys.exit(1)
-            
         tw = nearest_valid_tex_size(tw)
         th = nearest_valid_tex_size(th)
-        
-        words = build_display_list(faces, vertices, texcoords, scale, offset, tw, th, flip_winding=blender_source, blender_source=blender_source, vertex_color=vertex_color)
+        words = build_display_list(faces, vertices, texcoords, scale, offset, tw, th, vertex_color=vertex_color)
         dl_groups.append((tex_key, words, tw, th))
 
     bin_path      = os.path.join(output_dir, f'{base_name}.bin')
     header_path   = os.path.join(output_dir, f'{base_name}.h')
     tex_list_path = os.path.join(output_dir, f'{base_name}_textures.txt')
-    n = len(dl_groups)
+    n      = len(dl_groups)
     safe_n = max(n, 1)
 
     with open(bin_path, 'wb') as f:
@@ -252,8 +233,7 @@ def convert(obj_path, output_dir, config):
         f.write(struct.pack('<I', n))
         for _, words, _, _ in dl_groups:
             f.write(struct.pack('<I', len(words)))
-            for w in words:
-                f.write(w)
+            for w in words: f.write(w)
     print(f"Wrote: {bin_path}")
 
     with open(header_path, 'w') as h:
@@ -262,7 +242,7 @@ def convert(obj_path, output_dir, config):
         h.write(f"// Scale: {scale:.6f}  Centred: {center}\n")
         h.write(f"// DO NOT EDIT — regenerate from source.\n\n")
         h.write(f"#include <nds.h>\n#include <stdio.h>\n#include <stdlib.h>\n\n")
-        
+
         h.write("// --- World Bounds ---\n")
         h.write(f"#define {base_name.upper()}_WORLD_OFFSET_X {world_offset_x:.6f}f\n"
                 f"#define {base_name.upper()}_WORLD_OFFSET_Z {world_offset_z:.6f}f\n"
@@ -274,50 +254,39 @@ def convert(obj_path, output_dir, config):
             h.write(f"    {base_name.upper()}_TEX_{sanitize(os.path.splitext(tex_key)[0]).upper()} = {i},\n")
         h.write(f"    {base_name.upper()}_TEX_COUNT = {n}\n}};\n\n")
 
-        h.write(f"class {base_name}_Environment {{\n")
-        h.write(f"public:\n")
+        h.write(f"class {base_name}_Environment {{\npublic:\n")
         h.write(f"    u32* displayLists[{safe_n}];\n")
-        h.write(f"    u32 dlSizes[{safe_n}];\n")
-        h.write(f"    int textureIDs[{safe_n}];\n\n")
-        
+        h.write(f"    u32  dlSizes[{safe_n}];\n")
+        h.write(f"    int  textureIDs[{safe_n}];\n\n")
+
         h.write(f"    {base_name}_Environment() {{\n")
         h.write(f"        for (int i = 0; i < {safe_n}; i++) {{\n")
-        h.write(f"            displayLists[i] = NULL;\n")
-        h.write(f"            dlSizes[i] = 0;\n")
-        h.write(f"            textureIDs[i] = 0;\n")
+        h.write(f"            displayLists[i] = NULL; dlSizes[i] = 0; textureIDs[i] = 0;\n")
         h.write(f"        }}\n    }}\n\n")
 
         h.write(f"    bool load(const char* filepath, const unsigned int* bitmaps[{safe_n}]) {{\n")
         if n > 0:
             h.write(f"        FILE* file = fopen(filepath, \"rb\");\n")
             h.write(f"        if (!file) return false;\n\n")
-            h.write(f"        char magic[4];\n")
-            h.write(f"        fread(magic, 1, 4, file);\n")
-            h.write(f"        if (magic[0] != 'E' || magic[1] != 'N' || magic[2] != 'V' || magic[3] != '1') {{\n")
-            h.write(f"            fclose(file);\n            return false;\n        }}\n\n")
+            h.write(f"        char magic[4];\n        fread(magic, 1, 4, file);\n")
+            h.write(f"        if (magic[0]!='E'||magic[1]!='N'||magic[2]!='V'||magic[3]!='1')"
+                    f" {{ fclose(file); return false; }}\n\n")
             h.write(f"        u32 groupCount;\n        fread(&groupCount, sizeof(u32), 1, file);\n")
-            h.write(f"        if (groupCount != {n}) {{\n            fclose(file);\n            return false;\n        }}\n\n")
+            h.write(f"        if (groupCount != {n}) {{ fclose(file); return false; }}\n\n")
             h.write(f"        for (u32 i = 0; i < groupCount; i++) {{\n")
             h.write(f"            fread(&dlSizes[i], sizeof(u32), 1, file);\n")
             h.write(f"            displayLists[i] = (u32*)malloc((dlSizes[i] + 1) * sizeof(u32));\n")
             h.write(f"            displayLists[i][0] = dlSizes[i];\n")
-            h.write(f"            if (dlSizes[i] > 0) {{\n")
-            h.write(f"                fread(&displayLists[i][1], sizeof(u32), dlSizes[i], file);\n")
-            h.write(f"            }}\n        }}\n")
-            h.write(f"        fclose(file);\n\n")
-            
-            h.write(f"        // Bind Textures to VRAM\n")
+            h.write(f"            if (dlSizes[i] > 0) fread(&displayLists[i][1], sizeof(u32), dlSizes[i], file);\n")
+            h.write(f"        }}\n        fclose(file);\n\n")
+            h.write(f"        // Bind Textures\n")
             for i, (tex_key, _, tw, th) in enumerate(dl_groups):
-                nw = f"TEXTURE_SIZE_{tw}" if tw else "TEXTURE_SIZE_8"
-                nh = f"TEXTURE_SIZE_{th}" if th else "TEXTURE_SIZE_8"
-                
-                is_rgba = rgba_all or any(req in tex_key for req in rgba_list)
-                gl_format = "GL_RGBA" if is_rgba else "GL_RGB"
-
+                gl_format = "GL_RGBA" if (rgba_all or any(req in tex_key for req in rgba_list)) else "GL_RGB"
                 h.write(f"        if (bitmaps[{i}]) {{\n")
                 h.write(f"            glGenTextures(1, &textureIDs[{i}]);\n")
                 h.write(f"            glBindTexture(GL_TEXTURE_2D, textureIDs[{i}]);\n")
-                h.write(f"            glTexImage2D(GL_TEXTURE_2D, 0, {gl_format}, {nw}, {nh}, 0,\n")
+                h.write(f"            glTexImage2D(GL_TEXTURE_2D, 0, {gl_format}, "
+                        f"TEXTURE_SIZE_{tw}, TEXTURE_SIZE_{th}, 0,\n")
                 h.write(f"                TEXGEN_TEXCOORD | GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T, bitmaps[{i}]);\n")
                 h.write(f"        }}\n")
             h.write(f"        return true;\n")
@@ -326,22 +295,17 @@ def convert(obj_path, output_dir, config):
         h.write("    }\n\n")
 
         h.write(f"    void draw() {{\n")
-        for i, (tex_key, _, _, _) in enumerate(dl_groups):
+        for i in range(n):
             h.write(f"        glBindTexture(GL_TEXTURE_2D, textureIDs[{i}]);\n")
-            h.write(f"        if (displayLists[{i}]) {{\n")
-            h.write(f"            glCallList(displayLists[{i}]);\n        }}\n")
+            h.write(f"        if (displayLists[{i}]) glCallList(displayLists[{i}]);\n")
         h.write("    }\n\n")
 
         h.write(f"    void cleanup() {{\n")
         if n > 0:
             h.write(f"        for (u32 i = 0; i < {n}; i++) {{\n")
-            h.write(f"            if (displayLists[i]) {{\n")
-            h.write(f"                free(displayLists[i]);\n")
-            h.write(f"                displayLists[i] = NULL;\n            }}\n        }}\n")
-            h.write(f"        glDeleteTextures({n}, textureIDs);\n")
-        h.write("    }\n")
-        h.write("};\n")
-
+            h.write(f"            if (displayLists[i]) {{ free(displayLists[i]); displayLists[i] = NULL; }}\n")
+            h.write(f"        }}\n        glDeleteTextures({n}, textureIDs);\n")
+        h.write("    }\n};\n")
     print(f"Wrote: {header_path}")
 
     with open(tex_list_path, 'w') as t:
@@ -352,27 +316,19 @@ def convert(obj_path, output_dir, config):
     print(f"Wrote: {tex_list_path}")
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Convert a multi-texture OBJ to an NDS C header.')
+    parser = argparse.ArgumentParser()
     parser.add_argument('input')
     parser.add_argument('output_dir')
-    parser.add_argument('--scale',          type=float, default=None)
-    parser.add_argument('--target-size',    type=float, default=4.0)
-    parser.add_argument('--no-center',      action='store_true')
-    parser.add_argument('--source-blender', action='store_true')
-    parser.add_argument('--mapping',        type=str,   default=None)
-    parser.add_argument('--rgba',           action='store_true', help='Use GL_RGBA for all textures.')
-    parser.add_argument('--rgba-list',      type=str,   default='', help='Comma-separated list of texture names to use GL_RGBA.')
-    parser.add_argument('--color',          nargs=3,    type=int, metavar=('R', 'G', 'B'), default=[255, 255, 255])
+    parser.add_argument('--scale',       type=float, default=None)
+    parser.add_argument('--target-size', type=float, default=4.0)
+    parser.add_argument('--no-center',   action='store_true')
+    parser.add_argument('--mapping',     type=str,   default=None)
+    parser.add_argument('--rgba',        action='store_true')
+    parser.add_argument('--rgba-list',   type=str,   default='')
+    parser.add_argument('--color',       nargs=3, type=int, metavar=('R','G','B'), default=[255,255,255])
     args = parser.parse_args()
-
-    cli_config = {
-        "scale": args.scale,
-        "target_size": args.target_size,
-        "no_center": args.no_center,
-        "source_blender": args.source_blender,
-        "mapping": args.mapping,
-        "rgba": args.rgba,
-        "rgba_list": args.rgba_list,
-        "color": args.color
-    }
-    convert(args.input, args.output_dir, cli_config)
+    convert(args.input, args.output_dir, {
+        "scale": args.scale, "target_size": args.target_size,
+        "no_center": args.no_center, "mapping": args.mapping,
+        "rgba": args.rgba, "rgba_list": args.rgba_list, "color": args.color,
+    })
