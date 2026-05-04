@@ -36,5 +36,5 @@ class IwatodaiDormView : public View {
             const float angle = -1.6;
             const float characterFacingAngle = 91.67;
         DialogueController dialogueCtrl;
-            dialogue lines[5];
+            int bgSharedSlot;
 };
