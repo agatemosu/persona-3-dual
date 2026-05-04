@@ -10,7 +10,6 @@
 // environment
 #include "environments/iwatodai_dorm.h"
 #include "texture.h"
-#include "tree.h"
 // collision (deprecated)
 #include "maps/iwatodaiDorm.h"
 // dialogue
@@ -94,7 +93,6 @@ void IwatodaiDormView::Init() {
     // setup environment model
     const unsigned int* bitmaps[IWATODAI_DORM_TEX_COUNT] = {
         textureBitmap,
-        treeBitmap
     };
     iwatodaiDormEnv.load("nitro:/environments/iwatodai_dorm.bin", bitmaps);
 }

@@ -16,8 +16,7 @@
 
 enum iwatodai_dorm_TexSlot {
     IWATODAI_DORM_TEX_TEXTURE = 0,
-    IWATODAI_DORM_TEX_TREE = 1,
-    IWATODAI_DORM_TEX_COUNT = 2
+    IWATODAI_DORM_TEX_COUNT = 1
 };
 
 struct iwatodai_dorm_BillboardData {
@@ -29,24 +28,25 @@ struct iwatodai_dorm_BillboardData {
 
 class iwatodai_dorm_Environment {
 public:
-    u32* displayLists[2];
-    u32 dlSizes[2];
-    int textureIDs[2];
+    u32* displayLists[1];
+    u32 dlSizes[1];
+    int textureIDs[1];
 
-    static const int BILLBOARD_COUNT = 3;
-    const iwatodai_dorm_BillboardData BILLBOARDS[3] = {
-        { 2592, 769, -1553, 160, 330, 1, 0, 0, 16384, 16384 },
-        { 1975, 769, -1553, 160, 330, 1, 0, 0, 16384, 16384 },
-        { 3656, 559, -1553, 380, 101, 1, 0, 0, 16384, 16384 },
+    static const int BILLBOARD_COUNT = 4;
+    const iwatodai_dorm_BillboardData BILLBOARDS[4] = {
+        { 3258, 651, -814, 407, 244, 0, 96, 1088, 128, 1136 },
+        { 2280, 651, -814, 407, 244, 0, 416, 1088, 448, 1136 },
+        { 1303, 977, -814, 244, 570, 0, 304, 1039, 368, 1072 },
+        { 4235, 977, -814, 244, 570, 0, 384, 1039, 448, 1072 },
     };
 
     iwatodai_dorm_Environment() {
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < 1; i++) {
             displayLists[i] = NULL; dlSizes[i] = 0; textureIDs[i] = 0;
         }
     }
 
-    bool load(const char* filepath, const unsigned int* bitmaps[2]) {
+    bool load(const char* filepath, const unsigned int* bitmaps[1]) {
         FILE* file = fopen(filepath, "rb");
         if (!file) return false;
 
@@ -58,7 +58,7 @@ public:
 
         u32 groupCount;
         fread(&groupCount, sizeof(u32), 1, file);
-        if (groupCount != 2) { fclose(file); return false; }
+        if (groupCount != 1) { fclose(file); return false; }
 
         for (u32 i = 0; i < groupCount; i++) {
             fread(&dlSizes[i], sizeof(u32), 1, file);
@@ -73,19 +73,12 @@ public:
             glBindTexture(GL_TEXTURE_2D, textureIDs[0]);
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, TEXTURE_SIZE_256, TEXTURE_SIZE_256, 0, TEXGEN_TEXCOORD | GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T, bitmaps[0]);
         }
-        if (bitmaps[1]) {
-            glGenTextures(1, &textureIDs[1]);
-            glBindTexture(GL_TEXTURE_2D, textureIDs[1]);
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, TEXTURE_SIZE_1024, TEXTURE_SIZE_1024, 0, TEXGEN_TEXCOORD | GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T, bitmaps[1]);
-        }
         return true;
     }
 
     void draw() {
         glBindTexture(GL_TEXTURE_2D, textureIDs[0]);
         if (displayLists[0]) glCallList(displayLists[0]);
-        glBindTexture(GL_TEXTURE_2D, textureIDs[1]);
-        if (displayLists[1]) glCallList(displayLists[1]);
     }
 
     void drawBillboards(bool faceCamera, float camX, float camY, float camZ) {
@@ -136,9 +129,9 @@ public:
     }
 
     void cleanup() {
-        for (u32 i = 0; i < 2; i++) {
+        for (u32 i = 0; i < 1; i++) {
             if (displayLists[i]) { free(displayLists[i]); displayLists[i] = NULL; }
         }
-        glDeleteTextures(2, textureIDs);
+        glDeleteTextures(1, textureIDs);
     }
 };
