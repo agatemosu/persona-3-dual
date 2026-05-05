@@ -159,7 +159,7 @@ help:
 	@echo "  make              Build everything"
 	@echo "  make assets       Run all asset converters"
 
-assets: dirs dialogue music video environments jmaps models
+assets: dirs dialogue music video environments maps jmaps models
 
 dirs:
 	@mkdir -p $(CURDIR)/source/dialogue $(CURDIR)/source/maps $(CURDIR)/source/models $(CURDIR)/source/environments $(NITRO_MUSIC) $(NITRO_VIDEO) $(CURDIR)/nitrofiles/models $(CURDIR)/nitrofiles/environments
