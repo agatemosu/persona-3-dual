@@ -85,7 +85,7 @@ int main(int argc, char *argv[]) {
                 SwitchView(new MainMenuView());
             } else if (nextState == ViewState::IWATODAI_DORM) {
                 SwitchView(new IwatodaiDormView());
-            } else if (nextState == ViewState::IWATODAI_STREET) {
+            } else if (nextState == ViewState::IWATODAI_STREETS) {
                 SwitchView(new IwatodaiStreetsView());
             } else if (nextState == ViewState::DISCLAIMER) {
                 SwitchView(new DisclaimerView());
