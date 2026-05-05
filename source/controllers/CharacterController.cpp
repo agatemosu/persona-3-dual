@@ -4,7 +4,6 @@
 #include "math.h"
 #include "CharacterController.h"
 #include "geometry.h"
-#include "geometry.h"
 
 // check collision
 TileType CharacterController::isTileAt(int tileX, int tileZ)
@@ -53,8 +52,6 @@ characterPosition CharacterController::isCharacterAt()
 {
     characterPosition charPos;
 
-    charPos.x = characterTranslate.x;
-    charPos.z = characterTranslate.z;
     charPos.x = characterTranslate.x;
     charPos.z = characterTranslate.z;
     charPos.angle = angle;
@@ -116,8 +113,6 @@ cameraPosition CharacterController::update(u32 keys)
 
     nextX = characterTranslate.x + deltaX;
     nextZ = characterTranslate.z + deltaZ;
-    nextX = characterTranslate.x + deltaX;
-    nextZ = characterTranslate.z + deltaZ;
 
     // try full movement first
     if (isTileWalkable(nextX, nextZ))
@@ -140,7 +135,6 @@ cameraPosition CharacterController::update(u32 keys)
     if (deltaX != 0.0f || deltaZ != 0.0f)
     {
         // return angle in radians and convert to degrees
-        angleRad = atan2(deltaX, deltaZ);
         angleRad = atan2(deltaX, deltaZ);
         characterFacingAngle = angleRad * (180.0f / 3.14159265f);
     }
