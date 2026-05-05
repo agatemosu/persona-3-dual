@@ -71,7 +71,7 @@ int main(int argc, char *argv[]) {
     SwitchView(new DisclaimerView());
 
     // DEBUG
-    // SwitchView(new IwatodaiDormView());
+    // SwitchView(new IwatodaiStreetsView());
 
 	while(pmMainLoop()) {
 		swiWaitForVBlank();
