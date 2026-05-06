@@ -153,7 +153,7 @@ jobs:
       # FIX: The previous step gave a binary pass/fail with no diagnostic info,
       # making it impossible to tell why it failed. This version always lists every
       # .nds file found in the workspace first, so if the filename or output path
-      # from your Makefile differs from Persona-3-Dual.nds you can see it clearly
+      # from your Makefile differs from persona-3-dual.nds you can see it clearly
       # in the log rather than just getting "file not found".
       - name: Verify ROM was produced
         run: |
@@ -164,14 +164,14 @@ jobs:
             || echo "  (none)"
           echo ""
 
-          if [ ! -f Persona-3-Dual.nds ]; then
-            echo "::error::Persona-3-Dual.nds not found."
+          if [ ! -f persona-3-dual.nds ]; then
+            echo "::error::persona-3-dual.nds not found."
             echo "::error::If your Makefile outputs a different filename or path, update the"
             echo "::error::ROM filename everywhere it appears in this workflow to match."
             exit 1
           fi
 
-          echo "ROM verified: Persona-3-Dual.nds ($(du -sh Persona-3-Dual.nds | cut -f1))"
+          echo "ROM verified: persona-3-dual.nds ($(du -sh persona-3-dual.nds | cut -f1))"
 
       # ── NDS header validation ─────────────────────────────────────────────────
       # Uses od (standard POSIX tool, always available) to read raw bytes from
@@ -182,7 +182,7 @@ jobs:
       # wrong, the ROM will not boot regardless of everything else being correct.
       - name: Validate ROM header
         run: |
-          ROM="Persona-3-Dual.nds"
+          ROM="persona-3-dual.nds"
 
           ACTUAL_SIZE=$(stat -c%s "$ROM")
           if [ "$ACTUAL_SIZE" -lt 512 ]; then
@@ -208,8 +208,8 @@ jobs:
       - name: Generate checksums
         id: checksums
         run: |
-          SHA256=$(sha256sum Persona-3-Dual.nds | cut -d' ' -f1)
-          MD5=$(md5sum    Persona-3-Dual.nds | cut -d' ' -f1)
+          SHA256=$(sha256sum persona-3-dual.nds | cut -d' ' -f1)
+          MD5=$(md5sum    persona-3-dual.nds | cut -d' ' -f1)
           echo "sha256=${SHA256}" >> $GITHUB_OUTPUT
           echo "md5=${MD5}"       >> $GITHUB_OUTPUT
           echo "SHA-256 : ${SHA256}"
@@ -258,16 +258,16 @@ jobs:
         if: github.event_name != 'pull_request'
         uses: actions/upload-artifact@v4
         with:
-          name: Persona-3-Dual-ROM
-          path: Persona-3-Dual.nds
+          name: persona-3-dual-ROM
+          path: persona-3-dual.nds
           retention-days: 30
 
       - name: Upload ROM artifact (PR build)
         if: github.event_name == 'pull_request'
         uses: actions/upload-artifact@v4
         with:
-          name: Persona-3-Dual-ROM-PR${{ github.event.number }}
-          path: Persona-3-Dual.nds
+          name: persona-3-dual-ROM-PR${{ github.event.number }}
+          path: persona-3-dual.nds
           retention-days: 7
 
       # ── Create release ────────────────────────────────────────────────────────
@@ -280,7 +280,7 @@ jobs:
           tag_name:   ${{ steps.version.outputs.tag }}
           name:       ${{ steps.version.outputs.release_name }}
           prerelease: false
-          files:      Persona-3-Dual.nds
+          files:      persona-3-dual.nds
           body_path:  release-notes.md
 
       # ── Job summary ───────────────────────────────────────────────────────────
@@ -294,7 +294,7 @@ jobs:
         if: always()
         run: |
           IS_PR="${{ github.event_name == 'pull_request' }}"
-          ROM_SIZE=$(du -sh Persona-3-Dual.nds 2>/dev/null | cut -f1 || echo "N/A")
+          ROM_SIZE=$(du -sh persona-3-dual.nds 2>/dev/null | cut -f1 || echo "N/A")
           SHA256="${{ steps.checksums.outputs.sha256 }}"
           MD5="${{ steps.checksums.outputs.md5 }}"
           TAG="${{ steps.version.outputs.tag }}"
