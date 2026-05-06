@@ -79,11 +79,14 @@ jobs:
           path: /opt/devkitpro
           key: devkitpro-nds-dev-${{ runner.os }}-v1
 
+      # The devkitPro apt server checks the User-Agent and returns HTTP error 8
+      # for any request that does not identify as "dkp-apt". The -U flag is
+      # required — this is documented on devkitpro.org/wiki/devkitPro_pacman.
       - name: Install devkitARM
         if: steps.cache-devkitpro.outputs.cache-hit != 'true'
         run: |
-          wget -q https://apt.devkitpro.org/install-devkitpro-pacman
-          chmod +x install-devkitpro-pacman
+          wget -U "dkp-apt" https://apt.devkitpro.org/install-devkitpro-pacman
+          chmod +x ./install-devkitpro-pacman
           sudo ./install-devkitpro-pacman
           sudo dkp-pacman -Sy --noconfirm nds-dev
 
@@ -258,6 +261,10 @@ jobs:
       # ── Job summary ───────────────────────────────────────────────────────────
       # Visible in the Actions UI under the "Summary" tab of each run.
       # Runs with always() so a partial summary appears even on failure.
+      #
+      # Each conditional echo uses || true so that a false condition (e.g. empty
+      # SHA256 when an earlier step failed) returns 0 instead of 1. Without this,
+      # the { } group command exits 1 on its last statement and the step fails.
       - name: Write job summary
         if: always()
         run: |
@@ -268,20 +275,20 @@ jobs:
           TAG="${{ steps.version.outputs.tag }}"
 
           {
-            echo "## 🎮 Build Summary"
+            echo "## Build Summary"
             if [ "$IS_PR" = "true" ]; then
               echo "> ℹ️ **PR build** — artifact uploaded for testing, no release created."
             fi
             echo ""
             echo "| Field     | Value |"
             echo "|-----------|-------|"
-            [ "$IS_PR" != "true" ] && echo "| Version   | \`${TAG:-N/A}\` |"
+            [ "$IS_PR" != "true" ] && echo "| Version   | \`${TAG:-N/A}\` |" || true
             echo "| Commit    | \`${{ github.sha }}\` |"
             echo "| Branch    | \`${{ github.ref_name }}\` |"
             echo "| Triggered | \`${{ github.actor }}\` |"
             echo "| ROM Size  | ${ROM_SIZE} |"
-            [ -n "$SHA256" ] && echo "| SHA-256   | \`${SHA256}\` |"
-            [ -n "$MD5"    ] && echo "| MD5       | \`${MD5}\` |"
+            [ -n "$SHA256" ] && echo "| SHA-256   | \`${SHA256}\` |" || true
+            [ -n "$MD5"    ] && echo "| MD5       | \`${MD5}\` |"    || true
           } >> $GITHUB_STEP_SUMMARY
 
       # ── Discord notification ──────────────────────────────────────────────────
