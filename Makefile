@@ -210,11 +210,10 @@ $(CURDIR)/source/models/%.h: $(ASSETS_MODELS)/%/$$*.json \
 models: $(MODEL_OUT)
 
 #---------------------------------------------------------------------------------
-# JMAP collision maps — hand-authored tile files, converted by jmap_to_h.py
 $(CURDIR)/source/maps/%.h: $(ASSETS_MAPS)/%.jmap
 	@echo "  JMAP  $(notdir $<)"
 	@mkdir -p $(dir $@)
-	@$(VENV_PYTHON) $(TOOLS_DIR)/jmap_to_h.py $< $@
+	@$(VENV_PYTHON) $(TOOLS_DIR)/build_asset.py $< $@
 
 jmaps: $(JMAP_OUT)
 
@@ -222,7 +221,7 @@ jmaps: $(JMAP_OUT)
 clean:
 	@echo clean ...
 	@rm -fr $(BUILD) $(TARGET).elf $(TARGET).nds $(TARGET).ds.gba
-	@rm -f $(DIALOGUE_OUT) $(MUSIC_OUT) $(VIDEO_OUT) $(JMAP_OUT) $(MODEL_OUT) $(CURDIR)/source/dialogue/*_dialogue.cpp $(CURDIR)/source/dialogue/*_dialogue.h
+	@rm -f $(MUSIC_OUT) $(VIDEO_OUT) $(JMAP_OUT) $(MODEL_OUT) $(DIALOGUE_OUT) $(CURDIR)/source/dialogue/*_dialogue.h
 	@rm -rf $(CURDIR)/source/environments/* $(CURDIR)/nitrofiles/models/* $(CURDIR)/nitrofiles/environments/*
 
 #---------------------------------------------------------------------------------

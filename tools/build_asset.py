@@ -4,7 +4,7 @@ import os
 import json
 import importlib
 import argparse
-from typing import Optional, Tuple
+from typing import Optional
 
 def load_config(input_file: str) -> dict:
     """Load configuration from a sidecar JSON file next to the input file."""
@@ -29,15 +29,15 @@ def load_config(input_file: str) -> dict:
 def guess_asset_type(input_file: str) -> Optional[str]:
     """Guess the asset type based on file extension."""
     ext = os.path.splitext(input_file)[1].lower()
-    # TODO: add .jmap in the future
     if ext == '.dlg': return 'dlg2dialogue'
     if ext == '.mp4': return 'video2vid'
+    if ext == '.jmap': return 'jmap2map'
     if ext == '.obj': return 'nds_build_environment'
     if ext == '.json': return 'obj2model'
     return None
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="P3 Dual Master Asset Compiler")
+    parser = argparse.ArgumentParser(description="P3 Dual Asset Compiler")
     parser.add_argument('input', help="Input file")
     parser.add_argument('output', help="Output file or directory")
     args, unknown = parser.parse_known_args()
