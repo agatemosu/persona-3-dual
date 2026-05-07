@@ -56,7 +56,7 @@ let params = {
     offsetX: 0, offsetZ: 0,
     width: 0, height: 0,
     name: 'map', audio: '',
-    scale: 1.0, centered: true
+    scale: 1.0, centered: true, source_blender: false
 };
 let tileData = new Array(0 * 0).fill('w');
 let currentTool = 'w';
@@ -584,7 +584,7 @@ function selectTool(k) {
 
 // PARAMETERS
 const paramInputs = document.querySelectorAll(
-    '#p-offsetx, #p-offsetz, #p-width, #p-height, #p-name, #p-scale, #p-center'
+    '#p-offsetx, #p-offsetz, #p-width, #p-height, #p-name, #p-scale, #p-center, #p-source-blender'
 );
 paramInputs.forEach(input => {
     input.addEventListener('input',  () => document.getElementById('btn-apply').classList.add('needs-apply'));
@@ -596,12 +596,13 @@ function readParamInputs() {
         tileSize: parseFloat(document.getElementById('p-tilesize').value) || 0.0625,
         offsetX:  parseFloat(document.getElementById('p-offsetx').value)  || 0,
         offsetZ:  parseFloat(document.getElementById('p-offsetz').value)  || 0,
-        width:    Math.max(1, parseInt(document.getElementById('p-width').value)   || 0),
-        height:   Math.max(1, parseInt(document.getElementById('p-height').value)  || 0),
+        width:    Math.max(1, parseInt(document.getElementById('p-width').value)   || 56),
+        height:   Math.max(1, parseInt(document.getElementById('p-height').value)  || 12),
         name:     document.getElementById('p-name').value.trim()   || 'map',
         audio:    document.getElementById('p-audio').value.trim()  || '',
         scale:    parseFloat(document.getElementById('p-scale').value) || 1.0,
-        centered: document.getElementById('p-center').checked
+        centered: document.getElementById('p-center').checked,
+        source_blender: document.getElementById('p-source-blender').checked
     };
 }
 
@@ -616,11 +617,11 @@ function applyParams() {
         }
     }
 
-    const requiresTransformUpdate = (p.scale !== params.scale || p.centered !== params.centered);
+    const requiresTransformUpdate = (p.scale !== params.scale || p.centered !== params.centered || p.source_blender !== params.source_blender);
     params   = p;
     tileData = newTiles;
 
-    // Map dimensions may have changed = old snapshots are invalid
+    // Map dimensions may have changed → old snapshots are invalid
     undoStack    = [];
     redoStack    = [];
     strokeBefore = null;
@@ -718,27 +719,68 @@ document.getElementById('obj-input').addEventListener('change', e => {
 function applyModelTransforms() {
     modelGroup.clear();
 
+    // Mirror obj2environment.py convert_blender_zup: (x, y, z) to (x, z, y).
+    // Blender exports in Z-up space; NDS (and this editor) use Y-up space.
+    // We apply this as a matrix to CLONED geometries so rawModelGroup stays
+    // untouched and toggling the flag always produces a clean result.
+    //
+    // The matrix that performs (x,y,z)→(x,z,y):
+    //   new_x = old_x  ->  row 0: [1, 0, 0]
+    //   new_y = old_z  ->  row 1: [0, 0, 1]
+    //   new_z = old_y  ->  row 2: [0, 1, 0]
+    //
+    // det = -1 (reflection), which also flips winding — this matches the
+    // flip_winding=blender_source behaviour in build_display_list().
+    const blender  = params.source_blender;
+    const swapMat  = blender
+        ? new THREE.Matrix4().set(
+            1, 0, 0, 0,
+            0, 0, 1, 0,
+            0, 1, 0, 0,
+            0, 0, 0, 1
+          )
+        : null;
+
     rawModelGroup.traverse(child => {
-        if (child.isMesh) {
-            const wire  = new THREE.Mesh(child.geometry, wireMaterial.clone());
-            const solid = new THREE.Mesh(child.geometry, solidMaterial.clone());
-            wire._isWire   = true;
-            solid._isSolid = true;
-            wire.visible   = showWire;
-            solid.visible  = showSolid;
-            modelGroup.add(wire);
-            modelGroup.add(solid);
-        }
+        if (!child.isMesh) return;
+        // Clone geometry when blender flag is on so the swap is non-destructive
+        const geo = blender ? child.geometry.clone().applyMatrix4(swapMat) : child.geometry;
+        const wire  = new THREE.Mesh(geo, wireMaterial.clone());
+        const solid = new THREE.Mesh(geo, solidMaterial.clone());
+        wire._isWire   = true;
+        solid._isSolid = true;
+        wire.visible   = showWire;
+        solid.visible  = showSolid;
+        modelGroup.add(wire);
+        modelGroup.add(solid);
     });
 
     const s = params.scale;
     modelGroup.scale.set(s, s, s);
 
     if (params.centered) {
-        const bbox   = new THREE.Box3().setFromObject(rawModelGroup);
-        const center = new THREE.Vector3();
-        bbox.getCenter(center);
-        modelGroup.position.set(-center.x * s, -bbox.min.y * s, -center.z * s);
+        // Compute the bounding box directly from the (possibly swapped) geometry
+        // position attributes. Identical to Python's compute_bounds() which runs
+        // after convert_blender_zup. We read raw attribute data so modelGroup.scale
+        // is not factored in, keeping the math consistent with the Python pipeline:
+        //   ox = (xmin+xmax)/2,  oy = ymin,  oz = (zmin+zmax)/2
+        //   position = -offset * scale
+        const bbox = new THREE.Box3();
+        modelGroup.traverse(c => {
+            if (c.isMesh && c._isWire) {
+                const pos = c.geometry.attributes.position;
+                for (let i = 0; i < pos.count; i++) {
+                    bbox.expandByPoint(
+                        new THREE.Vector3(pos.getX(i), pos.getY(i), pos.getZ(i))
+                    );
+                }
+            }
+        });
+        modelGroup.position.set(
+            -(bbox.min.x + bbox.max.x) / 2 * s,
+            -bbox.min.y * s,
+            -(bbox.min.z + bbox.max.z) / 2 * s
+        );
     } else {
         modelGroup.position.set(0, 0, 0);
     }

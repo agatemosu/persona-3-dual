@@ -75,6 +75,10 @@
           <label data-tip="When checked, the model is centred on the world origin (matching 'Centred: True' in the generated .h file comment). Uncheck only if you exported with --no-center.">Center Model</label>
           <input type="checkbox" id="p-center" checked>
         </div>
+        <div class="row">
+          <label data-tip="Enable when the OBJ was exported from Blender (--source-blender flag). Swaps the Y and Z axes on the model geometry to convert Blender's Z-up coordinate system to the NDS Y-up system.">Source: Blender</label>
+          <input type="checkbox" id="p-source-blender">
+        </div>
         <div class="sep"></div>
         <div class="row">
           <button id="btn-apply"
