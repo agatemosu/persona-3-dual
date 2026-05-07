@@ -96,10 +96,10 @@ def compute_bounds(vertices):
     return (min(xs), max(xs)), (min(ys), max(ys)), (min(zs), max(zs))
 
 def convert_blender_zup(vertices):
-    return [(x, z, y) for x, y, z in vertices]
+    return [(x, z, -y) for x, y, z in vertices]
 
 def build_display_list(faces, vertices, texcoords, scale, offset, tex_w, tex_h,
-                       flip_winding=False, blender_source=False, vertex_color=None):
+                       blender_source=False, vertex_color=None):
     words = []
     ox, oy, oz = offset
 
@@ -110,8 +110,6 @@ def build_display_list(faces, vertices, texcoords, scale, offset, tex_w, tex_h,
 
     triangles, quads = [], []
     for face in faces:
-        if flip_winding and len(face) >= 2:
-            face = face[::-1]
         if len(face) == 3: triangles.append(face)
         elif len(face) == 4: quads.append(face)
         else:
@@ -331,8 +329,7 @@ def convert(obj_path, output_dir, config):
             tw, th = 8, 8
         tw, th = nearest_valid_tex_size(tw), nearest_valid_tex_size(th)
         words = build_display_list(faces, vertices, texcoords, scale, offset, tw, th,
-                                   flip_winding=blender_source, blender_source=blender_source,
-                                   vertex_color=vertex_color)
+                                   blender_source=blender_source, vertex_color=vertex_color)
         tex_to_slot[tex_key] = len(dl_groups)
         dl_groups.append((tex_key, words, tw, th))
 
