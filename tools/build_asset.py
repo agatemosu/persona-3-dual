@@ -1,9 +1,5 @@
 #!/usr/bin/env python3
-import sys
-import os
-import json
-import importlib
-import argparse
+import sys, os, json, importlib, argparse
 from typing import Optional
 
 def load_config(input_file: str) -> dict:

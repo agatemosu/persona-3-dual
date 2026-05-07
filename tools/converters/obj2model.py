@@ -1,8 +1,4 @@
-import sys
-import struct
-import argparse
-import json
-import os
+import struct, argparse, json, os
 
 FIFO_COLOR    = 0x20
 FIFO_TEXCOORD = 0x22

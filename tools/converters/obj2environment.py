@@ -1,4 +1,4 @@
-import sys, os, re, json, struct, argparse
+import os, re, json, struct, argparse
 from collections import defaultdict
 
 FIFO_COLOR    = 0x20

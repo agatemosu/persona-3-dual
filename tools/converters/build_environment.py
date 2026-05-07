@@ -1,4 +1,4 @@
-import sys, os, re, argparse
+import os, re, argparse
 from . import obj2environment
 
 def convert(input_file, output_dir, config):
