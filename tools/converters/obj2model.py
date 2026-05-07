@@ -216,7 +216,7 @@ def convert_model_json(input_file, output_file, tex_width=None, tex_height=None,
             hout.write(f"    MODEL_{model_name.upper()}_{safe_name} = {i},\n")
         hout.write("};\n")
 
-    print(f"Converted {input_file} -> {bin_out} & {header_out}")
+    print(f"Written: {bin_out} / {header_out}")
 
 def convert(input_file, output_file, config):
     tex_w, tex_h = None, None

@@ -125,7 +125,7 @@ def convert(input_file: str, output_file: str, config: dict) -> None:
     out_path.parent.mkdir(parents=True, exist_ok=True)
     out_path.write_text(header)
 
-    print(f'  Written: {out_path.name} / ({width}x{height})')
+    print(f'Written: {out_path.name} / ({width}x{height})')
 
 
 # Standalone CLI
