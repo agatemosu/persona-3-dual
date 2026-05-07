@@ -1,5 +1,6 @@
 #include <nds.h>
 #include <stdio.h>
+#include <malloc.h>
 #include "core/globals.h"
 #include "math.h"
 #include "IwatodaiStreetsView.h"
@@ -137,6 +138,7 @@ void IwatodaiStreetsView::Init() {
         f007_009_wood01Bitmap,
     };
     iwatodaiStreetsEnv.load("nitro:/environments/iwatodai_streets.bin", bitmaps);
+    totalPolyCount = iwatodaiStreetsEnv.getPolyCount();
 
     // pause menu
     streetsPauseMenu.init(bgSharedSlot, &isStreetsPauseMenuActive);
@@ -188,14 +190,6 @@ ViewState IwatodaiStreetsView::Update() {
         glPopMatrix(1);
 
         glFlush(0);
-
-        iprintf("\x1b[21;0Htile(x,z): %d, %d",
-            (int)((charPos.x + worldOffsetX) / tileSize),
-            (int)((charPos.z + worldOffsetZ) / tileSize));
-        iprintf("\x1b[22;0Htranslate(x,z): %d, %d",
-            (int)(charPos.x * 100),
-            (int)(charPos.z * 100));
-        iprintf("\x1b[23;0Hangle(w,c): %d, %d", (int)(charPos.angle * 100), (int)(charPos.facingAngle * 100));
     }
 
     musicCtrl.update();

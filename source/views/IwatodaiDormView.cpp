@@ -1,5 +1,6 @@
 #include <nds.h>
 #include <stdio.h>
+#include <malloc.h>
 #include "core/globals.h"
 #include "math.h"
 #include "IwatodaiDormView.h"
@@ -99,6 +100,7 @@ void IwatodaiDormView::Init()
     // setup environment model
     const unsigned int* bitmaps[IWATODAI_DORM_TEX_COUNT] = { textureBitmap };
     iwatodaiDormEnv.load("nitro:/environments/iwatodai_dorm.bin", bitmaps);
+    totalPolyCount = iwatodaiDormEnv.getPolyCount();
 
     // setup dialogue
     demo_dialogue_bg_slot = bgSharedSlot;
@@ -185,17 +187,6 @@ ViewState IwatodaiDormView::Update()
         glPopMatrix(1);
 
         glFlush(0);
-
-        // print coordinates (64x64 area from 0,0 to 64,64)
-      if (!dialogueCtrl.isActive() && !battleController.isActive()) {
-          iprintf("\x1b[21;0Htile(x,z): %d, %d",
-              (int)((charPos.x + worldOffsetX) / tileSize),
-              (int)((charPos.z + worldOffsetZ) / tileSize));
-          iprintf("\x1b[22;0Htranslate(x,z): %d, %d",
-              (int)(charPos.x * 100),
-              (int)(charPos.z * 100));
-          iprintf("\x1b[23;0Hangle(w,c): %d, %d", (int)(charPos.angle * 100), (int)(charPos.facingAngle * 100));
-      }
     }
 
     // update controllers
