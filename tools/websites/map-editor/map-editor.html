@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Map Editor</title>
+  <link rel="stylesheet" href="map-editor.css">
+</head>
+
+<body>
+  <div id="topbar">
+    <h1>▸ MAP EDITOR</h1>
+    <span id="map-info"><span class="dim">no map</span></span>
+    <div class="topbar-hint">
+      <kbd>scroll</kbd> zoom &nbsp;
+      <kbd>space + drag</kbd> pan &nbsp;
+      <kbd>right-click</kbd> clear &nbsp;
+      <kbd>G</kbd> toggle grid
+    </div>
+  </div>
+
+  <div id="main">
+    <div id="sidebar">
+      <div class="section">
+        <div class="section-title">Load Files</div>
+        <button class="file-btn" onclick="document.getElementById('obj-input').click()">📦 Load .obj model</button>
+        <button class="file-btn" onclick="document.getElementById('jmap-input').click()">🗺 Load existing .jmap</button>
+        <input type="file" id="obj-input" accept=".obj" style="display:none">
+        <input type="file" id="jmap-input" accept=".jmap" style="display:none">
+        <p class="hint">Geometry renders in wireframe overlay.</p>
+      </div>
+
+      <div class="section">
+        <div class="section-title">World Parameters</div>
+        <div class="row"><label>tileSize</label> <input type="number" id="p-tilesize" value="0.0625" step="0.0001"
+            min="0.001" disabled></div>
+        <div class="row"><label>worldOffsetX</label><input type="number" id="p-offsetx" value="1.75" step="0.0625">
+        </div>
+        <div class="row"><label>worldOffsetZ</label><input type="number" id="p-offsetz" value="1.3125" step="0.0625">
+        </div>
+        <div class="row"><label>mapWidth</label> <input type="number" id="p-width" value="56" step="1" min="1"></div>
+        <div class="row"><label>mapHeight</label> <input type="number" id="p-height" value="12" step="1" min="1"></div>
+        <div class="row"><label>mapName</label> <input type="text" id="p-name" value="map"></div>
+        <div class="sep"></div>
+        <div class="row"><label>Model Scale</label><input type="number" id="p-scale" value="1.0" step="0.01"></div>
+        <div class="row"><label>Center Model</label><input type="checkbox" id="p-center" checked></div>
+        <div class="sep"></div>
+        <div class="row">
+          <button id="btn-apply" onclick="applyParams()" style="flex:1">↻ Apply</button>
+          <button onclick="autoSize()" title="Set map size to cover full world bounds">Full World</button>
+        </div>
+        <p class="computed" id="world-computed"></p>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Tile Palette</div>
+        <div class="tile-palette" id="palette"></div>
+
+        <div class="row">
+          <button onclick="fillAll(currentTool)" style="flex:1">Fill All</button>
+          <button onclick="fillAll('w')" style="flex:1">Clear Map</button>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Camera & View</div>
+        <div class="row">
+          <button id="btn-view-top" class="view-btn active-btn" onclick="setView('top')" style="flex:1">Top</button>
+          <button id="btn-view-front" class="view-btn" onclick="setView('front')" style="flex:1">Front</button>
+          <button id="btn-view-back" class="view-btn" onclick="setView('back')" style="flex:1">Back</button>
+        </div>
+        <div class="row">
+          <button id="btn-view-left" class="view-btn" onclick="setView('left')" style="flex:1">Left</button>
+          <button id="btn-view-right" class="view-btn" onclick="setView('right')" style="flex:1">Right</button>
+        </div>
+        <div class="sep"></div>
+        <div class="row">
+          <button id="grid-btn" onclick="toggleGrid()" style="flex:1">Grid: ON</button>
+          <button id="model-btn" onclick="toggleModel()" style="flex:1">Model: ON</button>
+        </div>
+        <div class="row">
+          <button id="wire-btn" onclick="toggleWire()" style="flex:1">Wire: ON</button>
+          <button id="solid-btn" onclick="toggleSolid()" style="flex:1">Solid: OFF</button>
+        </div>
+        <div class="row">
+          <button onclick="resetCamera()" style="flex:1">⊙ Center Pan/Zoom</button>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Music Paths</div>
+        <div class="row"><label>audio</label><input type="text" id="p-audio" placeholder="nitro:/music/..."></div>
+      </div>
+
+      <div class="section">
+        <button class="primary" style="width:100%;margin-bottom:5px" onclick="exportJmap()">⬇ Export .jmap</button>
+      </div>
+
+    </div>
+    <div id="viewport">
+      <canvas id="three-canvas"></canvas>
+      <div id="paint-warning">⚠️ Painting disabled. Switch to Top View to edit tiles.</div>
+      <div id="no-model-hint">
+        <span class="big">no model loaded</span>
+        Load a <strong>.obj</strong> and <strong>.h</strong> file to get started.<br>
+        Use the sidebar to configure world parameters,<br>
+        then click/drag to paint tiles on the grid.
+      </div>
+      <div id="statusbar">
+        <span>tile: <span class="val" id="s-tile">—</span></span>
+        <span>world: <span class="val" id="s-world">—</span></span>
+        <span>type: <span class="val" id="s-type">—</span></span>
+        <span style="margin-left:auto">tool: <span class="type-indicator val" id="s-tool">w</span></span>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/three@0.128.0/build/three.min.js"></script>
+  <script src="https://unpkg.com/three@0.128.0/examples/js/loaders/OBJLoader.js"></script>
+  <script src="map-editor.js"></script>
+</body>
+
+</html>
