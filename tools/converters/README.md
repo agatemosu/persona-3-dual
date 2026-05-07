@@ -1,10 +1,6 @@
-Here is the updated `README.md` reflecting your new unified `build_asset.py` workflow and the shift toward `.build.json` sidecar configuration files. 
-
-I've removed the outdated Makefile flag overrides and filename-encoding rules, replacing them with instructions on how the new JSON-based configuration pipeline works.
-
 ***
 
-# Persona 3 Dual — Asset Pipeline
+# Persona 3 Dual — Asset Pipeline (OUTDATED)
 
 > Everything in `assets/` is source. Everything in `source/` or `nitrofiles/` are generated.  
 > **Never hand-edit generated files** — run `make assets` instead.
@@ -76,7 +72,6 @@ tools/
   nds_build_environment.py
   obj2environment.py
   obj2model.py
-  texture2collision.py
   video2vid.py
 ```
 
@@ -111,31 +106,6 @@ Compiles a hierarchical `.json` skeleton and per-bone `.obj` parts into a highly
 | **Input** | `assets/models/<name>/<name>.json` (plus isolated `.obj`s) |
 | **Output** | `nitrofiles/models/<name>.bin` and `source/models/<name>.h` |
 | **Config** | `assets/models/<name>/<name>.build.json` (e.g., `{"texsize": [128, 128], "source_blender": true}`) |
-
----
-
-### `texture2collision.py` — Collision Map Converter
-
-Converts a 2D PNG into a `uint8_t collision_map[H][W]` C header. This is fully decoupled from 3D model bounds, allowing absolute physical scaling.
-
-| | |
-|---|---|
-| **Input** | `assets/maps/<name>.png` |
-| **Output** | `source/maps/<name>.h` |
-| **Config** | `<name>.build.json` (e.g., `{"crop": [32, 0, 64, 64]}` to crop x, y, width, height) |
-
-**Tile values** (edit JSON palette or source code to map colors):
-
-| Value | Meaning |
-|---|---|
-| `0` | Walkable / Default |
-| `1` | Collision wall |
-| `2` | Save point |
-| `3` | Prev scene |
-| `4` | Next scene |
-| `100` | Character spawn |
-
----
 
 ### `dlg2dialogue.py` — Dialogue Compiler
 

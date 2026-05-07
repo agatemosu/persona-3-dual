@@ -29,9 +29,9 @@ def load_config(input_file: str) -> dict:
 def guess_asset_type(input_file: str) -> Optional[str]:
     """Guess the asset type based on file extension."""
     ext = os.path.splitext(input_file)[1].lower()
+    # TODO: add .jmap in the future
     if ext == '.dlg': return 'dlg2dialogue'
     if ext == '.mp4': return 'video2vid'
-    if ext == '.png': return 'texture2collision'
     if ext == '.obj': return 'nds_build_environment'
     if ext == '.json': return 'obj2model'
     return None
