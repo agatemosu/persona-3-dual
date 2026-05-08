@@ -8,32 +8,28 @@ void Persona::execute()
     menuState = SelectSkill;
 }
 
-bool Persona::update()
+bool Persona::update(u32 *keys)
 {
-    scanKeys();
-
-    u32 keys = keysDown();
-
     if (menuState == SelectSkill)
     {
         u32 skillCount = player->attackCount;
 
-        updateIndex.update(keys, targetIndex, skillCount);
+        updateIndex.update(*keys, targetIndex, skillCount);
 
-        if (keys & KEY_LEFT)
+        if (*keys & KEY_LEFT)
         {
             iprintf("Cur: ");
             iprintf(player->attackSkill[targetIndex]->name.c_str());
             iprintf("\n");
         }
-        else if (keys & KEY_RIGHT)
+        else if (*keys & KEY_RIGHT)
         {
             iprintf("Cur: ");
             iprintf(player->attackSkill[targetIndex]->name.c_str());
             iprintf("\n");
         }
 
-        if (keys & KEY_A)
+        if (*keys & KEY_A)
         {
             iprintf("Sel: ");
             selectedSkill = player->attackSkill[targetIndex];
@@ -48,9 +44,9 @@ bool Persona::update()
     {
         u32 enemyCount = enemies->size();
 
-        updateIndex.update(keys, targetIndex, enemyCount);
+        updateIndex.update(*keys, targetIndex, enemyCount);
 
-        bool madeAction = targetAndAttackActionEnemy->update(&keys, selectedSkill);
+        bool madeAction = targetAndAttackActionEnemy->update(keys, selectedSkill);
         if (madeAction)
         {
             targetIndex = 0;
@@ -59,7 +55,7 @@ bool Persona::update()
         }
     }
 
-    if (keys & KEY_B)
+    if (*keys & KEY_B)
     {
         if (menuState == SelectSkill)
         {

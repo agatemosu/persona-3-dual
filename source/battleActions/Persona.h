@@ -8,8 +8,6 @@
 #include "TargetAndAttackEnemy.h"
 #include "UpdateIndex.h"
 
-
-
 struct Persona : ActionBase
 {
     UpdateIndex updateIndex;
@@ -21,21 +19,19 @@ struct Persona : ActionBase
     Persona(std::vector<Enemy *> *iEnemies, Player *iPlayer) : enemies(iEnemies), player(iPlayer)
     {
         name = "Persona";
-        //TODO: dont forget to clear in the future
+        // TODO: dont forget to clear in the future
         targetAndAttackActionEnemy = new TargetAndAttackActionEnemy(enemies, player, &targetIndex);
     }
 
+    //  TargetAndAttackActionEnemy targetAndAttackActionEnemy(player.);
 
-  //  TargetAndAttackActionEnemy targetAndAttackActionEnemy(player.);
-
-
-    enum MenuState  {
+    enum MenuState
+    {
         SelectSkill,
         SelectTarget,
     };
     MenuState menuState;
 
-   
     void execute() override;
-    bool update() override;
+    bool update(u32 *keys) override;
 };

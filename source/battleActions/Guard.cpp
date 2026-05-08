@@ -7,7 +7,7 @@ void Guard::execute()
     iprintf("Guarding\n");
 }
 
-bool Guard::update()
+bool Guard::update(u32 *keys)
 {
     player->guarding = true;
     inProgress = false;

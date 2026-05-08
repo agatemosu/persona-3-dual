@@ -36,7 +36,7 @@ void BattleController::update(u32 keys)
     {
         if (actions[i]->inProgress)
         {
-            bool madeAction = actions[i]->update();
+            bool madeAction = actions[i]->update(&keys);
             if (!actions[i]->inProgress)
             {
                 if (enemies->size() == 0)
