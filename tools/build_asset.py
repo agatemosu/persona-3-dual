@@ -5,13 +5,13 @@ from typing import Optional
 def load_config(input_file: str) -> dict:
     """Load configuration from a sidecar JSON file next to the input file."""
     base, _ = os.path.splitext(input_file)
-    
+
     # 1. Check exactly next to the file (e.g., assets/models/akihiko/akihiko.build.json)
     config_path = base + ".build.json"
     if os.path.exists(config_path):
         with open(config_path, 'r') as f:
             return json.load(f)
-            
+
     # 2. Check the parent directory (e.g., assets/models/akihiko.build.json)
     parent_dir = os.path.dirname(os.path.dirname(input_file))
     file_name = os.path.basename(base)
@@ -19,7 +19,7 @@ def load_config(input_file: str) -> dict:
     if os.path.exists(parent_config_path):
         with open(parent_config_path, 'r') as f:
             return json.load(f)
-            
+
     return {}
 
 def guess_asset_type(input_file: str) -> Optional[str]:
@@ -29,7 +29,7 @@ def guess_asset_type(input_file: str) -> Optional[str]:
     if ext == '.mp4': return 'video2vid'
     if ext == '.jmap': return 'jmap2map'
     if ext == '.obj': return 'build_environment'
-    if ext == '.json': return 'obj2model'
+    if ext == '.json': return 'build_model'
     return None
 
 def main() -> None:
@@ -40,7 +40,7 @@ def main() -> None:
 
     # Load JSON Sidecar
     config = load_config(args.input)
-    
+
     # Identify asset routing
     asset_type = config.get("asset_type") or guess_asset_type(args.input)
     if not asset_type:
@@ -60,7 +60,7 @@ def main() -> None:
                 except ValueError: pass
                 vals.append(val)
                 i += 1
-                
+
             if len(vals) == 0:
                 config[key] = True
             elif len(vals) == 1:
@@ -70,7 +70,7 @@ def main() -> None:
         else:
             i += 1
 
-    # Dispatch!
+    # Dispatch
     try:
         converter = importlib.import_module(f"converters.{asset_type}")
     except ModuleNotFoundError:

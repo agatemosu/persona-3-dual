@@ -33,7 +33,7 @@ DATA        :=
 INCLUDES    :=  include source
 
 # Add environment subdirectories directly to the GRAPHICS build pipeline
-GRAPHICS    :=  assets/graphics $(wildcard assets/environments/*)
+GRAPHICS    :=  assets/graphics $(wildcard assets/environments/*) $(wildcard assets/models/*)
 SFX       	:=  assets/sfx
 NITRODATA   :=  nitrofiles
 

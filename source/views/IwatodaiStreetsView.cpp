@@ -5,7 +5,7 @@
 #include "math.h"
 #include "IwatodaiStreetsView.h"
 
-// collision map
+// map
 #include "maps/iwatodai_streets.h"
 // environment
 #include "environments/iwatodai_streets.h"
@@ -38,13 +38,9 @@
 // model
 #include "models/character.h"
 #include "character.h"
-// components
-#include "components/PauseMenuComponent.h"
 
 int streetsCharacterTextureId;
 iwatodai_streets_Environment iwatodaiStreetsEnv;
-PauseMenuComponent streetsPauseMenu;
-bool isStreetsPauseMenuActive = false;
 
 void IwatodaiStreetsView::Init() {
     videoSetMode(MODE_0_3D);
@@ -53,7 +49,7 @@ void IwatodaiStreetsView::Init() {
     vramSetBankA(VRAM_A_TEXTURE);
     vramSetBankB(VRAM_B_TEXTURE);
     vramSetBankC(VRAM_C_SUB_BG);
-    vramSetBankD(VRAM_D_TEXTURE); 
+    vramSetBankD(VRAM_D_TEXTURE);
     bgExtPaletteEnableSub();
 
     glInit();
@@ -69,18 +65,6 @@ void IwatodaiStreetsView::Init() {
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     gluPerspective(55, 256.0 / 192.0, 0.1, 40);
-
-    // character texture
-    glGenTextures(1, &streetsCharacterTextureId);
-    glBindTexture(GL_TEXTURE_2D, streetsCharacterTextureId);
-    glTexImage2D(
-        GL_TEXTURE_2D, 0,
-        GL_RGBA,
-        TEXTURE_SIZE_32, TEXTURE_SIZE_32,
-        0,
-        TEXGEN_TEXCOORD | GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T,
-        characterBitmap
-    );
 
     glPolyFmt(POLY_ALPHA(31) | POLY_CULL_BACK);
     glColor3b(255, 255, 255);
@@ -101,15 +85,15 @@ void IwatodaiStreetsView::Init() {
         angle, characterTranslate, characterFacingAngle
     );
 
-    // music
+    // setup music
     musicCtrl.init(IWATODAI_STREETS_MUSIC, 0.0f, -1.0f);
 
-    // character model
-    characterAnimationCtrl.loadModel("nitro:/models/character.bin");
-    characterAnimationCtrl.set(MODEL_CHARACTER_WALK, true);
+    // setup character model
+    character_loadTextures(characterAnimationCtrl, bitmapsCharacter);
+    characterAnimationCtrl.set(MODEL_CHARACTER_ARMATUREACTION, true);
     characterAnimationCtrl.play();
 
-    // environment - pass all 25 textures in slot order
+    // setup environment model
     const unsigned int* bitmaps[IWATODAI_STREETS_TEX_COUNT] = {
         f007_009_07Bitmap,
         f007_009_16Bitmap,
@@ -141,7 +125,7 @@ void IwatodaiStreetsView::Init() {
     totalPolyCount = iwatodaiStreetsEnv.getPolyCount();
 
     // pause menu
-    streetsPauseMenu.init(bgSharedSlot, &isStreetsPauseMenuActive);
+    pauseMenuCmpt.init(bgSharedSlot, &isPauseMenuActive);
 }
 
 ViewState IwatodaiStreetsView::Update() {
@@ -154,11 +138,11 @@ ViewState IwatodaiStreetsView::Update() {
     u32 pressed = keysDown();
 
     if (pressed & KEY_START) {
-        isStreetsPauseMenuActive = !isStreetsPauseMenuActive;
+        isPauseMenuActive = !isPauseMenuActive;
     }
 
-    if (isStreetsPauseMenuActive) {
-        ViewState menuResult = streetsPauseMenu.update(pressed);
+    if (isPauseMenuActive) {
+        ViewState menuResult = pauseMenuCmpt.update(pressed);
         if (menuResult != ViewState::KEEP_CURRENT) {
             musicCtrl.pause();
             return menuResult;
@@ -185,11 +169,21 @@ ViewState IwatodaiStreetsView::Update() {
             characterPosition charPos = playerCtrl->isCharacterAt();
             glTranslatef(charPos.x, 0.1, charPos.z);
             glRotatef(charPos.facingAngle, 0.0f, 1.0f, 0.0f);
-            glBindTexture(GL_TEXTURE_2D, streetsCharacterTextureId);
             characterAnimationCtrl.render();
         glPopMatrix(1);
 
         glFlush(0);
+
+        // print coordinates (64x64 area from 0,0 to 64,64)
+        if (enableDebugPrint) {
+            iprintf("\x1b[21;0Htile(x,z): %d, %d",
+                (int)((charPos.x + worldOffsetX) / tileSize),
+                (int)((charPos.z + worldOffsetZ) / tileSize));
+            iprintf("\x1b[22;0Htranslate(x,z): %d, %d",
+                (int)(charPos.x * 100),
+                (int)(charPos.z * 100));
+            iprintf("\x1b[23;0Hangle(w,c): %d, %d", (int)(charPos.angle * 100), (int)(charPos.facingAngle * 100));
+        }
     }
 
     musicCtrl.update();
@@ -202,8 +196,8 @@ void IwatodaiStreetsView::Cleanup() {
     setBrightness(3, 0);
     consoleClear();
 
-    streetsPauseMenu.cancelSFX();
-    isStreetsPauseMenuActive = false;
+    pauseMenuCmpt.cancelSFX();
+    isPauseMenuActive = false;
 
     iwatodaiStreetsEnv.cleanup();
     glDeleteTextures(1, &streetsCharacterTextureId);

@@ -17,16 +17,35 @@
 #include "controllers/VideoController.h"
 #include "controllers/AnimationController.h"
 
+// components
+#include "components/PauseMenuComponent.h"
+
 // sfx
 #include "soundbank_bin.h"
 
+// character model
+#include "models/character.h"
+#include "diss_00.h"
+#include "diss_01.h"
+#include "diss_02.h"
+#include "diss_03.h"
+#include "diss_04.h"
+
+// variables
 volatile int frame = 0;
-volatile bool enableBillboards = true;
 int fps = 0;
 int fpsTimer = 0;
+// controllers
 MusicController musicCtrl;
 VideoController videoCtrl;
 AnimationController characterAnimationCtrl;
+const unsigned int* bitmapsCharacter[MODEL_CHARACTER_TEX_COUNT];
+// components
+PauseMenuComponent pauseMenuCmpt;
+bool enableBillboards = true;
+bool enableDebugPrint = false;
+bool isPauseMenuActive = false;
+
 View* currentView = nullptr;
 
 void SwitchView(View* newView) {
@@ -49,7 +68,7 @@ void SwitchView(View* newView) {
 void Vblank() {
 	frame++;
 }
-	
+
 int main(int argc, char *argv[]) {
 	irqSet(IRQ_VBLANK, Vblank);
 
@@ -68,6 +87,14 @@ int main(int argc, char *argv[]) {
 
     // initialize maxmod (for sfx)
     mmInitDefaultMem((mm_addr)soundbank_bin);
+
+    // setup character model
+    characterAnimationCtrl.loadModel("nitro:/models/character.bin");
+    bitmapsCharacter[MODEL_CHARACTER_TEX_DISS_00] = diss_00Bitmap;
+    bitmapsCharacter[MODEL_CHARACTER_TEX_DISS_01] = diss_01Bitmap;
+    bitmapsCharacter[MODEL_CHARACTER_TEX_DISS_02] = diss_02Bitmap;
+    bitmapsCharacter[MODEL_CHARACTER_TEX_DISS_03] = diss_03Bitmap;
+    bitmapsCharacter[MODEL_CHARACTER_TEX_DISS_04] = diss_04Bitmap;
 
     // start with DisclaimerView
     SwitchView(new DisclaimerView());
