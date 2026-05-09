@@ -13,7 +13,7 @@ void BattleController::execute()
     }
 
     active = true;
-    actions = {&attack, &guard, &persona};
+    actions = {&attack, &guard, &persona, &switchPersona};
 
     counter = 0;
 }
@@ -25,7 +25,7 @@ void BattleController::update(u32 keys)
         return;
     }
 
-    if (counter < enemies->size() && isEnemeyTurn)
+    if (counter < enemies->size() && isEnemyTurn)
     {
         enemyTurn();
         return;
@@ -36,7 +36,7 @@ void BattleController::update(u32 keys)
     {
         if (actions[i]->inProgress)
         {
-            bool madeAction = actions[i]->update();
+            bool madeAction = actions[i]->update(&keys);
             if (!actions[i]->inProgress)
             {
                 if (enemies->size() == 0)
@@ -45,7 +45,21 @@ void BattleController::update(u32 keys)
                 }
                 else if (madeAction)
                 {
-                    isEnemeyTurn = true;
+                    // properly erase dead enemies
+                    for (u32 i = 0; i < enemies->size(); i++)
+                        if (enemies->at(i)->hp <= 0)
+                        {
+                            enemies->erase(enemies->begin() + i);
+                            counter = 0;
+                            i--;
+                        }
+
+                    if (enemies->empty())
+                        exit();
+                    else
+                    {
+                        isEnemyTurn = true;
+                    }
                 }
             }
             return;
@@ -80,33 +94,64 @@ void BattleController::update(u32 keys)
 void BattleController::enemyTurn()
 {
     srand(time(0));
-
     int randomNum = rand() % enemies->at(counter)->attackCount;
-    player->hp -= enemies->at(counter)->attackSkill[randomNum]->calculateDamage(&enemies->at(counter)->ma, &enemies->at(counter)->st, &player->en, &enemies->at(counter)->lv, &player->lv);
 
-    iprintf("Attack with: ");
-    iprintf(enemies->at(counter)->attackSkill[randomNum]->name.c_str());
-    iprintf("\n");
+    AttackSkill *curSkill = enemies->at(counter)->attackSkill[randomNum];
 
-    char str[50];
-    std::sprintf(str, "remaing player hp: %lu \n", player->hp);
-    iprintf(str);
-
-    if (player->hp <= 0)
+    u32 damage = curSkill->calculateDamage(&enemies->at(counter)->ma, &enemies->at(counter)->st, &player->curPersona->en, &enemies->at(counter)->lv, &player->lv);
+    if (player->guarding)
     {
-        // idk just resets for now
-        player->hp = 72;
-        counter = 0;
-        exit();
+        iprintf("player guarded\n");
+        damage *= 0.4;
     }
-    else
+
+    bool attacked = false;
+    if (curSkill->race == AttackSkill::mag)
     {
+        if (!DeductAttackCost(&enemies->at(counter)->sp, curSkill->cost, "not enough SP\n"))
+        {
+            counter++;
+        }
+        else
+        {
+            attacked = true;
+        }
+    }
+    else if (curSkill->race == AttackSkill::phys)
+    {
+        if (!DeductAttackCost(&enemies->at(counter)->hp, curSkill->cost, "not enough HP\n"))
+        {
+            counter++;
+        }
+        else
+        {
+            attacked = true;
+        }
+    }
+
+    if (attacked)
+    {
+        player->hp -= damage;
+        iprintf("Attack with: ");
+        iprintf(curSkill->name.c_str());
+        iprintf("\n");
+        char str[50];
+        std::sprintf(str, "remaining player hp: %lu \n", player->hp);
+        iprintf(str);
+        if (player->hp <= 0)
+        {
+            player->hp = 72;
+            counter = 0;
+            exit();
+            return;
+        }
         counter++;
     }
 
     if (counter >= enemies->size())
     {
-        isEnemeyTurn = false;
+        player->guarding = false;
+        isEnemyTurn = false;
         counter = 0;
     }
 }
@@ -118,4 +163,4 @@ void BattleController::exit()
     active = false;
 }
 
-BattleController::BattleController(Player *iPlayer, std::vector<Enemy *> *iEnemies) : player(iPlayer), enemies(iEnemies), attack(enemies, player), guard(player), persona(enemies, player) {}
+BattleController::BattleController(Player *iPlayer, std::vector<Enemy *> *iEnemies) : player(iPlayer), enemies(iEnemies), attack(enemies, player), guard(player), persona(enemies, player), switchPersona(player) {}

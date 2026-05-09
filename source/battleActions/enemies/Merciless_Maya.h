@@ -9,14 +9,15 @@ struct Merciless_Maya : Enemy
     Slash_Attack slash_Attack;
     Agi agi;
     AttackSkill *myAttackSkill[2];
-    
-    Merciless_Maya() {
+
+    Merciless_Maya()
+    {
         myAttackSkill[0] = &slash_Attack;
         myAttackSkill[1] = &agi;
 
         name = "Merciless Maya";
         hp = 50;
-        sp = 21;
+        sp = 3;
         lv = 3;
         st = 4;
         ma = 4;

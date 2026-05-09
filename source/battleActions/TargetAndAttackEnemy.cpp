@@ -1,6 +1,6 @@
 #include "TargetAndAttackEnemy.h"
 
-bool TargetAndAttackActionEnemy::update(u32 *keys,  AttackSkill* attack)
+bool TargetAndAttackActionEnemy::update(u32 *keys, AttackSkill *attack)
 {
     if (*keys & KEY_LEFT)
     {
@@ -19,18 +19,14 @@ bool TargetAndAttackActionEnemy::update(u32 *keys,  AttackSkill* attack)
     {
         iprintf("Attacking: ");
         iprintf(enemies->at(*targetIndex)->name.c_str());
-        enemies->at(*targetIndex)->hp -= attack->calculateDamage(&player->ma, &player->st, &enemies->at(*targetIndex)->en, &player->lv, &enemies->at(*targetIndex)->lv);
         iprintf("\n");
+
+        enemies->at(*targetIndex)->hp -= attack->calculateDamage(&player->curPersona->ma, &player->curPersona->st, &enemies->at(*targetIndex)->en, &player->lv, &enemies->at(*targetIndex)->lv);
 
         char str[50];
-        std::sprintf(str, "remaing Enemy hp: %d \n", enemies->at(*targetIndex)->hp);
+        std::sprintf(str, "remaing Enemy hp: %lu \n", enemies->at(*targetIndex)->hp);
         iprintf(str);
         iprintf("\n");
-
-        if (enemies->at(*targetIndex)->hp <= 0)
-        {
-            enemies->erase(enemies->begin() + *targetIndex);
-        }
 
         return true;
     }

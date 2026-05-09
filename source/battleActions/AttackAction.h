@@ -22,5 +22,5 @@ struct AttackAction : ActionBase
     }
 
     void execute() override;
-    bool update() override;
+    bool update(u32 *keys) override;
 };

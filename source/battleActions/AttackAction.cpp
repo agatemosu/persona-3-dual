@@ -8,21 +8,20 @@ void AttackAction::execute()
     targetIndex = 0;
 }
 
-bool AttackAction::update()
+bool AttackAction::update(u32 *keys)
 {
-    u32 keys = keysDown();
     u32 enemyCount = enemies->size();
 
-    updateIndex.update(keys, targetIndex, enemyCount);
+    updateIndex.update(*keys, targetIndex, enemyCount);
 
-    bool madeAction = targetAndAttackActionEnemy->update(&keys, player->baseAttackAction);
+    bool madeAction = targetAndAttackActionEnemy->update(keys, player->baseAttackAction);
     if (madeAction)
     {
         targetIndex = 0;
         inProgress = false;
     }
 
-    if (keys & KEY_B)
+    if (*keys & KEY_B)
     {
         inProgress = false;
     }
