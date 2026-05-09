@@ -26,6 +26,15 @@ struct Orpheus : PersonaBase
         attackCount = 2;
         attackSkill = myAttcking;
 
-        // add resistances and arcana in the future
+        affinities[Element::Slash] = Neutral;
+        affinities[Element::Strike] = Neutral;
+        affinities[Element::Pierce] = Neutral;
+        affinities[Element::Fire] = Neutral;
+        affinities[Element::Ice] = Neutral;
+        affinities[Element::Electricity] = Weak;
+        affinities[Element::Wind] = Neutral;
+        affinities[Element::Light] = Neutral;
+        affinities[Element::Dark] = Weak;
+        // add arcana
     }
 };

@@ -7,6 +7,7 @@ struct Agi : AttackSkill
     {
         moveDamage = 40;
         race = mag;
+        element = Fire;
         cost = 3;
         name = "Agi";
     }

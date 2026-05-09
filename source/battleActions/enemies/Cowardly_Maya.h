@@ -7,7 +7,8 @@ struct Cowardly_Maya : Enemy
 {
     Slash_Attack slash_Attack;
     AttackSkill *myAttackSkill[1];
-    Cowardly_Maya() {
+    Cowardly_Maya()
+    {
         myAttackSkill[0] = &slash_Attack;
 
         name = "Cowardly Maya";
@@ -21,5 +22,15 @@ struct Cowardly_Maya : Enemy
         lu = 2;
         attackSkill = myAttackSkill;
         attackCount = 1;
+
+        affinities[Element::Slash] = Weak;
+        affinities[Element::Strike] = Neutral;
+        affinities[Element::Pierce] = Neutral;
+        affinities[Element::Fire] = Weak;
+        affinities[Element::Ice] = Neutral;
+        affinities[Element::Electricity] = Neutral;
+        affinities[Element::Wind] = Neutral;
+        affinities[Element::Light] = Neutral;
+        affinities[Element::Dark] = Neutral;
     }
 };
