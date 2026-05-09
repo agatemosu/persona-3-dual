@@ -98,7 +98,7 @@ void BattleController::enemyTurn()
 
     AttackSkill *curSkill = enemies->at(counter)->attackSkill[randomNum];
 
-    u32 damage = curSkill->calculateDamage(&enemies->at(counter)->ma, &enemies->at(counter)->st, &player->en, &enemies->at(counter)->lv, &player->lv);
+    u32 damage = curSkill->calculateDamage(&enemies->at(counter)->ma, &enemies->at(counter)->st, &player->curPersona->en, &enemies->at(counter)->lv, &player->lv);
     if (player->guarding)
     {
         iprintf("player guarded\n");

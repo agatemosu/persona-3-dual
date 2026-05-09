@@ -12,38 +12,39 @@ bool PersonaAction::update(u32 *keys)
 {
     if (menuState == SelectSkill)
     {
-        u32 skillCount = player->attackCount;
-
+        u32 skillCount = player->curPersona->attackCount;
         updateIndex.update(*keys, targetIndex, skillCount);
+
+        AttackSkill *curSkill = player->curPersona->attackSkill[targetIndex];
 
         if (*keys & KEY_LEFT)
         {
             iprintf("Cur: ");
-            iprintf(player->attackSkill[targetIndex]->name.c_str());
+            iprintf(curSkill->name.c_str());
             iprintf("\n");
         }
         else if (*keys & KEY_RIGHT)
         {
             iprintf("Cur: ");
-            iprintf(player->attackSkill[targetIndex]->name.c_str());
+            iprintf(curSkill->name.c_str());
             iprintf("\n");
         }
 
         if (*keys & KEY_A)
         {
-            if (player->attackSkill[targetIndex]->race == AttackSkill::mag)
+            if (curSkill->race == AttackSkill::mag)
             {
-                if (!DeductAttackCost(&player->sp, player->attackSkill[targetIndex]->cost, "not enough SP\n"))
+                if (!DeductAttackCost(&player->sp, curSkill->cost, "not enough SP\n"))
                     return false;
             }
-            else if (player->attackSkill[targetIndex]->race == AttackSkill::phys)
+            else if (curSkill->race == AttackSkill::phys)
             {
-                if (!DeductAttackCost(&player->hp, player->attackSkill[targetIndex]->cost, "not enough HP\n"))
+                if (!DeductAttackCost(&player->hp, curSkill->cost, "not enough HP\n"))
                     return false;
             }
 
             iprintf("Sel: ");
-            selectedSkill = player->attackSkill[targetIndex];
+            selectedSkill = curSkill;
             iprintf(selectedSkill->name.c_str());
             iprintf("\n");
 
