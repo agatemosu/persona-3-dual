@@ -73,7 +73,7 @@ void IwatodaiDormView::Init()
     // setup shared bg slot on sub screen
     bgSharedSlot = bgInitSub(0, BgType_Text8bpp, BgSize_T_256x256, 0, 1);
     dmaFillHalfWords(0, bgGetMapPtr(bgSharedSlot), 2048);
-    
+
     // setup console
     consoleInit(&console, 1, BgType_Text4bpp, BgSize_T_256x256, 4, 5, false, true);
     consoleSelect(&console);
@@ -92,7 +92,7 @@ void IwatodaiDormView::Init()
 
     // setup character model
     characterAnimationCtrl.loadModel("nitro:/models/character.bin");
-    characterAnimationCtrl.set(MODEL_CHARACTER_WALK, true);
+    characterAnimationCtrl.set(MODEL_CHARACTER_ARMATUREACTION, true);
     characterAnimationCtrl.play();
 
     // setup environment model
@@ -121,7 +121,7 @@ ViewState IwatodaiDormView::Update()
     if (pressed & KEY_START) {
         isPauseMenuActive = !isPauseMenuActive;
     }
-    
+
     if (isPauseMenuActive) {
         ViewState menuResult = pauseMenu.update(pressed);
         if (menuResult != ViewState::KEEP_CURRENT) {
@@ -133,7 +133,7 @@ ViewState IwatodaiDormView::Update()
         if (!dialogueCtrl.isActive() && !battleController.isActive()) {
             // move character
             camPos = playerCtrl->update(keys);
-          
+
             // start battle
             if (keys & KEY_Y)
             {
@@ -173,12 +173,12 @@ ViewState IwatodaiDormView::Update()
         glPopMatrix(1);
 
         // draw character
-        glPushMatrix();        
+        glPushMatrix();
             // move character
             characterPosition charPos = playerCtrl->isCharacterAt();
             glTranslatef(charPos.x, 0.1, charPos.z);
             glRotatef(charPos.facingAngle, 0.0f, 1.0f, 0.0f);
-            
+
             // draw character
             glBindTexture(GL_TEXTURE_2D, characterTextureId);
             characterAnimationCtrl.render();

@@ -53,7 +53,7 @@ void IwatodaiStreetsView::Init() {
     vramSetBankA(VRAM_A_TEXTURE);
     vramSetBankB(VRAM_B_TEXTURE);
     vramSetBankC(VRAM_C_SUB_BG);
-    vramSetBankD(VRAM_D_TEXTURE); 
+    vramSetBankD(VRAM_D_TEXTURE);
     bgExtPaletteEnableSub();
 
     glInit();
@@ -106,10 +106,10 @@ void IwatodaiStreetsView::Init() {
 
     // character model
     characterAnimationCtrl.loadModel("nitro:/models/character.bin");
-    characterAnimationCtrl.set(MODEL_CHARACTER_WALK, true);
+    characterAnimationCtrl.set(MODEL_CHARACTER_ARMATUREACTION, true);
     characterAnimationCtrl.play();
 
-    // environment - pass all 25 textures in slot order
+    // environment model
     const unsigned int* bitmaps[IWATODAI_STREETS_TEX_COUNT] = {
         f007_009_07Bitmap,
         f007_009_16Bitmap,
