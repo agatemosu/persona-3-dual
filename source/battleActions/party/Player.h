@@ -1,4 +1,4 @@
-#pragma once 
+#pragma once
 #include <nds.h>
 #include <string>
 #include "../skills/AttackSkill.h"
@@ -13,7 +13,7 @@ Lu	Represents luck, which is taken into account when using certain skills involv
 struct Player
 {
     std::string name;
-    s32 hp;
+    u32 hp;
     u32 sp;
     u32 lv;
     u32 st;
@@ -26,9 +26,8 @@ struct Player
     u32 attackCount;
 
     bool guarding = false;
-    //add resitances and arcana in the future
+    // add resitances and arcana in the future
 
     Player() {}
     ~Player() {};
 };
-

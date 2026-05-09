@@ -31,6 +31,17 @@ bool Persona::update(u32 *keys)
 
         if (*keys & KEY_A)
         {
+            if (player->attackSkill[targetIndex]->race == AttackSkill::mag)
+            {
+                if (!DeductAttackCost(&player->sp, player->attackSkill[targetIndex]->cost, "not enough SP\n"))
+                    return false;
+            }
+            else if (player->attackSkill[targetIndex]->race == AttackSkill::phys)
+            {
+                if (!DeductAttackCost(&player->hp, player->attackSkill[targetIndex]->cost, "not enough HP\n"))
+                    return false;
+            }
+
             iprintf("Sel: ");
             selectedSkill = player->attackSkill[targetIndex];
             iprintf(selectedSkill->name.c_str());
