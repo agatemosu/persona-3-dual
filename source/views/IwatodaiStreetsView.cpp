@@ -89,6 +89,7 @@ void IwatodaiStreetsView::Init() {
     musicCtrl.init(IWATODAI_STREETS_MUSIC, 0.0f, -1.0f);
 
     // setup character model
+    characterAnimationCtrl.loadModel("nitro:/models/character.bin");
     character_loadTextures(characterAnimationCtrl, bitmapsCharacter);
 
     // setup environment model

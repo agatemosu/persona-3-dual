@@ -90,7 +90,6 @@ int main(int argc, char *argv[]) {
     mmInitDefaultMem((mm_addr)soundbank_bin);
 
     // setup character model
-    characterAnimationCtrl.loadModel("nitro:/models/character.bin");
     bitmapsCharacter[MODEL_CHARACTER_TEX_DISS_00] = diss_00Bitmap;
     bitmapsCharacter[MODEL_CHARACTER_TEX_DISS_01] = diss_01Bitmap;
     bitmapsCharacter[MODEL_CHARACTER_TEX_DISS_02] = diss_02Bitmap;
