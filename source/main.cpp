@@ -100,7 +100,7 @@ int main(int argc, char *argv[]) {
     // start with DisclaimerView
     // seed with DS hardware timer for reliable randomness (time() can return 0 on DS)
     TIMER0_CR = TIMER_ENABLE | TIMER_DIV_1;
-    srand(TIMER0_DATA ^ (IPC->time.rtc.seconds + IPC->time.rtc.minutes * 60));
+    srand(TIMER0_DATA);
     SwitchView(new DisclaimerView());
 
     // DEBUG
