@@ -22,14 +22,14 @@ bool TargetAndAttackActionEnemy::update(u32 *keys, AttackSkill *attack)
         iprintf("\n");
 
         u32 damage = attack->calculateDamage(player->curPersona->getBattleStats(), enemies->at(*targetIndex)->getBattleStats(), &player->lv, &enemies->at(*targetIndex)->lv);
-        enemies->at(*targetIndex)->hp -= damage;
+        enemies->at(*targetIndex)->hp -= (s32)damage;
 
         char str1[25];
-        std::sprintf(str1, "Damage: %lu \n", damage);
+        std::sprintf(str1, "Damage: %ld \n", damage);
         iprintf(str1);
 
         char str2[50];
-        std::sprintf(str2, "remaing Enemy hp: %lu \n", enemies->at(*targetIndex)->hp);
+        std::sprintf(str2, "remaing Enemy hp: %ld \n", enemies->at(*targetIndex)->hp);
         iprintf(str2);
 
         return true;

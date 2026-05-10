@@ -55,8 +55,7 @@ struct AttackSkill
             affinityMtp = -2.0f;
 
         // todo: level diffrence never goes under 0 for either party during boss fights
-        u32 result = (u32)floor(sqrt((float)(moveDamage * 15 * Atk) / defenderStats->en) * 2 * levelDifference * affinityMtp);
-        return result;
+        return (u32)floor(sqrt((float)(moveDamage * 15 * Atk) / defenderStats->en) * 2 * levelDifference * affinityMtp);
     }
 
     virtual ~AttackSkill() = default;

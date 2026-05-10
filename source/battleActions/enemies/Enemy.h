@@ -14,8 +14,9 @@ Lu	Represents luck, which is taken into account when using certain skills involv
 struct Enemy : BattleStats
 {
     std::string name;
-    u32 hp;
-    u32 sp;
+    s32 hp;
+    // needs to be signed at least for now so i can pass it
+    s32 sp;
     u32 lv;
     AttackSkill **attackSkill;
     u32 attackCount;

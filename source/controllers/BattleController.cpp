@@ -131,12 +131,12 @@ void BattleController::enemyTurn()
 
     if (attacked)
     {
-        player->hp -= damage;
+        player->hp -= (s32)damage;
         iprintf("Attack with: ");
         iprintf(curSkill->name.c_str());
         iprintf("\n");
         char str[50];
-        std::sprintf(str, "remaining player hp: %lu \n", player->hp);
+        std::sprintf(str, "remaining player hp: %ld \n", player->hp);
         iprintf(str);
         if (player->hp <= 0)
         {

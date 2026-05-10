@@ -14,8 +14,8 @@ Lu	Represents luck, which is taken into account when using certain skills involv
 struct Player
 {
     std::string name;
-    u32 hp;
-    u32 sp;
+    s32 hp;
+    s32 sp;
     u32 lv;
     AttackSkill *baseAttackAction;
     PersonaBase **personas;
