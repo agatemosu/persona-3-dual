@@ -41,14 +41,35 @@ def parent_index(bone, bone_list: list) -> int:
 def get_material_image(mat):
     if mat is None or not mat.use_nodes:
         return None
+
+    # 1. Try to trace the Principled BSDF Base Color (Most accurate)
+    for node in mat.node_tree.nodes:
+        if node.type == 'BSDF_PRINCIPLED':
+            color_socket = node.inputs.get('Base Color')
+            if color_socket and color_socket.is_linked:
+                src_node = color_socket.links[0].from_node
+                if src_node.type == 'TEX_IMAGE' and src_node.image:
+                    return src_node.image
+
+    # 2. Fallback: Find ANY Image Texture that is linked to a shader
+    for node in mat.node_tree.nodes:
+        if node.type == 'TEX_IMAGE' and node.image:
+            if getattr(node.outputs[0], 'is_linked', False):
+                return node.image
+
+    # 3. Final Resort: Just grab the first image node that exists
     for node in mat.node_tree.nodes:
         if node.type == "TEX_IMAGE" and node.image:
             return node.image
+
     return None
 
 
 def tex_filename_for_image(image) -> str:
-    return sanitize(os.path.splitext(image.name)[0]) + ".png"
+    # Instead of splitting extensions, we sanitize Blender's exact name.
+    # "diffused texture.001" becomes "diffused_texture_001"
+    clean_name = sanitize(image.name)
+    return clean_name + ".png"
 
 
 def image_to_png_bytes(image) -> bytes:
