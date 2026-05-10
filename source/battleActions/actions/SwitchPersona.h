@@ -2,8 +2,8 @@
 #include <stdio.h>
 
 #include "ActionBase.h"
-#include "party/Player.h"
-#include "UpdateIndex.h"
+#include "../party/Player.h"
+#include "../UpdateIndex.h"
 
 struct SwitchPersona : ActionBase
 {

@@ -20,8 +20,6 @@ struct BattleStats
         Repel
     };
 
-    // this works for now but if you have a better idea leave a message (idk map?)
-
     Affinity affinities[10] = {
         Neutral,
         Neutral,

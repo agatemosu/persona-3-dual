@@ -1,11 +1,11 @@
 #pragma once
 #include "ActionBase.h"
-#include "enemies/Enemy.h"
-#include "party/Player.h"
+#include "../enemies/Enemy.h"
+#include "../party/Player.h"
 #include <stdio.h>
 #include <vector>
-#include "UpdateIndex.h"
-#include "TargetAndAttackEnemy.h"
+#include "../UpdateIndex.h"
+#include "../TargetAndAttackEnemy.h"
 
 struct AttackAction : ActionBase
 {

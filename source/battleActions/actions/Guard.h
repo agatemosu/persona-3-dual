@@ -1,6 +1,6 @@
 #pragma once
 #include "ActionBase.h"
-#include "party/Player.h"
+#include "../party/Player.h"
 
 struct Guard : ActionBase
 {
