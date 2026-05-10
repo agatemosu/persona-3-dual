@@ -6,11 +6,11 @@
 #include <vector>
 #include <array>
 
-#include "./battleActions/ActionBase.h"
-#include "./battleActions/AttackAction.h"
-#include "./battleActions/Guard.h"
-#include "./battleActions/PersonaAction.h"
-#include "./battleActions/SwitchPersona.h"
+#include "./battleActions/actions/ActionBase.h"
+#include "./battleActions/actions/AttackAction.h"
+#include "./battleActions/actions/Guard.h"
+#include "./battleActions/actions/PersonaAction.h"
+#include "./battleActions/actions/SwitchPersona.h"
 #include "./battleActions/party/Player.h"
 #include "./battleActions/enemies/Enemy.h"
 #include "./battleActions/UpdateIndex.h"

@@ -1,7 +1,8 @@
-#pragma once 
+#pragma once
 #include <nds.h>
 #include <string>
 #include "../skills/AttackSkill.h"
+#include "../BattleStats.h"
 
 /*
 St	Represents strength and physical damage.
@@ -10,22 +11,21 @@ En	Represents endurance, which determines your defense and how much damage you c
 Ag	Represents agility, which determines your place in the turn order.
 Lu	Represents luck, which is taken into account when using certain skills involving status afflictions or insta-death abilities.*/
 
-struct Enemy
+struct Enemy : BattleStats
 {
     std::string name;
-    u32 hp;
-    u32 sp;
+    s32 hp;
+    // needs to be signed at least for now so i can pass it
+    s32 sp;
     u32 lv;
-    u32 st;
-    u32 ma;
-    u32 en;
-    u32 ag;
-    u32 lu;
     AttackSkill **attackSkill;
     u32 attackCount;
-    //add resitances and arcana in the future
+
+    bool oneMore = false;
+    // knocked will be needed in the future, no use yet
+    bool knockedDown = false;
+    // add arcana in the future
 
     Enemy() {}
     virtual ~Enemy() = default;
 };
-

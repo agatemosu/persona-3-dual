@@ -3,10 +3,10 @@
 #include <vector>
 
 #include "ActionBase.h"
-#include "enemies/Enemy.h"
-#include "party/Player.h"
-#include "TargetAndAttackEnemy.h"
-#include "UpdateIndex.h"
+#include "../enemies/Enemy.h"
+#include "../party/Player.h"
+#include "../TargetAndAttackEnemy.h"
+#include "../UpdateIndex.h"
 
 struct PersonaAction : ActionBase
 {

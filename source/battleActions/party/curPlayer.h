@@ -28,7 +28,7 @@ struct curPlayer : Player
     {
         name = "Makoto";
         hp = 720;
-        sp = 4;
+        sp = 50;
         lv = 2;
 
         baseAttackAction = &slash_Attack;

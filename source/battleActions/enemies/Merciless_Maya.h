@@ -16,8 +16,8 @@ struct Merciless_Maya : Enemy
         myAttackSkill[1] = &agi;
 
         name = "Merciless Maya";
-        hp = 50;
-        sp = 3;
+        hp = 700;
+        sp = 300;
         lv = 3;
         st = 4;
         ma = 4;
@@ -26,5 +26,15 @@ struct Merciless_Maya : Enemy
         lu = 2;
         attackSkill = myAttackSkill;
         attackCount = 2;
+
+        affinities[Element::Slash] = Weak;
+        affinities[Element::Strike] = Neutral;
+        affinities[Element::Pierce] = Neutral;
+        affinities[Element::Fire] = Resist;
+        affinities[Element::Ice] = Weak;
+        affinities[Element::Electricity] = Null;
+        affinities[Element::Wind] = Neutral;
+        affinities[Element::Light] = Neutral;
+        affinities[Element::Dark] = Neutral;
     }
 };

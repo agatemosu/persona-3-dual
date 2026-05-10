@@ -7,6 +7,7 @@ struct Bufu : AttackSkill
     {
         moveDamage = 40;
         race = mag;
+        element = Ice;
         cost = 3;
         name = "Bufu";
     }

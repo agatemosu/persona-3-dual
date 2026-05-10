@@ -26,6 +26,15 @@ struct Forneus : PersonaBase
         attackCount = 2;
         attackSkill = myAttcking;
 
-        // add resistances and arcana in the future
+        affinities[Element::Slash] = Neutral;
+        affinities[Element::Strike] = Neutral;
+        affinities[Element::Pierce] = Neutral;
+        affinities[Element::Fire] = Weak;
+        affinities[Element::Ice] = Resist;
+        affinities[Element::Electricity] = Neutral;
+        affinities[Element::Wind] = Neutral;
+        affinities[Element::Light] = Neutral;
+        affinities[Element::Dark] = Neutral;
+        // add arcana
     }
 };
