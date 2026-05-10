@@ -102,8 +102,8 @@ jobs:
       - name: Cache and install ffmpeg
         uses: awalsh128/cache-apt-pkgs-action@latest
         with:
-          packages: ffmpeg
-          version: 1.0
+          packages: ffmpeg libblas3 liblapack3
+          version: 2.0
 
       # Python venv
       # Cache is keyed to requirements.txt so it auto-invalidates on dep changes.
