@@ -16,7 +16,7 @@ struct AttackSkill
         mag
     };
 
-    u32 cost;
+    s32 cost;
     Race race;
     u32 element;
     std::string name;
