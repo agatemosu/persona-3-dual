@@ -113,7 +113,7 @@ cameraPosition CharacterController::update(u32 keys)
     if (deltaX != 0.0f && deltaZ != 0.0f)
     {
         // set walking animation
-        if (characterAnimationCtrl.getCurrentAnimIndex() != MODEL_CHARACTER_4) {
+        if (enableCharacterAnim && (characterAnimationCtrl.getCurrentAnimIndex() != MODEL_CHARACTER_4)) {
             characterAnimationCtrl.set(MODEL_CHARACTER_4, true);
         }
 
@@ -123,7 +123,7 @@ cameraPosition CharacterController::update(u32 keys)
         deltaZ *= invSqrt2;
     } else {
         // set idle animation
-        if (characterAnimationCtrl.getCurrentAnimIndex() != MODEL_CHARACTER_1) {
+        if (enableCharacterAnim && (characterAnimationCtrl.getCurrentAnimIndex() != MODEL_CHARACTER_1)) {
             characterAnimationCtrl.set(MODEL_CHARACTER_1, true);
         }
     }
