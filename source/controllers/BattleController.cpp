@@ -56,9 +56,14 @@ void BattleController::update(u32 keys)
 
                     if (enemies->empty())
                         exit();
-                    else
+
+                    if (!player->oneMore)
                     {
                         isEnemyTurn = true;
+                    }
+                    else
+                    {
+                        player->oneMore = false;
                     }
                 }
             }
@@ -93,6 +98,12 @@ void BattleController::update(u32 keys)
 
 void BattleController::enemyTurn()
 {
+    if (enemies->at(counter)->knockedDown)
+    {
+        // recovery logic in the future
+        enemies->at(counter)->knockedDown = false;
+    }
+
     srand(time(0));
     int randomNum = rand() % enemies->at(counter)->attackCount;
 
@@ -145,12 +156,33 @@ void BattleController::enemyTurn()
             exit();
             return;
         }
-        counter++;
+
+        u32 affinity = player->curPersona->affinities[curSkill->element];
+        if (affinity == BattleStats::Affinity::Weak && !player->knockedDown && !player->guarding)
+        {
+            enemies->at(counter)->oneMore = true;
+            iprintf("one more!\n");
+            player->knockedDown = true;
+        }
+
+        if (!enemies->at(counter)->oneMore)
+        {
+            counter++;
+        }
+        else
+        {
+            enemies->at(counter)->oneMore = false;
+        }
     }
 
     if (counter >= enemies->size())
     {
         player->guarding = false;
+        if (player->knockedDown)
+        {
+            // recovery logic in the future
+            player->knockedDown = false;
+        }
         isEnemyTurn = false;
         counter = 0;
     }

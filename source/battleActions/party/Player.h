@@ -23,6 +23,8 @@ struct Player
     u32 personaCount;
 
     bool guarding = false;
+    bool oneMore = false;
+    bool knockedDown = false;
 
     Player() {}
     ~Player() {};

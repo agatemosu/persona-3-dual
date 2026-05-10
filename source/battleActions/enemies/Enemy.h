@@ -20,6 +20,10 @@ struct Enemy : BattleStats
     u32 lv;
     AttackSkill **attackSkill;
     u32 attackCount;
+
+    bool oneMore = false;
+    // knocked will be needed in the future, no use yet
+    bool knockedDown = false;
     // add arcana in the future
 
     Enemy() {}

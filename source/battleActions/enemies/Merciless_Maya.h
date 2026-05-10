@@ -16,8 +16,8 @@ struct Merciless_Maya : Enemy
         myAttackSkill[1] = &agi;
 
         name = "Merciless Maya";
-        hp = 70;
-        sp = 3;
+        hp = 700;
+        sp = 300;
         lv = 3;
         st = 4;
         ma = 4;
