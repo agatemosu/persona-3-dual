@@ -96,22 +96,14 @@ jobs:
           echo "PATH=/opt/devkitpro/tools/bin:/opt/devkitpro/devkitARM/bin:$PATH" >> $GITHUB_ENV
 
       # System tools (ffmpeg)
-      # awalsh128/cache-apt-pkgs-action handles install + caching automatically.
-      # First run installs and saves; subsequent runs restore in ~2s.
-      # Bump version: 2.0 → 3.0 to force a clean reinstall and avoid a broken
-      # cached state where libblas.so.3 is present but ldconfig hasn't indexed it.
-      - name: Cache and install ffmpeg
-        uses: awalsh128/cache-apt-pkgs-action@latest
-        with:
-          packages: ffmpeg libblas3 liblapack3
-          version: 3.0
-
-      # After a cache restore, ldconfig is not re-run, so shared libraries
-      # installed by apt (libblas.so.3, liblapack.so.3) are invisible to the
-      # dynamic linker even though the files exist on disk. Running ldconfig
-      # explicitly fixes this whether the step was a live install or a restore.
-      - name: Refresh dynamic linker cache
-        run: sudo ldconfig
+      # Installed directly via apt rather than cached — ffmpeg + its BLAS/LAPACK
+      # deps create .so symlinks via ldconfig during post-install hooks, which
+      # cache-restore actions skip. Direct apt install is fast (~15s) and avoids
+      # the "libblas.so.3: cannot open shared object file" linker failure.
+      - name: Install ffmpeg
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends ffmpeg libblas3 liblapack3
 
       # Python venv
       # Cache is keyed to requirements.txt so it auto-invalidates on dep changes.
