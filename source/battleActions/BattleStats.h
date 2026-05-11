@@ -1,6 +1,7 @@
 #pragma once
 #include <nds.h>
 #include "Element.h"
+#include "armours/Armour.h"
 
 struct BattleStats
 {
