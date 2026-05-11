@@ -3,7 +3,7 @@
 #include <string>
 #include "../skills/AttackSkill.h"
 #include "../personas/PersonaBase.h"
-#include "../armourType.h"
+#include "../ArmourType.h"
 #include "../armours/Armour.h"
 
 /*
