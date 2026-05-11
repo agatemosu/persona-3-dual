@@ -97,7 +97,7 @@ jobs:
                 title:  $title,
                 color:  $color,
                 url:    $url,
-                fields: (fork_field + [
+                fields: ($fork_field + [
                   { name: "Build",     value: $build_type, inline: false },
                   { name: "Branch",    value: $branch,     inline: true  },
                   { name: "Commit",    value: $sha,        inline: true  },
