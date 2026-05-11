@@ -43,6 +43,11 @@ jobs:
       # inline Python, because embedding multi-line Python inside a YAML block
       # scalar causes a syntax error. Unindented Python lines are interpreted
       # by the YAML parser as ending the block.
+      #
+      # The tag is also written to build-version.txt and uploaded as an artifact
+      # so that notify.yml (which runs in a separate workflow_run context with no
+      # access to this job's step outputs) can read it and include it in the
+      # Discord notification.
       - name: Generate version tag
         id: version
         if: github.event_name != 'pull_request'
@@ -63,10 +68,24 @@ jobs:
           TAG="${PREFIX}${SUFFIX}"
           RELEASE_NAME="Autobuild: ${TAG}"
 
+          echo "${TAG}" > build-version.txt
+
           echo "tag=${TAG}"                   >> $GITHUB_OUTPUT
           echo "release_name=${RELEASE_NAME}" >> $GITHUB_OUTPUT
           echo "Version tag : ${TAG}"
           echo "Release name: ${RELEASE_NAME}"
+
+      # Upload the version tag so notify.yml can read it.
+      # Skipped on PRs since they don't generate a tag.
+      # Retention of 1 day is enough — notify.yml fires within seconds of this
+      # job completing. Using a short retention avoids cluttering artifact storage.
+      - name: Upload version artifact
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-artifact@v5
+        with:
+          name: build-version
+          path: build-version.txt
+          retention-days: 1
 
       # devkitARM
       - name: Prepare devkitPro directory
@@ -96,25 +115,41 @@ jobs:
           echo "DEVKITARM=/opt/devkitpro/devkitARM" >> $GITHUB_ENV
           echo "PATH=/opt/devkitpro/tools/bin:/opt/devkitpro/devkitARM/bin:$PATH" >> $GITHUB_ENV
 
-      # System tools (ffmpeg)
-      # Installed directly via apt rather than cached — ffmpeg + its BLAS/LAPACK
-      # deps create .so symlinks via ldconfig during post-install hooks, which
-      # cache-restore actions skip. Direct apt install is fast (~15s) and avoids
-      # the "libblas.so.3: cannot open shared object file" linker failure.
-      - name: Install ffmpeg
-        run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y --no-install-recommends ffmpeg libblas3 liblapack3
+      # System tools (ffmpeg + BLAS)
+      # ffmpeg is cached via awalsh128 — subsequent runs restore in ~2s.
+      #
+      # libblas3 / liblapack3 are intentionally NOT included in the awalsh128
+      # package list. Their .so.3 symlinks are managed by update-alternatives,
+      # a post-install hook that awalsh128 skips entirely on cache restore.
+      # Without the hook, ffmpeg fails at runtime with:
+      #   libblas.so.3: cannot open shared object file: No such file or directory
+      # sudo ldconfig alone does not fix this because the symlink itself is never
+      # created — ldconfig only updates the linker cache, not the alternatives.
+      #
+      # The fix is to install those two packages directly with apt every run.
+      # They are small (~200 KB combined) and the install completes in ~1s,
+      # ensuring update-alternatives always fires and the symlink is always live.
+      - name: Cache and install ffmpeg
+        uses: awalsh128/cache-apt-pkgs-action@latest
+        with:
+          packages: ffmpeg
+          version: 1.0
+
+      - name: Install BLAS dependencies
+        run: sudo apt-get install -y --no-install-recommends libblas3 liblapack3
 
       # Python venv
       # Cache is keyed to requirements.txt so it auto-invalidates on dep changes.
+      # Key is versioned (v2) because the venv path moved from .venv (workspace)
+      # to ~/.venv (home) — bumping forces a clean write at the new location and
+      # avoids perpetual cache misses against stale v1 entries.
       - name: Cache Python venv
         uses: actions/cache@v5
         with:
           path: ~/.venv
-          key: python-venv-${{ runner.os }}-${{ hashFiles('tools/requirements.txt') }}
+          key: python-venv-v2-${{ runner.os }}-${{ hashFiles('tools/requirements.txt') }}
           restore-keys: |
-            python-venv-${{ runner.os }}-
+            python-venv-v2-${{ runner.os }}-
 
       - name: Set up Python venv
         run: |
@@ -153,7 +188,7 @@ jobs:
 
       # NDS header validation
       # Uses od (standard POSIX tool, always available) to read raw bytes from
-      # the 512-byte NDS header
+      # the 512-byte NDS header.
       #
       # The Nintendo logo CRC at offset 0x15C must be 0xCF56. This value is
       # hard-coded into NDS hardware and required by every emulator. If it is
@@ -293,93 +328,3 @@ jobs:
             [ -n "$SHA256" ] && echo "| SHA-256   | \`${SHA256}\` |" || true
             [ -n "$MD5"    ] && echo "| MD5       | \`${MD5}\` |"    || true
           } >> $GITHUB_STEP_SUMMARY
-
-      # Discord notification
-      # Fires on success, failure, and cancellation.
-      # If DISCORD_WEBHOOK secret is absent, exits cleanly, never fails the build.
-      # jq builds the JSON payload so branch names / commit SHAs with special
-      # characters cannot produce malformed JSON (injection-safe).
-      - name: Notify Discord
-        if: always()
-        env:
-          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
-          JOB_STATUS:      ${{ job.status }}
-          IS_PR:           ${{ github.event_name == 'pull_request' }}
-          PR_NUMBER:       ${{ github.event.number }}
-          VERSION_TAG:     ${{ steps.version.outputs.tag }}
-          BRANCH:          ${{ github.ref_name }}
-          COMMIT_SHA:      ${{ github.sha }}
-          ACTOR:           ${{ github.actor }}
-          REPO:            ${{ github.repository }}
-          BASE_REPO:       ${{ github.event.repository.full_name }}
-          SERVER_URL:      ${{ github.server_url }}
-        run: |
-          if [ -z "$DISCORD_WEBHOOK" ]; then
-            echo "DISCORD_WEBHOOK secret not configured — skipping Discord notification"
-            exit 0
-          fi
-
-          case "$JOB_STATUS" in
-            success)   COLOR=3066993;  EMOJI="✅" ;;
-            cancelled) COLOR=9807270;  EMOJI="⏹️" ;;
-            *)         COLOR=15158332; EMOJI="❌" ;;
-          esac
-
-          SHORT_SHA="${COMMIT_SHA:0:7}"
-          VERSION_TAG="${VERSION_TAG:-unknown}"
-
-          # Detect forks: REPO is the repo the workflow is running in;
-          # BASE_REPO is the repo the event targets (always the upstream repo).
-          # They differ when a fork triggers the workflow.
-          if [ "$REPO" != "$BASE_REPO" ]; then
-            IS_FORK="true"
-            FORK_LABEL=" [fork: ${REPO}]"
-          else
-            IS_FORK="false"
-            FORK_LABEL=""
-          fi
-
-          if [ "$IS_PR" = "true" ]; then
-            TITLE="${EMOJI} PR #${PR_NUMBER} — Build ${JOB_STATUS}${FORK_LABEL}"
-            URL="${SERVER_URL}/${REPO}/pull/${PR_NUMBER}"
-            BUILD_TYPE="Pull Request #${PR_NUMBER}"
-          else
-            TITLE="${EMOJI} Build ${JOB_STATUS}: ${VERSION_TAG}${FORK_LABEL}"
-            URL="${SERVER_URL}/${REPO}/releases/tag/${VERSION_TAG}"
-            BUILD_TYPE="Release ${VERSION_TAG}"
-          fi
-
-          # Build the optional fork field and splice it in only when needed.
-          # jq --argjson lets us pass a pre-built JSON array fragment safely.
-          if [ "$IS_FORK" = "true" ]; then
-            FORK_FIELD=$(jq -n --arg repo "$REPO" \
-              '[{ name: "Fork", value: $repo, inline: false }]')
-          else
-            FORK_FIELD='[]'
-          fi
-
-          jq -n \
-            --arg  title      "$TITLE"      \
-            --arg  url        "$URL"        \
-            --argjson color   "$COLOR"      \
-            --arg  build_type "$BUILD_TYPE" \
-            --arg  branch     "$BRANCH"     \
-            --arg  sha        "$SHORT_SHA"  \
-            --arg  actor      "$ACTOR"      \
-            --argjson fork_field "$FORK_FIELD" \
-            '{
-              embeds: [{
-                title:  $title,
-                color:  $color,
-                url:    $url,
-                fields: (fork_field + [
-                  { name: "Build",     value: $build_type, inline: false },
-                  { name: "Branch",    value: $branch,     inline: true  },
-                  { name: "Commit",    value: $sha,        inline: true  },
-                  { name: "Triggered", value: $actor,      inline: true  }
-                ])
-              }]
-            }' \
-          | curl -sf -X POST "$DISCORD_WEBHOOK" \
-              -H "Content-Type: application/json" \
-              -d @-
