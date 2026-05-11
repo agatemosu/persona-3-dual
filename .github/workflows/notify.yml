@@ -1,0 +1,110 @@
+name: Discord Notification
+
+# Triggers after every "Build ROM" run completes — success, failure, or
+# cancellation — including runs triggered by fork PRs.
+#
+# WHY workflow_run INSTEAD OF A STEP IN build.yml:
+# GitHub blocks secret access for pull_request events from forks as a
+# security measure. workflow_run always executes in the base-repo context
+# regardless of where the triggering commit came from, so secrets are
+# available unconditionally.
+#
+# SECURITY NOTE: this workflow never checks out or executes any code from
+# the PR/fork. It only reads metadata from github.event.workflow_run.
+# That makes it safe to run with base-repo secrets even for untrusted forks.
+on:
+  workflow_run:
+    workflows: ["Build ROM"]   # Must match the `name:` field in build.yml exactly
+    types: [completed]
+
+permissions:
+  contents: read
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Notify Discord
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+          JOB_STATUS:      ${{ github.event.workflow_run.conclusion }}
+          EVENT:           ${{ github.event.workflow_run.event }}
+          PR_NUMBER:       ${{ github.event.workflow_run.pull_requests[0].number }}
+          BRANCH:          ${{ github.event.workflow_run.head_branch }}
+          COMMIT_SHA:      ${{ github.event.workflow_run.head_sha }}
+          ACTOR:           ${{ github.event.workflow_run.triggering_actor.login }}
+          BASE_REPO:       ${{ github.event.workflow_run.repository.full_name }}
+          HEAD_REPO:       ${{ github.event.workflow_run.head_repository.full_name }}
+          SERVER_URL:      ${{ github.server_url }}
+          RUN_ID:          ${{ github.event.workflow_run.id }}
+        run: |
+          if [ -z "$DISCORD_WEBHOOK" ]; then
+            echo "DISCORD_WEBHOOK secret not configured — skipping Discord notification"
+            exit 0
+          fi
+
+          case "$JOB_STATUS" in
+            success)   COLOR=3066993;  EMOJI="✅" ;;
+            cancelled) COLOR=9807270;  EMOJI="⏹️" ;;
+            *)         COLOR=15158332; EMOJI="❌" ;;
+          esac
+
+          SHORT_SHA="${COMMIT_SHA:0:7}"
+          IS_PR="false"
+          [ "$EVENT" = "pull_request" ] && IS_PR="true"
+
+          # Fork detection: head_repository differs from base repository when
+          # the workflow was triggered by a fork PR.
+          # FORK_FIELD is always initialised to [] first so jq always receives
+          # a valid JSON array — even if the if-block is skipped entirely.
+          # (This was the source of the "fork_field/0 is not defined" jq error
+          # in the previous inline version where the else branch could be missed.)
+          FORK_FIELD='[]'
+          if [ "$HEAD_REPO" != "$BASE_REPO" ]; then
+            IS_FORK="true"
+            FORK_LABEL=" [fork: ${HEAD_REPO}]"
+            FORK_FIELD=$(jq -n --arg repo "$HEAD_REPO" \
+              '[{ name: "Fork", value: $repo, inline: false }]')
+          else
+            IS_FORK="false"
+            FORK_LABEL=""
+          fi
+
+          if [ "$IS_PR" = "true" ] && [ -n "$PR_NUMBER" ]; then
+            TITLE="${EMOJI} PR #${PR_NUMBER} — Build ${JOB_STATUS}${FORK_LABEL}"
+            URL="${SERVER_URL}/${BASE_REPO}/pull/${PR_NUMBER}"
+            BUILD_TYPE="Pull Request #${PR_NUMBER}"
+          else
+            TITLE="${EMOJI} Build ${JOB_STATUS}: ${BRANCH}@${SHORT_SHA}${FORK_LABEL}"
+            # Non-PR runs link to the Actions run page since there is no release
+            # tag available in this workflow's context.
+            URL="${SERVER_URL}/${BASE_REPO}/actions/runs/${RUN_ID}"
+            BUILD_TYPE="Push to ${BRANCH}"
+          fi
+
+          jq -n \
+            --arg     title      "$TITLE"      \
+            --arg     url        "$URL"        \
+            --argjson color      "$COLOR"      \
+            --arg     build_type "$BUILD_TYPE" \
+            --arg     branch     "$BRANCH"     \
+            --arg     sha        "$SHORT_SHA"  \
+            --arg     actor      "$ACTOR"      \
+            --argjson fork_field "$FORK_FIELD" \
+            '{
+              embeds: [{
+                title:  $title,
+                color:  $color,
+                url:    $url,
+                fields: (fork_field + [
+                  { name: "Build",     value: $build_type, inline: false },
+                  { name: "Branch",    value: $branch,     inline: true  },
+                  { name: "Commit",    value: $sha,        inline: true  },
+                  { name: "Triggered", value: $actor,      inline: true  }
+                ])
+              }]
+            }' \
+          | curl -sf -X POST "$DISCORD_WEBHOOK" \
+              -H "Content-Type: application/json" \
+              -d @-

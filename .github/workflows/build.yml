@@ -32,6 +32,7 @@ jobs:
         uses: actions/checkout@v5
         with:
           fetch-depth: 0   # Full history required so git tag --list sees all tags
+          lfs: true        # Fetch real LFS files (mp4, etc.) not just pointer stubs
 
       # Version tag (push / workflow_dispatch only)
       # Format: YYwWWn  →  e.g. "26w18a"
@@ -107,18 +108,21 @@ jobs:
 
       # Python venv
       # Cache is keyed to requirements.txt so it auto-invalidates on dep changes.
+      # Key is versioned (v2) because the venv path moved from .venv (workspace)
+      # to ~/.venv (home) - bumping forces a clean write at the new location and
+      # avoids perpetual cache misses against stale v1 entries.
       - name: Cache Python venv
         uses: actions/cache@v5
         with:
-          path: .venv
-          key: python-venv-${{ runner.os }}-${{ hashFiles('tools/requirements.txt') }}
+          path: ~/.venv
+          key: python-venv-v2-${{ runner.os }}-${{ hashFiles('tools/requirements.txt') }}
           restore-keys: |
-            python-venv-${{ runner.os }}-
+            python-venv-v2-${{ runner.os }}-
 
       - name: Set up Python venv
         run: |
-          python3 -m venv .venv
-          echo "${{ github.workspace }}/.venv/bin" >> $GITHUB_PATH
+          python3 -m venv ~/.venv
+          echo "$HOME/.venv/bin" >> $GITHUB_PATH
 
       - name: Install Python dependencies
         run: |
@@ -152,7 +156,7 @@ jobs:
 
       # NDS header validation
       # Uses od (standard POSIX tool, always available) to read raw bytes from
-      # the 512-byte NDS header
+      # the 512-byte NDS header.
       #
       # The Nintendo logo CRC at offset 0x15C must be 0xCF56. This value is
       # hard-coded into NDS hardware and required by every emulator. If it is
@@ -292,71 +296,3 @@ jobs:
             [ -n "$SHA256" ] && echo "| SHA-256   | \`${SHA256}\` |" || true
             [ -n "$MD5"    ] && echo "| MD5       | \`${MD5}\` |"    || true
           } >> $GITHUB_STEP_SUMMARY
-
-      # Discord notification
-      # Fires on success, failure, and cancellation.
-      # If DISCORD_WEBHOOK secret is absent, exits cleanly, never fails the build.
-      # jq builds the JSON payload so branch names / commit SHAs with special
-      # characters cannot produce malformed JSON (injection-safe).
-      - name: Notify Discord
-        if: always()
-        env:
-          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
-          JOB_STATUS:      ${{ job.status }}
-          IS_PR:           ${{ github.event_name == 'pull_request' }}
-          PR_NUMBER:       ${{ github.event.number }}
-          VERSION_TAG:     ${{ steps.version.outputs.tag }}
-          BRANCH:          ${{ github.ref_name }}
-          COMMIT_SHA:      ${{ github.sha }}
-          ACTOR:           ${{ github.actor }}
-          REPO:            ${{ github.repository }}
-          SERVER_URL:      ${{ github.server_url }}
-        run: |
-          if [ -z "$DISCORD_WEBHOOK" ]; then
-            echo "DISCORD_WEBHOOK secret not configured — skipping Discord notification"
-            exit 0
-          fi
-
-          case "$JOB_STATUS" in
-            success)   COLOR=3066993;  EMOJI="✅" ;;
-            cancelled) COLOR=9807270;  EMOJI="⏹️" ;;
-            *)         COLOR=15158332; EMOJI="❌" ;;
-          esac
-
-          SHORT_SHA="${COMMIT_SHA:0:7}"
-          VERSION_TAG="${VERSION_TAG:-unknown}"
-
-          if [ "$IS_PR" = "true" ]; then
-            TITLE="${EMOJI} PR #${PR_NUMBER} — Build ${JOB_STATUS}"
-            URL="${SERVER_URL}/${REPO}/pull/${PR_NUMBER}"
-            BUILD_TYPE="Pull Request #${PR_NUMBER}"
-          else
-            TITLE="${EMOJI} Build ${JOB_STATUS}: ${VERSION_TAG}"
-            URL="${SERVER_URL}/${REPO}/releases/tag/${VERSION_TAG}"
-            BUILD_TYPE="Release ${VERSION_TAG}"
-          fi
-
-          jq -n \
-            --arg  title      "$TITLE"      \
-            --arg  url        "$URL"        \
-            --argjson color   "$COLOR"      \
-            --arg  build_type "$BUILD_TYPE" \
-            --arg  branch     "$BRANCH"     \
-            --arg  sha        "$SHORT_SHA"  \
-            --arg  actor      "$ACTOR"      \
-            '{
-              embeds: [{
-                title:  $title,
-                color:  $color,
-                url:    $url,
-                fields: [
-                  { name: "Build",     value: $build_type, inline: false },
-                  { name: "Branch",    value: $branch,     inline: true  },
-                  { name: "Commit",    value: $sha,        inline: true  },
-                  { name: "Triggered", value: $actor,      inline: true  }
-                ]
-              }]
-            }' \
-          | curl -sf -X POST "$DISCORD_WEBHOOK" \
-              -H "Content-Type: application/json" \
-              -d @-
