@@ -31,7 +31,7 @@ struct curPlayer : Player
     curPlayer()
     {
         name = "Makoto";
-        hp = 72;
+        hp = 720;
         sp = 50;
         lv = 2;
 
