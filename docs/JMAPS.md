@@ -19,6 +19,8 @@ Each area is authored as a `.jmap` file in `assets/maps/`. The build system conv
 
 ### Tile Key Reference
 
+Tile keys and their mappings are defined in [`tools/tile_map.json`](../tools/tile_map.json). A summary is shown below though still check `tile_map.json`
+
 ```
 # Tile key:
 #   c     = collision        (COLLISION)
