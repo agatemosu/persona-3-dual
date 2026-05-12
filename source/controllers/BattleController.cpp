@@ -104,12 +104,23 @@ void BattleController::enemyTurn()
         enemies->at(counter)->knockedDown = false;
     }
 
-    srand(time(0));
-    int randomNum = rand() % enemies->at(counter)->attackCount;
+    int randomNum = rand() % (enemies->at(counter)->attackCount + 1);
 
-    AttackSkill *curSkill = enemies->at(counter)->attackSkill[randomNum];
+    u32 damage;
+    AttackSkill *curSkill;
 
-    u32 damage = curSkill->calculateDamageEnemySkill(enemies->at(counter)->getBattleStats(), player->curPersona->getBattleStats(), &enemies->at(counter)->lv, &player->lv, &player->armour);
+    // TODO: enemy ai. ugly way but this is temporary anyway since we dont have any actuall ai yet
+    if (randomNum == 0)
+    {
+        curSkill = enemies->at(counter)->baseAttackAction;
+        damage = curSkill->calculateDamageEnemyRegular(enemies->at(counter)->getBattleStats(), player->curPersona->getBattleStats(), &enemies->at(counter)->lv, &player->lv, &player->armour);
+    }
+    else
+    {
+        curSkill = enemies->at(counter)->attackSkill[randomNum - 1];
+        damage = curSkill->calculateDamageEnemySkill(enemies->at(counter)->getBattleStats(), player->curPersona->getBattleStats(), &enemies->at(counter)->lv, &player->lv, &player->armour);
+    }
+
     if (player->guarding)
     {
         iprintf("player guarded\n");

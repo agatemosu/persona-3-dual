@@ -18,6 +18,7 @@ struct Enemy : BattleStats
     // needs to be signed at least for now so i can pass it
     s32 sp;
     u32 lv;
+    AttackSkill *baseAttackAction;
     AttackSkill **attackSkill;
     u32 attackCount;
 

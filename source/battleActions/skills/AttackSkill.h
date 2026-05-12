@@ -38,7 +38,6 @@ struct AttackSkill
         return (u32)floor((sqrt((float)(moveDamage * 6 * Atk) / (8 * defenderStats->en + armourValue)) * 9 * levelDifference - 10) * affinityMtp);
     }
 
-    // unused atm since the they dont have a regulat attack yet
     u32 calculateDamageEnemyRegular(BattleStats *attackerStats, BattleStats *defenderStats, u32 *attackerLevel, u32 *defenderLevel, Armour *armour = nullptr)
     {
         // This value is used if an enemy attacks another enemy
