@@ -3,6 +3,8 @@
 #include <string>
 #include "../skills/AttackSkill.h"
 #include "../personas/PersonaBase.h"
+#include "../ArmourType.h"
+#include "../armours/Armour.h"
 
 /*
 St	Represents strength and physical damage.
@@ -17,6 +19,8 @@ struct Player
     s32 hp;
     s32 sp;
     u32 lv;
+    ArmourType armourType;
+    Armour armour;
     AttackSkill *baseAttackAction;
     PersonaBase **personas;
     PersonaBase *curPersona;
