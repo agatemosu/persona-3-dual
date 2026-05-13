@@ -15,9 +15,13 @@
 // dialogue
 #include "dialogue/demo_dialogue.h"
 
+// bgSubScreen
+#include "menuMockup.h"
+
 // TODO: move to header
 int characterTextureId;
 iwatodai_dorm_Environment iwatodaiDormEnv;
+int bgSubScreen;
 
 // TODO: dont forget to clear in future
 IwatodaiDormView::IwatodaiDormView() : enemies(new std::vector<Enemy *>({&merciless_Maya, &cowardly_Maya})),
@@ -55,7 +59,9 @@ void IwatodaiDormView::Init()
 
     // setup shared bg slot on sub screen
     bgSharedSlot = bgInitSub(0, BgType_Text8bpp, BgSize_T_256x256, 0, 1);
+    bgSubScreen = bgInitSub(2, BgType_Text8bpp, BgSize_T_256x256, 10, 3);
     dmaFillHalfWords(0, bgGetMapPtr(bgSharedSlot), 2048);
+    dmaFillHalfWords(0, bgGetMapPtr(bgSubScreen), 2048);
 
     // setup console
     consoleInit(&console, 1, BgType_Text4bpp, BgSize_T_256x256, 4, 5, false, true);
@@ -64,6 +70,15 @@ void IwatodaiDormView::Init()
     // adjust sub screen image and console to sit correctly on each other
     bgSetPriority(console.bgId, 0);
     bgSetPriority(bgSharedSlot, 1);
+    bgSetPriority(bgSubScreen, 2);
+
+    // set bgSubScreen img
+    dmaCopy(menuMockupTiles, bgGetGfxPtr(bgSubScreen), menuMockupTilesLen);
+    dmaCopy(menuMockupMap, bgGetMapPtr(bgSubScreen), menuMockupMapLen);
+    vramSetBankH(VRAM_H_LCD);
+    dmaCopy(menuMockupPal, &VRAM_H_EXT_PALETTE[2][0], menuMockupPalLen);
+    vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
+    bgShow(bgSubScreen);
 
     bgUpdate();
 
