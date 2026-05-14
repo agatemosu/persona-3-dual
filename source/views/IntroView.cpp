@@ -102,7 +102,7 @@ void IntroView::Init() {
 	// copy palettes to extended palette area
 	dmaCopy(silhouetteBackgroundPal, &VRAM_E_EXT_PALETTE[0][0], silhouetteBackgroundPalLen);	// bg 0, slot 0 (slot can be specified slot in .grit file)
 	dmaCopy(roomBackgroundPal,  &VRAM_E_EXT_PALETTE[1][0],  roomBackgroundPalLen);  			// bg 1, slot 0
-	dmaCopy(skyBackgroundPal, &VRAM_E_EXT_PALETTE[2][0], skyBackgroundPalLen); 					// bg 2, slot 0 
+	dmaCopy(skyBackgroundPal, &VRAM_E_EXT_PALETTE[2][0], skyBackgroundPalLen); 					// bg 2, slot 0
 	dmaCopy(overlayBackgroundPal,   &VRAM_E_EXT_PALETTE[3][0], overlayBackgroundPalLen);		// bg 3, slot 0
     dmaCopy(attributionBackgroundPal,  &VRAM_H_EXT_PALETTE[0][0], attributionBackgroundPalLen);
     dmaCopy(skyBackgroundSubPal,  &VRAM_H_EXT_PALETTE[1][0], skyBackgroundSubPalLen);
@@ -118,11 +118,10 @@ void IntroView::Init() {
 	// showing logo as sprite
 	logoSprite[0] = {0, SpriteSize_64x64, SpriteColorFormat_256Color, 0, 15, -25, 100};
     logoSprite[1] = {0, SpriteSize_64x64, SpriteColorFormat_256Color, 0, 15, 39, 100};
-    // logoSprite[1] = {0, SpriteSize_64x64, SpriteColorFormat_256Color, 0, 15, 120, 100};
 
 	// initialize sub sprite engine with 1D mapping, 128 byte boundry, no external palette support
 	oamInit(&oamMain, SpriteMapping_1D_128, false);
-	
+
 	// allocating space for sprite graphics
 	logoSprite[0].gfx = oamAllocateGfx(&oamMain, SpriteSize_64x64, SpriteColorFormat_256Color);
     logoSprite[1].gfx = oamAllocateGfx(&oamMain, SpriteSize_64x64, SpriteColorFormat_256Color);
@@ -157,7 +156,7 @@ void IntroView::Init() {
     // fade top screen in
     for(int i = 0; i <= 16; i++) {
         setBrightness(1, -16 + i);
-	
+
 		// wait for duration amount of frames
 		for (int frame = 0; frame <= 3; frame++) {
             musicCtrl.update();
@@ -171,7 +170,7 @@ void IntroView::Init() {
 		REG_BLDALPHA = i | ((16 - i) << 8);
         // fade sub screen
         setBrightness(2, -16 + i);
-	
+
 		// wait for duration amount of frames
 		for (int frame = 0; frame <= 6; frame++) {
             musicCtrl.update();
@@ -187,7 +186,7 @@ ViewState IntroView::Update() {
 
     // transition to menu state on any input
     if (keys) {
-        musicCtrl.playSFX(SFX_SELECT, 255, 128); 
+        musicCtrl.playSFX(SFX_SELECT, 255, 128);
         musicCtrl.pause();
         // transition both screens to white
         for(int i = 0; i <= 16; i++) {
@@ -201,7 +200,7 @@ ViewState IntroView::Update() {
         }
         return ViewState::MAIN_MENU;
     }
-    
+
     touchRead(&touchXY);
 
     // scroll silhouette background
@@ -213,12 +212,12 @@ ViewState IntroView::Update() {
 
     // animate Y (moving up towards 0)
     if (silhouetteY > 0 && frame % 5 == 0) {
-        silhouetteY += (-silhouetteY) / 6 + 1; 
+        silhouetteY += (-silhouetteY) / 6 + 1;
         if (silhouetteY < 0) silhouetteY = 0;
     }
 
     bgSetScroll(bg[0], -silhouetteX, -silhouetteY);
-    
+
     // perform code after silhouette slide-in
     if (silhouetteX < 0 || silhouetteY < 0) {
         return ViewState::KEEP_CURRENT;
@@ -235,7 +234,7 @@ ViewState IntroView::Update() {
         if (durationCounter >= duration) {
             durationCounter = 0;
             textAlpha += textAlphaDirection;
-            
+
             if (textAlpha >= 16) {
                 textAlpha = 16;
                 textAlphaDirection = -1;    // Start fading out
@@ -272,14 +271,14 @@ ViewState IntroView::Update() {
 
                 oamMain.oamMemory[i].attribute[0] |= ATTR0_TYPE_BLENDED;
         }
-        
+
         // setup fade for main screen sprites
-        REG_BLDCNT = BLEND_ALPHA | BLEND_SRC_SPRITE | 
+        REG_BLDCNT = BLEND_ALPHA | BLEND_SRC_SPRITE |
                      BLEND_DST_BG0 | BLEND_DST_BG1 | BLEND_DST_BG2;
         REG_BLDALPHA = 0 | (16  << 8);
 
         // setup fade for sub screen attribution text layer
-        REG_BLDCNT_SUB = BLEND_ALPHA | BLEND_SRC_BG0 | 
+        REG_BLDCNT_SUB = BLEND_ALPHA | BLEND_SRC_BG0 |
                          BLEND_DST_BG1 | BLEND_DST_BACKDROP;
         REG_BLDALPHA_SUB = 0 | (16  << 8);
     }

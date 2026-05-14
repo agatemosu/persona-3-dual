@@ -11,8 +11,8 @@
 #include "./battleActions/enemies/Cowardly_Maya.h"
 #include "./battleActions/enemies/Merciless_Maya.h"
 #include "./controllers/BattleController.h" // TODO: move somewhere
+#include "IntroView.h"  // TODO: extract Sprite struct into some other view
 
-// implementing from View
 class IwatodaiDormView : public View {
     public:
         // override tells compiler we intend to override a virtual fn in a base class (i.e. View)
@@ -23,7 +23,11 @@ class IwatodaiDormView : public View {
 
     private:
         // sub screen
+        int bgSubScreen;
         PrintConsole console;
+
+        // sprites
+        Sprite sprites[10]; // random # of sprites for now
 
         // Battle participants
         curPlayer player;

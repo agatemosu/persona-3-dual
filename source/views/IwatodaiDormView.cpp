@@ -17,11 +17,13 @@
 
 // bgSubScreen
 #include "menuMockup.h"
+// sprites
+#include "logoSpriteLeft.h"
+#include "logoSpriteRight.h"
 
 // TODO: move to header
 int characterTextureId;
 iwatodai_dorm_Environment iwatodaiDormEnv;
-int bgSubScreen;
 
 // TODO: dont forget to clear in future
 IwatodaiDormView::IwatodaiDormView() : enemies(new std::vector<Enemy *>({&merciless_Maya, &cowardly_Maya})),
@@ -35,6 +37,7 @@ void IwatodaiDormView::Init()
     vramSetBankA(VRAM_A_TEXTURE);
     vramSetBankB(VRAM_B_TEXTURE);
     vramSetBankC(VRAM_C_SUB_BG);
+    vramSetBankI(VRAM_I_SUB_SPRITE);
     bgExtPaletteEnableSub();
 
     // main screen, 3D
@@ -57,7 +60,7 @@ void IwatodaiDormView::Init()
     glPolyFmt(POLY_ALPHA(31) | POLY_CULL_BACK);
     glColor3b(255, 255, 255); // keep white so texture colors aren't tinted
 
-    // setup shared bg slot on sub screen
+    // setup sub screen
     bgSharedSlot = bgInitSub(0, BgType_Text8bpp, BgSize_T_256x256, 0, 1);
     bgSubScreen = bgInitSub(2, BgType_Text8bpp, BgSize_T_256x256, 10, 3);
     dmaFillHalfWords(0, bgGetMapPtr(bgSharedSlot), 2048);
@@ -81,6 +84,24 @@ void IwatodaiDormView::Init()
     bgShow(bgSubScreen);
 
     bgUpdate();
+
+    // setup sprites
+	sprites[0] = {0, SpriteSize_64x64, SpriteColorFormat_256Color, 0, 15, -25, 100};
+    sprites[1] = {0, SpriteSize_64x64, SpriteColorFormat_256Color, 0, 15, 39, 100};
+
+	// initialize sub sprite engine with 1D mapping, 128 byte boundry, no external palette support
+	oamInit(&oamSub, SpriteMapping_1D_128, false);
+
+	// allocating space for sprite graphics
+	sprites[0].gfx = oamAllocateGfx(&oamSub, SpriteSize_64x64, SpriteColorFormat_256Color);
+    sprites[1].gfx = oamAllocateGfx(&oamSub, SpriteSize_64x64, SpriteColorFormat_256Color);
+
+    // copy sprites
+	dmaCopy(logoSpriteLeftTiles, sprites[0].gfx, logoSpriteLeftTilesLen);
+    dmaCopy(logoSpriteRightTiles, sprites[1].gfx, logoSpriteRightTilesLen);
+
+    dmaCopy(logoSpriteLeftPal, SPRITE_PALETTE_SUB, logoSpriteLeftPalLen);
+    dmaCopy(logoSpriteRightPal, SPRITE_PALETTE_SUB, logoSpriteRightPalLen);
 
     // setup player controller
     playerCtrl = new CharacterController(IWATODAI_DORM_MAP_WIDTH, IWATODAI_DORM_MAP_WIDTH, &iwatodai_dorm_map[0][0], tileSize, worldOffsetX, worldOffsetZ, characterSize, speed, angleIncrement, distance, lookAhead, angle, characterTranslate, characterFacingAngle);
@@ -164,6 +185,27 @@ ViewState IwatodaiDormView::Update()
             camPos.targetX, camPos.targetY, camPos.targetZ,
             camPos.upX, camPos.upY, camPos.upZ);
 
+        // draw sprites
+        for (int i = 0; i < 2; i++)
+        {
+            oamSet(
+                &oamSub,                    // sub display (OamState)
+                i,                          // oam entry to set (id)
+                sprites[i].x, sprites[i].y, // position
+                1,                          // priority
+                sprites[i].paletteAlpha,    // palette for 16 color sprite or alpha for bmp sprite
+                sprites[i].size,
+                sprites[i].format,
+                sprites[i].gfx,
+                sprites[i].rotationIndex,
+                true,         // double the size of rotated sprites
+                false,        // don't hide the sprite
+                false, false, // vflip, hflip
+                false         // apply mosaic
+            );
+        }
+
+        oamUpdate(&oamSub);
 
         // draw environment
         glPushMatrix();
