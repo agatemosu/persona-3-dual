@@ -19,7 +19,7 @@
 #include "menuMockup.h"
 // sprites
 #include "moon-0.h"
-#include "logoSpriteRight.h"
+#include "tuesday.h"
 
 // TODO: move to header
 int characterTextureId;
@@ -87,25 +87,24 @@ void IwatodaiDormView::Init()
     bgUpdate();
 
     // setup sprites
-	sprites[0] = {0, SpriteSize_32x32, SpriteColorFormat_256Color, 0, 0, 202, 20}; // moon
-    // sprites[1] = {0, SpriteSize_64x64, SpriteColorFormat_256Color, 0, 15, 39, 100};
+	sprites[0] = {0, SpriteSize_32x32, SpriteColorFormat_256Color, 0, 0, 202, 20};  // moon
+    sprites[1] = {0, SpriteSize_32x32, SpriteColorFormat_256Color, 0, 15, 66, 143}; // day of the week
 
 	// initialize sub sprite engine with 1D mapping, 128 byte boundry, external palette support
 	oamInit(&oamSub, SpriteMapping_1D_128, true);
 
 	// allocating space for sprite graphics
 	sprites[0].gfx = oamAllocateGfx(&oamSub, SpriteSize_32x32, SpriteColorFormat_256Color);
-    // sprites[1].gfx = oamAllocateGfx(&oamSub, SpriteSize_64x64, SpriteColorFormat_256Color);
+    sprites[1].gfx = oamAllocateGfx(&oamSub, SpriteSize_32x32, SpriteColorFormat_256Color);
 
     // copy sprites
 	dmaCopy(moon_0Tiles, sprites[0].gfx, moon_0TilesLen);
-    // dmaCopy(logoSpriteRightTiles, sprites[1].gfx, logoSpriteRightTilesLen);
+    dmaCopy(tuesdayTiles, sprites[1].gfx, tuesdayTilesLen);
 
     vramSetBankI(VRAM_I_LCD);
     dmaCopy(moon_0Pal, &VRAM_I_EXT_SPR_PALETTE[0][0], moon_0PalLen);
+    dmaCopy(tuesdayPal, &VRAM_I_EXT_SPR_PALETTE[1][0], tuesdayPalLen);
     vramSetBankI(VRAM_I_SUB_SPRITE_EXT_PALETTE);
-    // dmaCopy(moon_0Pal, SPRITE_PALETTE_SUB, moon_0PalLen);
-    // dmaCopy(logoSpriteRightPal, SPRITE_PALETTE_SUB, logoSpriteRightPalLen);
 
     // setup player controller
     playerCtrl = new CharacterController(IWATODAI_DORM_MAP_WIDTH, IWATODAI_DORM_MAP_WIDTH, &iwatodai_dorm_map[0][0], tileSize, worldOffsetX, worldOffsetZ, characterSize, speed, angleIncrement, distance, lookAhead, angle, characterTranslate, characterFacingAngle);
@@ -190,7 +189,7 @@ ViewState IwatodaiDormView::Update()
             camPos.upX, camPos.upY, camPos.upZ);
 
         // draw sprites
-        for (int i = 0; i < 1; i++)
+        for (int i = 0; i < 2; i++)
         {
             oamSet(
                 &oamSub,                    // sub display (OamState)
