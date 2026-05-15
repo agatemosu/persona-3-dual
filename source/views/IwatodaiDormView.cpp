@@ -114,7 +114,7 @@ void IwatodaiDormView::Init()
     sprites[7].gfx = oamAllocateGfx(&oamSub, SpriteSize_16x16, SpriteColorFormat_256Color);
 
     // get sprites
-    spriteCtrl.switchSprite(MOON, MOON_0, &moonSprite);
+    spriteCtrl.switchSprite(MOON, MOON_22, &moonSprite);
     spriteCtrl.switchSprite(DAY_OF_WEEK, TUESDAY, &dayOfWeekSprite);
     spriteCtrl.switchSprite(DIGIT, DIGIT_1, &numberSprites[0]);
     spriteCtrl.switchSprite(DIGIT, DIGIT_3, &numberSprites[1]);
