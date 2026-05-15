@@ -1,7 +1,5 @@
 #pragma once
 #include <nds.h>
-#include <string>
-#include "../skills/AttackSkill.h"
 #include "../personas/PersonaBase.h"
 #include "../ArmourType.h"
 #include "../armours/Armour.h"
