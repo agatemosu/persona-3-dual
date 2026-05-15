@@ -116,8 +116,8 @@ void IwatodaiDormView::Init()
     // get sprites
     spriteCtrl.switchSprite(MOON, MOON_0, &moonSprite);
     spriteCtrl.switchSprite(DAY_OF_WEEK, TUESDAY, &dayOfWeekSprite);
-    spriteCtrl.switchSprite(DIGIT, DIGIT_4, &numberSprites[0]);
-    spriteCtrl.switchSprite(DIGIT, DIGIT_7, &numberSprites[1]);
+    spriteCtrl.switchSprite(DIGIT, DIGIT_1, &numberSprites[0]);
+    spriteCtrl.switchSprite(DIGIT, DIGIT_3, &numberSprites[1]);
     spriteCtrl.switchSprite(TIME, AFTERNOON_0_0, &timeSprites[0]);
     spriteCtrl.switchSprite(TIME, AFTERNOON_1_0, &timeSprites[1]);
     spriteCtrl.switchSprite(TIME, AFTERNOON_2_0, &timeSprites[2]);
