@@ -16,7 +16,7 @@
 #include "dialogue/demo_dialogue.h"
 
 // bgSubScreen
-#include "menuMockup.h"
+#include "menuHUD.h"
 
 // TODO: move to header
 int characterTextureId;
@@ -74,10 +74,10 @@ void IwatodaiDormView::Init()
     bgSetPriority(bgSubScreen, 2);
 
     // set bgSubScreen img
-    dmaCopy(menuMockupTiles, bgGetGfxPtr(bgSubScreen), menuMockupTilesLen);
-    dmaCopy(menuMockupMap, bgGetMapPtr(bgSubScreen), menuMockupMapLen);
+    dmaCopy(menuHUDTiles, bgGetGfxPtr(bgSubScreen), menuHUDTilesLen);
+    dmaCopy(menuHUDMap, bgGetMapPtr(bgSubScreen), menuHUDMapLen);
     vramSetBankH(VRAM_H_LCD);
-    dmaCopy(menuMockupPal, &VRAM_H_EXT_PALETTE[2][0], menuMockupPalLen);
+    dmaCopy(menuHUDPal, &VRAM_H_EXT_PALETTE[2][0], menuHUDPalLen);
     vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
     bgShow(bgSubScreen);
 
