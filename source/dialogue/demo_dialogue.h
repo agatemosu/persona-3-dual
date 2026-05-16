@@ -6,18 +6,18 @@
 
 extern int demo_dialogue_bg_slot;
 
-// ── interaction: yuki_guard_argument — Yuki arguing with a guard at the gate
-extern const char* demo_yuki_guard_argument_bg_names[4];
-extern void        (*demo_yuki_guard_argument_bg_loaders[4])();
-void  demo_yuki_guard_argument_load_bg(int bgIndex);
-extern dialogue demo_yuki_guard_argument_lines[18];
-void  demo_yuki_guard_argument_init();
-void  demo_yuki_guard_argument_load();
-inline dialogue* demo_yuki_guard_argument_first() { return &demo_yuki_guard_argument_lines[0]; }
-inline dialogue* demo_yuki_guard_argument_vouch() { return &demo_yuki_guard_argument_lines[7]; }
-inline dialogue* demo_yuki_guard_argument_side_guard() { return &demo_yuki_guard_argument_lines[12]; }
-inline dialogue* demo_yuki_guard_argument_stay_out() { return &demo_yuki_guard_argument_lines[15]; }
+// ── interaction: yukari_kenji_argument — Yukari arguing with Kenji at the gate
+extern const char* demo_yukari_kenji_argument_bg_names[4];
+extern void        (*demo_yukari_kenji_argument_bg_loaders[4])();
+void  demo_yukari_kenji_argument_load_bg(int bgIndex);
+extern dialogue demo_yukari_kenji_argument_lines[18];
+void  demo_yukari_kenji_argument_init();
+void  demo_yukari_kenji_argument_load();
+inline dialogue* demo_yukari_kenji_argument_first() { return &demo_yukari_kenji_argument_lines[0]; }
+inline dialogue* demo_yukari_kenji_argument_vouch() { return &demo_yukari_kenji_argument_lines[7]; }
+inline dialogue* demo_yukari_kenji_argument_side_kenji() { return &demo_yukari_kenji_argument_lines[12]; }
+inline dialogue* demo_yukari_kenji_argument_stay_out() { return &demo_yukari_kenji_argument_lines[15]; }
 
 inline void demo_init_all() {
-    demo_yuki_guard_argument_init();
+    demo_yukari_kenji_argument_init();
 }

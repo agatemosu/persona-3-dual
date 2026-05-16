@@ -7,50 +7,50 @@
 # Scene-wide background defaults.
 # Any character listed here gets this bg unless overridden locally.
 @bg Akihiko   bgAkihiko
-@bg Yuki      bgYuki
-@bg Guard     bgGuard
+@bg Yukari    bgYukari
+@bg Kenji     bgKenji
 
 == Scene: Riverside Park ==
 
 # ============================================================
 # INTERACTION 4 — Three-way conversation, multiple characters
-# The player stumbles into an argument between Yuki and the Guard.
+# The player stumbles into an argument between Yukari and Kenji.
 # ============================================================
 
-[interaction: yuki_guard_argument | Yuki arguing with a guard at the gate]
+[interaction: yukari_kenji_argument | Yukari arguing with Kenji at the gate]
 
-Guard: Ma'am, the east path is closed after sundown. I've said it twice.
-Yuki: And I've told you - I left my bag on the bench. It will take thirty seconds.
-Guard: Rules are rules. Come back tomorrow.
+Kenji: Yukari, the east path is closed after sundown. I've said it twice.
+Yukari: And I've told you - I left my bag on the bench. It will take thirty seconds.
+Kenji: Rules are rules. Come back tomorrow.
 
 # Player arrives
 Akihiko: Hey, what's going on?
-Yuki: This guard won't let me through to get my bag.
-Guard: Sir, please stay back. This doesn't concern you.
+Yukari: Kenji won't let me through to get my bag.
+Kenji: Akihiko, stay back. This doesn't concern you.
 
 Akihiko: Can we work something out here?
 
 [choice]
-    > Vouch for Yuki     -> @vouch
-    > Side with the guard -> @side_guard
+    > Vouch for Yukari     -> @vouch
+    > Side with Kenji -> @side_kenji
     > Stay out of it      -> @stay_out
 
 @vouch
-Akihiko: I know her. She's not going to cause any trouble.
-Guard: ...
-Guard: Fine. Two minutes. And you're coming with her.
-Yuki: Thank you.
-Yuki(bgYukiClose): ...Both of you.
+Akihiko: C'mon, she's not going to cause any trouble.
+Kenji: ...
+Kenji: Fine. Two minutes. And you're coming with her.
+Yukari: Thank you.
+Yukari(bgYukariClose): ...Both of you.
 [end]
 
-@side_guard
-Akihiko: He's got a point, Yuki. Come back in the morning.
-Yuki: Are you serious right now?
-Yuki(bgYukiClose): Fine. Don't talk to me tonight.
+@side_kenji
+Akihiko: He's got a point, Yukari. Come back in the morning.
+Yukari: Are you serious right now?
+Yukari(bgYukariClose): Fine. Don't talk to me tonight.
 [end]
 
 @stay_out
 Akihiko: Actually - yeah, none of my business. Carry on.
-Guard: Smart man.
-Yuki: Unbelievable.
+Kenji: Smart man.
+Yukari: Unbelievable.
 [end]
