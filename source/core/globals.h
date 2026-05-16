@@ -19,7 +19,7 @@ extern int fpsTimer;
 extern MusicController musicCtrl;
 extern VideoController videoCtrl;
 extern AnimationController characterAnimationCtrl;
-extern const unsigned int* bitmapsCharacter[MODEL_CHARACTER_TEX_COUNT];
+extern const unsigned int *bitmapsCharacter[MODEL_CHARACTER_TEX_COUNT];
 extern SpriteController spriteCtrl;
 
 // components
