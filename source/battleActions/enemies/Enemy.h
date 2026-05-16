@@ -12,12 +12,19 @@ En	Represents endurance, which determines your defense and how much damage you c
 Ag	Represents agility, which determines your place in the turn order.
 Lu	Represents luck, which is taken into account when using certain skills involving status afflictions or insta-death abilities.*/
 
-struct Enemy : BattleStats, BattleParticipant
+struct Enemy : BattleParticipant
 {
     AttackSkill **attackSkill;
     u32 attackCount;
     // add arcana in the future
 
-    Enemy() {}
+    Enemy()
+    {
+        participantType = ParticipantType::Enemy;
+    }
+
+    // enemys have indivual ais in the future
+    bool TakeTurn(u32 *keys) override;
+
     virtual ~Enemy() = default;
 };

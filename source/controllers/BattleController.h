@@ -4,36 +4,23 @@
 #include <nds.h>
 #include <stdio.h>
 #include <vector>
-#include <array>
 
-#include "./battleActions/actions/ActionBase.h"
-#include "./battleActions/actions/AttackAction.h"
-#include "./battleActions/actions/Guard.h"
-#include "./battleActions/actions/PersonaAction.h"
-#include "./battleActions/actions/SwitchPersona.h"
-#include "./battleActions/party/Player.h"
+#include "./battleActions/BattleParticipant.h"
 #include "./battleActions/enemies/Enemy.h"
-#include "./battleActions/UpdateIndex.h"
-#include "./battleActions/DeductAttackCost.h"
+#include "./battleActions/party/PartyMember.h"
 
 class BattleController
 {
 private:
-    u32 index = 0;
-    u32 counter = 0;
+    u32 turnsTaken = 0;
+    BattleParticipant *currentParticipantTurn;
     bool active = false;
     bool isEnemyTurn = false;
-    UpdateIndex updateIndex;
 
-    Player *player;
-    std::vector<Enemy *> *enemies;
-
-    AttackAction attack;
-    Guard guard;
-    PersonaAction persona;
-    SwitchPersona switchPersona;
-
-    std::array<ActionBase *, 4> actions = {nullptr};
+    std::vector<BattleParticipant *> *battleParticipants;
+    // needs to be battleparticipant so i can just vecotr push back based on participant type alone
+    std::vector<BattleParticipant *> *enemies;
+    std::vector<BattleParticipant *> *partyMembers;
 
     void enemyTurn();
 
@@ -42,6 +29,6 @@ public:
     void execute();
     void update(u32 keys);
     void exit();
-    BattleController(Player *iPlayer, std::vector<Enemy *> *iEnemies);
+    BattleController(std::vector<BattleParticipant *> *iBattleParticipants);
     ~BattleController() {}
 };

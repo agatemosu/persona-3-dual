@@ -10,6 +10,7 @@
 #include "./battleActions/enemies/Enemy.h"
 #include "./battleActions/enemies/Cowardly_Maya.h"
 #include "./battleActions/enemies/Merciless_Maya.h"
+#include "./battleActions/BattleParticipant.h"
 #include "./controllers/BattleController.h" // TODO: move somewhere
 
 // implementing from View
@@ -30,7 +31,7 @@ private:
     curPlayer player;
     Cowardly_Maya cowardly_Maya;
     Merciless_Maya merciless_Maya;
-    std::vector<Enemy *> *enemies;
+    std::vector<BattleParticipant *> *battleParticipants;
 
     // controllers
     BattleController battleController;

@@ -13,6 +13,7 @@ struct SwitchPersona : ActionBase
     SwitchPersona(Player *iPlayer) : player(iPlayer)
     {
         name = "SwitchPersona";
+        possibleUsers = ParticipantType::Player;
     }
 
     void execute() override;

@@ -20,8 +20,8 @@ int characterTextureId;
 iwatodai_dorm_Environment iwatodaiDormEnv;
 
 // TODO: dont forget to clear in future
-IwatodaiDormView::IwatodaiDormView() : enemies(new std::vector<Enemy *>({&merciless_Maya, &cowardly_Maya})),
-                                       battleController(&player, enemies) {}
+IwatodaiDormView::IwatodaiDormView() : battleParticipants(new std::vector<BattleParticipant *>({&player, &merciless_Maya, &cowardly_Maya})),
+                                       battleController(battleParticipants) {}
 
 void IwatodaiDormView::Init()
 {

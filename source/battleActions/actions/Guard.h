@@ -1,13 +1,14 @@
 #pragma once
 #include "ActionBase.h"
-#include "../party/Player.h"
+#include "../party/PartyMember.h"
 
 struct Guard : ActionBase
 {
-    Player *player;
-    Guard(Player *iPlayer) : player(iPlayer)
+    PartyMember *user;
+    Guard(PartyMember *iUser) : user(iUser)
     {
         name = "Guard";
+        possibleUsers = ParticipantType::Party;
     }
 
     void execute() override;

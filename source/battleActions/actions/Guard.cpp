@@ -9,7 +9,7 @@ void Guard::execute()
 
 bool Guard::update(u32 *keys)
 {
-    player->guarding = true;
+    user->guarding = true;
     inProgress = false;
     return true;
 }

@@ -1,15 +1,49 @@
 #pragma once
 #include <nds.h>
+#include <array>
 #include "../personas/PersonaBase.h"
 #include "../ArmourType.h"
 #include "../armours/Armour.h"
 #include "../BattleParticipant.h"
+#include "../ParticipantType.h"
+#include "../actions/ActionBase.h"
+#include "./battleActions/UpdateIndex.h"
+#include "CharacterProfile.h"
 
 struct PartyMember : BattleParticipant
 {
-    ArmourType armourType;
+    UpdateIndex updateIndex;
+    u32 index = 0;
+
     Armour armour;
-    PersonaBase *persona;
+    PersonaBase **personas;
+    PersonaBase *curPersona;
+    u32 personaCount;
 
     bool guarding = false;
+
+    CharacterProfile *characterProfile;
+    std::array<ActionBase *, 4> *actions = {nullptr};
+
+    PartyMember(CharacterProfile *iCharacterProfile) : characterProfile(iCharacterProfile)
+    {
+        name = characterProfile->name;
+        hp = characterProfile->hp;
+        sp = characterProfile->sp;
+        lv = characterProfile->lv;
+
+        baseAttackAction = characterProfile->baseAttackAction;
+        participantType = characterProfile->participantType;
+
+        armour = characterProfile->armour;
+        personas = characterProfile->personas;
+        curPersona = characterProfile->curPersona;
+        personaCount = characterProfile->personaCount;
+
+        battleStats = characterProfile->battleStats;
+    }
+    ~PartyMember() {};
+
+    void Init(std::vector<BattleParticipant *> *iBattleParticipant, std::array<ActionBase *, 4> *iActions);
+    bool TakeTurn(u32 *keys) override;
 };

@@ -10,11 +10,11 @@ void AttackAction::execute()
 
 bool AttackAction::update(u32 *keys)
 {
-    u32 enemyCount = enemies->size();
+    u32 enemyCount = targets->size();
 
     updateIndex.update(*keys, targetIndex, enemyCount);
 
-    bool madeAction = targetAndAttackActionEnemy->update(keys, player->baseAttackAction);
+    bool madeAction = targetAndAttackActionEnemy->update(keys, user->baseAttackAction);
     if (madeAction)
     {
         targetIndex = 0;

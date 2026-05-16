@@ -3,24 +3,25 @@
 #include <vector>
 
 #include "ActionBase.h"
-#include "../enemies/Enemy.h"
-#include "../party/Player.h"
+#include "../party/PartyMember.h"
 #include "../TargetAndAttackEnemy.h"
 #include "../UpdateIndex.h"
 
 struct PersonaAction : ActionBase
 {
     UpdateIndex updateIndex;
-    std::vector<Enemy *> *enemies = new std::vector<Enemy *>;
-    Player *player;
+    std::vector<BattleParticipant *> *targets;
+    PartyMember *user;
     AttackSkill *selectedSkill;
     TargetAndAttackActionEnemy *targetAndAttackActionEnemy;
 
-    PersonaAction(std::vector<Enemy *> *iEnemies, Player *iPlayer) : enemies(iEnemies), player(iPlayer)
+    PersonaAction(std::vector<BattleParticipant *> *iTargets, PartyMember *iUser) : targets(iTargets), user(iUser)
     {
         name = "Persona";
+        possibleUsers = ParticipantType::Party;
+
         // TODO: dont forget to clear in the future
-        targetAndAttackActionEnemy = new TargetAndAttackActionEnemy(enemies, player, &targetIndex);
+        targetAndAttackActionEnemy = new TargetAndAttackActionEnemy(targets, user, &targetIndex);
     }
 
     //  TargetAndAttackActionEnemy targetAndAttackActionEnemy(player.);
