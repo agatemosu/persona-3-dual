@@ -49,7 +49,7 @@ void IwatodaiStreetsView::Init() {
     vramSetBankA(VRAM_A_TEXTURE);
     vramSetBankB(VRAM_B_TEXTURE);
     vramSetBankC(VRAM_C_SUB_BG);
-    vramSetBankD(VRAM_D_TEXTURE);
+    vramSetBankD(VRAM_D_SUB_SPRITE);
     bgExtPaletteEnableSub();
 
     glInit();
@@ -71,12 +71,30 @@ void IwatodaiStreetsView::Init() {
 
     // sub screen console
     bgSharedSlot = bgInitSub(0, BgType_Text8bpp, BgSize_T_256x256, 0, 1);
+    bgSubScreen = bgInitSub(2, BgType_Text8bpp, BgSize_T_256x256, 10, 3);
     dmaFillHalfWords(0, bgGetMapPtr(bgSharedSlot), 2048);
+    dmaFillHalfWords(0, bgGetMapPtr(bgSubScreen), 2048);
+
     consoleInit(&console, 1, BgType_Text4bpp, BgSize_T_256x256, 4, 5, false, true);
     consoleSelect(&console);
+
     bgSetPriority(console.bgId, 0);
     bgSetPriority(bgSharedSlot, 1);
+    bgSetPriority(bgSubScreen, 2);
+
+    // set bgSubScreen img
+    dmaCopy(menuHUDTiles, bgGetGfxPtr(bgSubScreen), menuHUDTilesLen);
+    dmaCopy(menuHUDMap, bgGetMapPtr(bgSubScreen), menuHUDMapLen);
+    vramSetBankH(VRAM_H_LCD);
+    dmaCopy(menuHUDPal, &VRAM_H_EXT_PALETTE[2][0], menuHUDPalLen);
+    vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
+    bgShow(bgSubScreen);
+    
     bgUpdate();
+
+    // setup menuHUD
+    // uses VRAM bank I for sprite extended palettes
+    menuHUDCmpt.loadHUD();
 
     playerCtrl = new CharacterController(
         IWATODAI_STREETS_MAP_WIDTH, IWATODAI_STREETS_MAP_HEIGHT, &iwatodai_streets_map[0][0],
@@ -160,6 +178,10 @@ ViewState IwatodaiStreetsView::Update() {
             camPos.upX,     camPos.upY,     camPos.upZ
         );
 
+        // draw menuHUD
+        menuHUDCmpt.drawHUD();
+        oamUpdate(&oamSub);
+
         glPushMatrix();
             iwatodaiStreetsEnv.draw();
         glPopMatrix(1);
@@ -207,6 +229,7 @@ void IwatodaiStreetsView::Cleanup() {
     vramSetBankC(VRAM_C_LCD);
     vramSetBankD(VRAM_D_LCD);
     vramSetBankH(VRAM_H_LCD);
+    vramSetBankI(VRAM_I_LCD);
 
     delete playerCtrl;
     playerCtrl = nullptr;

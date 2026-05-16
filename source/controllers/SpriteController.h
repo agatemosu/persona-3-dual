@@ -1,4 +1,5 @@
 #pragma once
+#include <nds.h>
 #include "core/enums.h"
 #include "core/structs.h"
 

@@ -11,8 +11,9 @@ class IwatodaiStreetsView : public View {
         void Cleanup() override;
 
     private:
-        PrintConsole console;
+        int bgSubScreen;
         int bgSharedSlot;
+        PrintConsole console;
 
         CharacterController* playerCtrl;
             cameraPosition camPos;

@@ -5,6 +5,10 @@
 #include "models/character.h"
 #include "controllers/SpriteController.h"
 #include "components/PauseMenuComponent.h"
+#include "components/MenuHUDComponent.h"
+
+class MenuHUDComponent;
+class PauseMenuComponent;
 
 // variables
 extern volatile int frame;
@@ -24,3 +28,4 @@ extern bool enableBillboards;
 extern bool enableDebugPrint;
 extern bool enableCharacterAnim;
 extern bool isPauseMenuActive;
+extern MenuHUDComponent menuHUDCmpt;

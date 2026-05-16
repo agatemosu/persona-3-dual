@@ -17,3 +17,15 @@ typedef struct
     const unsigned short *pal;
     unsigned int palLen;
 } SpriteDBEntry;
+
+//a simple sprite structure
+typedef struct
+{
+   u16* gfx;
+   SpriteSize size;
+   SpriteColorFormat format;
+   int rotationIndex;
+   int paletteAlpha;
+   int x;
+   int y;
+} Sprite;

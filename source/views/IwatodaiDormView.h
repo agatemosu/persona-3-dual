@@ -11,7 +11,6 @@
 #include "./battleActions/enemies/Cowardly_Maya.h"
 #include "./battleActions/enemies/Merciless_Maya.h"
 #include "./controllers/BattleController.h" // TODO: move somewhere
-#include "IntroView.h"  // TODO: extract Sprite struct into some other view
 
 class IwatodaiDormView : public View {
     public:
@@ -25,22 +24,6 @@ class IwatodaiDormView : public View {
         // sub screen
         int bgSubScreen;
         PrintConsole console;
-
-        // NOTE: we can have max:
-        // 1 moon
-        // 1 day of the week
-        // 4 numbers
-        // 4 times
-        // 18 skill progress items (all same sprite)
-
-        // sprites
-        Sprite sprites[28]; // enough entries for moon, day, digits, times, and repeated skill markers
-        SpriteRegister moonSprite;
-        SpriteRegister dayOfWeekSprite;
-        SpriteRegister numberSprites[4];
-        SpriteRegister timeSprites[4];
-        SpriteRegister skillSprites[18];
-        SpriteRegister slashSprite;
 
         // Battle participants
         curPlayer player;
