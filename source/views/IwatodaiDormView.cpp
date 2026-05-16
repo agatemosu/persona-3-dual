@@ -14,6 +14,8 @@
 #include "maps/iwatodai_dorm.h"
 // dialogue
 #include "dialogue/demo_dialogue.h"
+// menuHUD
+#include "menuHUD.h"
 
 // TODO: move to header
 int characterTextureId;

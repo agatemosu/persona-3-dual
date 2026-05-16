@@ -3,7 +3,6 @@
 #include "core/globals.h"
 #include "core/enums.h"
 #include "core/structs.h"
-#include "menuHUD.h"
 
 class MenuHUDComponent
 {

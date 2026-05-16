@@ -38,6 +38,8 @@
 // model
 #include "models/character.h"
 #include "character.h"
+// menuHUD
+#include "menuHUD.h"
 
 int streetsCharacterTextureId;
 iwatodai_streets_Environment iwatodaiStreetsEnv;
@@ -89,7 +91,7 @@ void IwatodaiStreetsView::Init() {
     dmaCopy(menuHUDPal, &VRAM_H_EXT_PALETTE[2][0], menuHUDPalLen);
     vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
     bgShow(bgSubScreen);
-    
+
     bgUpdate();
 
     // setup menuHUD
