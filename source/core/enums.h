@@ -44,6 +44,7 @@ enum MoonSprite
     MOON_28,
     MOON_29
 };
+
 enum DayOfWeekSprite
 {
     SUNDAY = 0,
@@ -54,6 +55,7 @@ enum DayOfWeekSprite
     FRIDAY,
     SATURDAY
 };
+
 enum TimeSprite
 {
     AFTER_SCHOOL_0_0 = 0,
@@ -75,12 +77,14 @@ enum TimeSprite
     LUNCHTIME_1_0,
     LUNCHTIME_2_0,
     MORNING_0_0,
-    MORNING_0_1,
+    MORNING_1_0,
 };
+
 enum SkillSprite
 {
     SKILLS_LEVEL = 0
 };
+
 enum DigitSprite
 {
     DIGIT_0 = 0,

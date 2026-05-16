@@ -53,9 +53,26 @@
 #include "number-8.h"
 #include "number-9.h"
 // time text
-#include "afternnoon-0-0.h"
-#include "afternnoon-1-0.h"
-#include "afternnoon-2-0.h"
+#include "after-school-0-0.h"
+#include "after-school-1-0.h"
+#include "after-school-2-0.h"
+#include "afternoon-0-0.h"
+#include "afternoon-1-0.h"
+#include "afternoon-2-0.h"
+#include "daytime-0-0.h"
+#include "daytime-1-0.h"
+#include "early-morning-0-0.h"
+#include "early-morning-1-0.h"
+#include "early-morning-2-0.h"
+#include "early-morning-3-0.h"
+#include "late-night-0-0.h"
+#include "late-night-1-0.h"
+#include "late-night-2-0.h"
+#include "lunchtime-0-0.h"
+#include "lunchtime-1-0.h"
+#include "lunchtime-2-0.h"
+#include "morning-0-0.h"
+#include "morning-1-0.h"
 // skills
 #include "skills-level.h"
 // slash (w/ digits)
@@ -119,9 +136,26 @@ const SpriteDBEntry SPRITE_DB[] = {
     {DIGIT, DIGIT_9, number_9Tiles, number_9TilesLen, number_9Pal, number_9PalLen},
 
     // time
-    {TIME, AFTERNOON_0_0, afternnoon_0_0Tiles, afternnoon_0_0TilesLen, afternnoon_0_0Pal, afternnoon_0_0PalLen},
-    {TIME, AFTERNOON_1_0, afternnoon_1_0Tiles, afternnoon_1_0TilesLen, afternnoon_1_0Pal, afternnoon_1_0PalLen},
-    {TIME, AFTERNOON_2_0, afternnoon_2_0Tiles, afternnoon_2_0TilesLen, afternnoon_2_0Pal, afternnoon_2_0PalLen},
+    {TIME, AFTER_SCHOOL_0_0, after_school_0_0Tiles, after_school_0_0TilesLen, after_school_0_0Pal, after_school_0_0PalLen},
+    {TIME, AFTER_SCHOOL_1_0, after_school_1_0Tiles, after_school_1_0TilesLen, after_school_1_0Pal, after_school_1_0PalLen},
+    {TIME, AFTER_SCHOOL_2_0, after_school_2_0Tiles, after_school_2_0TilesLen, after_school_2_0Pal, after_school_2_0PalLen},
+    {TIME, AFTERNOON_0_0, afternoon_0_0Tiles, afternoon_0_0TilesLen, afternoon_0_0Pal, afternoon_0_0PalLen},
+    {TIME, AFTERNOON_1_0, afternoon_1_0Tiles, afternoon_1_0TilesLen, afternoon_1_0Pal, afternoon_1_0PalLen},
+    {TIME, AFTERNOON_2_0, afternoon_2_0Tiles, afternoon_2_0TilesLen, afternoon_2_0Pal, afternoon_2_0PalLen},
+    {TIME, DAYTIME_0_0, daytime_0_0Tiles, daytime_0_0TilesLen, daytime_0_0Pal, daytime_0_0PalLen},
+    {TIME, DAYTIME_1_0, daytime_1_0Tiles, daytime_1_0TilesLen, daytime_1_0Pal, daytime_1_0PalLen},
+    {TIME, EARLY_MORNING_0_0, early_morning_0_0Tiles, early_morning_0_0TilesLen, early_morning_0_0Pal, early_morning_0_0PalLen},
+    {TIME, EARLY_MORNING_1_0, early_morning_1_0Tiles, early_morning_1_0TilesLen, early_morning_1_0Pal, early_morning_1_0PalLen},
+    {TIME, EARLY_MORNING_2_0, early_morning_2_0Tiles, early_morning_2_0TilesLen, early_morning_2_0Pal, early_morning_2_0PalLen},
+    {TIME, EARLY_MORNING_3_0, early_morning_3_0Tiles, early_morning_3_0TilesLen, early_morning_3_0Pal, early_morning_3_0PalLen},
+    {TIME, LATE_NIGHT_0_0, late_night_0_0Tiles, late_night_0_0TilesLen, late_night_0_0Pal, late_night_0_0PalLen},
+    {TIME, LATE_NIGHT_1_0, late_night_1_0Tiles, late_night_1_0TilesLen, late_night_1_0Pal, late_night_1_0PalLen},
+    {TIME, LATE_NIGHT_2_0, late_night_2_0Tiles, late_night_2_0TilesLen, late_night_2_0Pal, late_night_2_0PalLen},
+    {TIME, LUNCHTIME_0_0, lunchtime_0_0Tiles, lunchtime_0_0TilesLen, lunchtime_0_0Pal, lunchtime_0_0PalLen},
+    {TIME, LUNCHTIME_1_0, lunchtime_1_0Tiles, lunchtime_1_0TilesLen, lunchtime_1_0Pal, lunchtime_1_0PalLen},
+    {TIME, LUNCHTIME_2_0, lunchtime_2_0Tiles, lunchtime_2_0TilesLen, lunchtime_2_0Pal, lunchtime_2_0PalLen},
+    {TIME, MORNING_0_0, morning_0_0Tiles, morning_0_0TilesLen, morning_0_0Pal, morning_0_0PalLen},
+    {TIME, MORNING_1_0, morning_1_0Tiles, morning_1_0TilesLen, morning_1_0Pal, morning_1_0PalLen},
 
     // skills
     {SKILL_SPRITE, SKILLS_LEVEL, skills_levelTiles, skills_levelTilesLen, skills_levelPal, skills_levelPalLen},

@@ -137,10 +137,10 @@ void IwatodaiDormView::Init()
     spriteCtrl.switchSprite(DIGIT, DIGIT_0, &numberSprites[2]);
     spriteCtrl.switchSprite(DIGIT, DIGIT_7, &numberSprites[3]);
     // time
-    spriteCtrl.switchSprite(TIME, AFTERNOON_0_0, &timeSprites[0]);
-    spriteCtrl.switchSprite(TIME, AFTERNOON_1_0, &timeSprites[1]);
-    spriteCtrl.switchSprite(TIME, AFTERNOON_2_0, &timeSprites[2]);
-    spriteCtrl.switchSprite(TIME, AFTERNOON_0_0, &timeSprites[3]);
+    spriteCtrl.switchSprite(TIME, EARLY_MORNING_0_0, &timeSprites[0]);
+    spriteCtrl.switchSprite(TIME, EARLY_MORNING_1_0, &timeSprites[1]);
+    spriteCtrl.switchSprite(TIME, EARLY_MORNING_2_0, &timeSprites[2]);
+    spriteCtrl.switchSprite(TIME, EARLY_MORNING_3_0, &timeSprites[3]);
     // skill level
     spriteCtrl.switchSprite(SKILL_SPRITE, SKILLS_LEVEL, &skillSprites[0]);
     // slash
