@@ -85,21 +85,23 @@ void IwatodaiDormView::Init()
 
     // setup sprites
     // moon
-	sprites[0] = {0, SpriteSize_32x32, SpriteColorFormat_256Color, 0, 0, 202, 20};
+	sprites[0] = {0, SpriteSize_32x32, SpriteColorFormat_256Color, 0, 0, 202, -15};
     // day of the week
-    sprites[1] = {0, SpriteSize_32x32, SpriteColorFormat_256Color, 0, 1, 82, 143};
+    sprites[1] = {0, SpriteSize_32x32, SpriteColorFormat_256Color, 0, 1, 134, 143};
     // numbers
-    sprites[2] = {0, SpriteSize_32x32, SpriteColorFormat_256Color, 0, 2, 0, 0};     // month (far)
-    sprites[3] = {0, SpriteSize_32x32, SpriteColorFormat_256Color, 0, 2, -11, 140}; // month (close)
-    sprites[4] = {0, SpriteSize_32x32, SpriteColorFormat_256Color, 0, 2, 25, 140};  // day (close)
-    sprites[5] = {0, SpriteSize_32x32, SpriteColorFormat_256Color, 0, 2, 0, 20};    // day (far)
+    sprites[2] = {0, SpriteSize_32x32, SpriteColorFormat_256Color, 0, 2, -11, 141}; // month (10s)
+    sprites[3] = {0, SpriteSize_32x32, SpriteColorFormat_256Color, 0, 2, 15, 141};  // month (1s)
+    sprites[4] = {0, SpriteSize_32x32, SpriteColorFormat_256Color, 0, 2, 54, 141};  // day (10s)
+    sprites[5] = {0, SpriteSize_32x32, SpriteColorFormat_256Color, 0, 2, 80, 141};  // day (1s)
     // time
-    sprites[6] = {0, SpriteSize_64x32, SpriteColorFormat_256Color, 0, 3, 9, -12};   // piece 0
-    sprites[7] = {0, SpriteSize_64x32, SpriteColorFormat_256Color, 0, 4, 73, -12};  // piece 1
-    sprites[8] = {0, SpriteSize_64x32, SpriteColorFormat_256Color, 0, 5, 137, -12}; // piece 2
-    sprites[9] = {0, SpriteSize_64x32, SpriteColorFormat_256Color, 0, 6, 201, -12}; // piece 3
+    sprites[6] = {0, SpriteSize_64x32, SpriteColorFormat_256Color, 0, 3, -27, -5}; // piece 0
+    sprites[7] = {0, SpriteSize_64x32, SpriteColorFormat_256Color, 0, 4, 37, -5};  // piece 1
+    sprites[8] = {0, SpriteSize_64x32, SpriteColorFormat_256Color, 0, 5, 101, -5}; // piece 2
+    sprites[9] = {0, SpriteSize_64x32, SpriteColorFormat_256Color, 0, 6, 165, -5}; // piece 3
     // skill level
-    sprites[10] = {0, SpriteSize_16x16, SpriteColorFormat_256Color, 0, 7, 86, 77};
+    sprites[10] = {0, SpriteSize_16x16, SpriteColorFormat_256Color, 0, 7, 90, 77};
+    // slash
+    sprites[11] = {0, SpriteSize_16x16, SpriteColorFormat_256Color, 0, 2, 52, 157};
 
 	// initialize sub sprite engine with 1D mapping, 128 byte boundry, external palette support
 	oamInit(&oamSub, SpriteMapping_1D_128, true);
@@ -121,17 +123,19 @@ void IwatodaiDormView::Init()
     sprites[9].gfx = oamAllocateGfx(&oamSub, SpriteSize_64x32, SpriteColorFormat_256Color);
     // skill level
     sprites[10].gfx = oamAllocateGfx(&oamSub, SpriteSize_16x16, SpriteColorFormat_256Color);
+    // slash
+    sprites[11].gfx = oamAllocateGfx(&oamSub, SpriteSize_16x16, SpriteColorFormat_256Color);
 
     // get sprites
     // moon
     spriteCtrl.switchSprite(MOON, MOON_22, &moonSprite);
     // day of the week
-    spriteCtrl.switchSprite(DAY_OF_WEEK, MONDAY, &dayOfWeekSprite);
+    spriteCtrl.switchSprite(DAY_OF_WEEK, TUESDAY, &dayOfWeekSprite);
     // numbers
     spriteCtrl.switchSprite(DIGIT, DIGIT_0, &numberSprites[0]);
-    spriteCtrl.switchSprite(DIGIT, DIGIT_1, &numberSprites[1]);
-    spriteCtrl.switchSprite(DIGIT, DIGIT_3, &numberSprites[2]);
-    spriteCtrl.switchSprite(DIGIT, DIGIT_0, &numberSprites[3]);
+    spriteCtrl.switchSprite(DIGIT, DIGIT_4, &numberSprites[1]);
+    spriteCtrl.switchSprite(DIGIT, DIGIT_0, &numberSprites[2]);
+    spriteCtrl.switchSprite(DIGIT, DIGIT_7, &numberSprites[3]);
     // time
     spriteCtrl.switchSprite(TIME, AFTERNOON_0_0, &timeSprites[0]);
     spriteCtrl.switchSprite(TIME, AFTERNOON_1_0, &timeSprites[1]);
@@ -139,6 +143,8 @@ void IwatodaiDormView::Init()
     spriteCtrl.switchSprite(TIME, AFTERNOON_0_0, &timeSprites[3]);
     // skill level
     spriteCtrl.switchSprite(SKILL_SPRITE, SKILLS_LEVEL, &skillSprites[0]);
+    // slash
+    spriteCtrl.switchSprite(DIGIT, SLASH, &slashSprite);
 
     // TODO: initialize any extra sprite registers for max-case arrays?
     // ...
@@ -160,11 +166,13 @@ void IwatodaiDormView::Init()
     dmaCopy(timeSprites[3].tiles, sprites[9].gfx, timeSprites[3].tilesLen);
     // skill level
     dmaCopy(skillSprites[0].tiles, sprites[10].gfx, skillSprites[0].tilesLen);
+    // slash
+    dmaCopy(slashSprite.tiles, sprites[11].gfx, slashSprite.tilesLen);
 
     vramSetBankI(VRAM_I_LCD);
     dmaCopy(moonSprite.pal, &VRAM_I_EXT_SPR_PALETTE[0][0], moonSprite.palLen);              // moon
     dmaCopy(dayOfWeekSprite.pal, &VRAM_I_EXT_SPR_PALETTE[1][0], dayOfWeekSprite.palLen);    // day of the week
-    dmaCopy(numberSprites[0].pal, &VRAM_I_EXT_SPR_PALETTE[2][0], numberSprites[0].palLen);  // numbers
+    dmaCopy(numberSprites[0].pal, &VRAM_I_EXT_SPR_PALETTE[2][0], numberSprites[0].palLen);  // numbers & slash
     dmaCopy(timeSprites[0].pal, &VRAM_I_EXT_SPR_PALETTE[3][0], timeSprites[0].palLen);      // time (0)
     dmaCopy(timeSprites[1].pal, &VRAM_I_EXT_SPR_PALETTE[4][0], timeSprites[1].palLen);      // time (1)
     dmaCopy(timeSprites[2].pal, &VRAM_I_EXT_SPR_PALETTE[5][0], timeSprites[2].palLen);      // time (2)
@@ -255,7 +263,7 @@ ViewState IwatodaiDormView::Update()
             camPos.upX, camPos.upY, camPos.upZ);
 
         // draw sprites
-        for (int i = 0; i < 11; i++)
+        for (int i = 0; i < 12; i++)
         {
             oamSet(
                 &oamSub,                    // sub display (OamState)

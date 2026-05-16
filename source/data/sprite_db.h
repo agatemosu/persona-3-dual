@@ -58,6 +58,8 @@
 #include "afternnoon-2-0.h"
 // skills
 #include "skills-level.h"
+// slash (w/ digits)
+#include "slash.h"
 
 // sprites sharing a palette should point at the same array
 const SpriteDBEntry SPRITE_DB[] = {
@@ -123,6 +125,9 @@ const SpriteDBEntry SPRITE_DB[] = {
 
     // skills
     {SKILL_SPRITE, SKILLS_LEVEL, skills_levelTiles, skills_levelTilesLen, skills_levelPal, skills_levelPalLen},
+
+    // slash (w/ digits)
+    {DIGIT, SLASH, slashTiles, slashTilesLen, slashPal, slashPalLen},
 };
 
 const int SPRITE_DB_LEN = sizeof(SPRITE_DB) / sizeof(SPRITE_DB[0]);

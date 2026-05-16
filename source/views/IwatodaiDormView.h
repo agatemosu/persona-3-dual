@@ -40,6 +40,7 @@ class IwatodaiDormView : public View {
         SpriteRegister numberSprites[4];
         SpriteRegister timeSprites[4];
         SpriteRegister skillSprites[18];
+        SpriteRegister slashSprite;
 
         // Battle participants
         curPlayer player;

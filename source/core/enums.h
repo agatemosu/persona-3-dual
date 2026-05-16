@@ -56,9 +56,26 @@ enum DayOfWeekSprite
 };
 enum TimeSprite
 {
-    AFTERNOON_0_0 = 0,
+    AFTER_SCHOOL_0_0 = 0,
+    AFTER_SCHOOL_1_0,
+    AFTER_SCHOOL_2_0,
+    AFTERNOON_0_0,
     AFTERNOON_1_0,
-    AFTERNOON_2_0
+    AFTERNOON_2_0,
+    DAYTIME_0_0,
+    DAYTIME_1_0,
+    EARLY_MORNING_0_0,
+    EARLY_MORNING_1_0,
+    EARLY_MORNING_2_0,
+    EARLY_MORNING_3_0,
+    LATE_NIGHT_0_0,
+    LATE_NIGHT_1_0,
+    LATE_NIGHT_2_0,
+    LUNCHTIME_0_0,
+    LUNCHTIME_1_0,
+    LUNCHTIME_2_0,
+    MORNING_0_0,
+    MORNING_0_1,
 };
 enum SkillSprite
 {
@@ -75,5 +92,6 @@ enum DigitSprite
     DIGIT_6,
     DIGIT_7,
     DIGIT_8,
-    DIGIT_9
+    DIGIT_9,
+    SLASH
 };
