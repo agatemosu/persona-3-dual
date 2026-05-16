@@ -1,16 +1,5 @@
 #pragma once
-
-// enum to tell which ViewState to use
-enum class ViewState
-{
-    KEEP_CURRENT,
-    DISCLAIMER,
-    INTRO_VIDEO,
-    INTRO,
-    MAIN_MENU,
-    IWATODAI_DORM,
-    IWATODAI_STREETS,
-};
+#include "core/enums.h"
 
 class View
 {

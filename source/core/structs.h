@@ -1,4 +1,7 @@
 #pragma once
+#include "core/enums.h"
+class BaseMenu;
+
 typedef struct
 {
     int id;
@@ -29,3 +32,18 @@ typedef struct
    int x;
    int y;
 } Sprite;
+
+typedef struct
+{
+    const char *name;
+    int bgIndex;
+    ViewState (BaseMenu::*onSelect)();
+} MenuOption;
+
+typedef struct
+{
+    MenuOption *options;
+    int optionCount;
+    int selectedOption;
+    int startIndex;
+} MenuState;
