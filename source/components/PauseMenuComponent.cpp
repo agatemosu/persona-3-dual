@@ -5,11 +5,11 @@
 
 // sfx
 #include "soundbank.h"
-// backgrounds
-#include "bgYukiClose.h"
-#include "bgGuard.h"
+// dummy backgrounds
 #include "bgAkihiko.h"
-#include "bgYuki.h"
+#include "bgKenji.h"
+#include "bgYukari.h"
+#include "bgYukariClose.h"
 // dialogue
 #include "dialogue/demo_dialogue.h"
 
@@ -23,24 +23,6 @@ void PauseMenuComponent::setBgLoaders()
 {
     bgLoaders[0] = [](int slot)
     {
-        dmaCopy(bgGuardTiles, bgGetGfxPtr(slot), bgGuardTilesLen);
-        dmaCopy(bgGuardMap, bgGetMapPtr(slot), bgGuardMapLen);
-        vramSetBankH(VRAM_H_LCD);
-        dmaCopy(bgGuardPal, &VRAM_H_EXT_PALETTE[0][0], bgGuardPalLen);
-        vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
-        bgShow(slot);
-    };
-    bgLoaders[1] = [](int slot)
-    {
-        dmaCopy(bgYukiTiles, bgGetGfxPtr(slot), bgYukiTilesLen);
-        dmaCopy(bgYukiMap, bgGetMapPtr(slot), bgYukiMapLen);
-        vramSetBankH(VRAM_H_LCD);
-        dmaCopy(bgYukiPal, &VRAM_H_EXT_PALETTE[0][0], bgYukiPalLen);
-        vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
-        bgShow(slot);
-    };
-    bgLoaders[2] = [](int slot)
-    {
         dmaCopy(bgAkihikoTiles, bgGetGfxPtr(slot), bgAkihikoTilesLen);
         dmaCopy(bgAkihikoMap, bgGetMapPtr(slot), bgAkihikoMapLen);
         vramSetBankH(VRAM_H_LCD);
@@ -48,12 +30,30 @@ void PauseMenuComponent::setBgLoaders()
         vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
         bgShow(slot);
     };
+    bgLoaders[1] = [](int slot)
+    {
+        dmaCopy(bgKenjiTiles, bgGetGfxPtr(slot), bgKenjiTilesLen);
+        dmaCopy(bgKenjiMap, bgGetMapPtr(slot), bgKenjiMapLen);
+        vramSetBankH(VRAM_H_LCD);
+        dmaCopy(bgKenjiPal, &VRAM_H_EXT_PALETTE[0][0], bgKenjiPalLen);
+        vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
+        bgShow(slot);
+    };
+    bgLoaders[2] = [](int slot)
+    {
+        dmaCopy(bgYukariTiles, bgGetGfxPtr(slot), bgYukariTilesLen);
+        dmaCopy(bgYukariMap, bgGetMapPtr(slot), bgYukariMapLen);
+        vramSetBankH(VRAM_H_LCD);
+        dmaCopy(bgYukariPal, &VRAM_H_EXT_PALETTE[0][0], bgYukariPalLen);
+        vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
+        bgShow(slot);
+    };
     bgLoaders[3] = [](int slot)
     {
-        dmaCopy(bgYukiCloseTiles, bgGetGfxPtr(slot), bgYukiCloseTilesLen);
-        dmaCopy(bgYukiCloseMap, bgGetMapPtr(slot), bgYukiCloseMapLen);
+        dmaCopy(bgYukariCloseTiles, bgGetGfxPtr(slot), bgYukariCloseTilesLen);
+        dmaCopy(bgYukariCloseMap, bgGetMapPtr(slot), bgYukariCloseMapLen);
         vramSetBankH(VRAM_H_LCD);
-        dmaCopy(bgYukiClosePal, &VRAM_H_EXT_PALETTE[0][0], bgYukiClosePalLen);
+        dmaCopy(bgYukariClosePal, &VRAM_H_EXT_PALETTE[0][0], bgYukariClosePalLen);
         vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
         bgShow(slot);
     };
@@ -371,9 +371,9 @@ ViewState PauseMenuComponent::debugOptionSelected()
         break;
     case DEBUG_DIALOGUE:
         consoleClear();
-        demo_yuki_guard_argument_load();
-        dialogueCtrl.setLoader(demo_yuki_guard_argument_load_bg);
-        dialogueCtrl.start(demo_yuki_guard_argument_first());
+        demo_yukari_kenji_argument_load();
+        dialogueCtrl.setLoader(demo_yukari_kenji_argument_load_bg);
+        dialogueCtrl.start(demo_yukari_kenji_argument_first());
         selectedView = ViewState::KEEP_CURRENT;
         break;
     case TOGGLE_BILLBOARDS:

@@ -193,9 +193,9 @@ ViewState IwatodaiDormView::Update()
                 iprintf("\x1b[0;0HPress A to talk");
                 if (pressed & KEY_A)
                 {
-                    demo_yuki_guard_argument_load();
-                    dialogueCtrl.setLoader(demo_yuki_guard_argument_load_bg);
-                    dialogueCtrl.start(demo_yuki_guard_argument_first());
+                    demo_yukari_kenji_argument_load();
+                    dialogueCtrl.setLoader(demo_yukari_kenji_argument_load_bg);
+                    dialogueCtrl.start(demo_yukari_kenji_argument_first());
                 }
             }
         }
