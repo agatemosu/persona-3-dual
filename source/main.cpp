@@ -32,6 +32,9 @@
 #include "character_texture_3.h"
 #include "character_texture_4.h"
 
+// character profiles
+#include "battleActions/party/CharacterProfiles.h"
+
 // variables
 volatile int frame = 0;
 int fps = 0;
@@ -102,6 +105,9 @@ int main(int argc, char *argv[])
     bitmapsCharacter[MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_2] = character_texture_2Bitmap;
     bitmapsCharacter[MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_3] = character_texture_3Bitmap;
     bitmapsCharacter[MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_4] = character_texture_4Bitmap;
+
+    // init Character Profiles
+    CharacterProfiles::InitializeProfiles();
 
     // start with DisclaimerView
     // seed with DS hardware timer for reliable randomness (time() can return 0 on DS)

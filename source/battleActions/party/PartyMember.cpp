@@ -51,4 +51,6 @@ bool PartyMember::TakeTurn(u32 *keys)
     {
         actions->at(index)->execute();
     }
+
+    return false;
 }

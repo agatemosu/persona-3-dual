@@ -26,8 +26,8 @@ private:
 
     std::vector<BattleParticipant *> *battleParticipants;
     // needs to be battleparticipant so i can just vecotr push back based on participant type aloneyy
-    std::vector<BattleParticipant *> *enemies;
-    std::vector<BattleParticipant *> *partyMembers;
+    std::vector<BattleParticipant *> enemies;
+    std::vector<BattleParticipant *> partyMembers;
 
     AttackAction attack;
     Guard guard;

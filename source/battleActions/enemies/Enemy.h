@@ -25,9 +25,9 @@ struct Enemy : BattleParticipant
     }
 
     std::vector<BattleParticipant *> *enemies;
-    std::vector<PartyMember *> *partyMembers;
+    std::vector<BattleParticipant *> *partyMembers;
 
-    void Init(std::vector<BattleParticipant *> *iEnemies, std::vector<PartyMember *> *iPartyMembers);
+    void Init(std::vector<BattleParticipant *> *iEnemies, std::vector<BattleParticipant *> *iPartyMembers);
 
     // enemys have indivual ais in the future
     bool TakeTurn(u32 *keys) override;

@@ -1,6 +1,6 @@
 #include "Enemy.h"
 
-void Enemy::Init(std::vector<BattleParticipant *> *iEnemies, std::vector<PartyMember *> *iPartyMembers)
+void Enemy::Init(std::vector<BattleParticipant *> *iEnemies, std::vector<BattleParticipant *> *iPartyMembers)
 {
     enemies = iEnemies;
     partyMembers = iPartyMembers;
@@ -10,7 +10,7 @@ bool Enemy::TakeTurn(u32 *keys)
 {
     u32 randomNum = rand() % attackCount + 1;
 
-    PartyMember *target = partyMembers->at(rand() % partyMembers->size());
+    PartyMember *target = static_cast<PartyMember *>(partyMembers->at(rand() % partyMembers->size()));
 
     u32 damage;
     AttackSkill *curSkill;
@@ -54,6 +54,8 @@ bool Enemy::TakeTurn(u32 *keys)
         target->hp -= (s32)damage;
         iprintf("Attack with: ");
         iprintf(curSkill->name.c_str());
+        iprintf("Attacking: ");
+        iprintf(target->name.c_str());
         iprintf("\n");
         char str[50];
         std::sprintf(str, "remaining target hp: %ld \n", target->hp);
@@ -76,4 +78,7 @@ bool Enemy::TakeTurn(u32 *keys)
             target->knockedDown = true;
         }
     }
+
+    // just directly always ends for now
+    return true;
 }
