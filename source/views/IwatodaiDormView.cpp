@@ -252,13 +252,7 @@ ViewState IwatodaiDormView::update()
 
 void IwatodaiDormView::cleanup()
 {
-    // clear screen
-    setBrightness(3, 0);
-    consoleClear();
-
-    // stop pause menu sfx
-    pauseMenuCmpt.cancelSFX();
-    isPauseMenuActive = false;
+    BaseView::cleanup();
 
     // cleanup environment
     iwatodaiDormEnv.cleanup();
@@ -266,15 +260,6 @@ void IwatodaiDormView::cleanup()
     glDeleteTextures(1, &characterTextureId);
     // reset shared bg slot
     dmaFillHalfWords(0, bgGetMapPtr(bgSharedSlot), 2048);
-
-    // reset vram
-    vramSetBankA(VRAM_A_LCD);
-    vramSetBankB(VRAM_B_LCD);
-    vramSetBankC(VRAM_C_LCD);
-    vramSetBankD(VRAM_D_LCD);
-    vramSetBankE(VRAM_E_LCD);
-    vramSetBankH(VRAM_H_LCD);
-    vramSetBankI(VRAM_I_LCD);
 
     // cleanup controllers
     delete playerCtrl;

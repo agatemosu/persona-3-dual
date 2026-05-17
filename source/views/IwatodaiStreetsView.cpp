@@ -239,23 +239,11 @@ ViewState IwatodaiStreetsView::update()
 
 void IwatodaiStreetsView::cleanup()
 {
-    setBrightness(3, 0);
-    consoleClear();
-
-    pauseMenuCmpt.cancelSFX();
-    isPauseMenuActive = false;
+    BaseView::cleanup();
 
     iwatodaiStreetsEnv.cleanup();
     glDeleteTextures(1, &streetsCharacterTextureId);
     dmaFillHalfWords(0, bgGetMapPtr(bgSharedSlot), 2048);
-
-    vramSetBankA(VRAM_A_LCD);
-    vramSetBankB(VRAM_B_LCD);
-    vramSetBankC(VRAM_C_LCD);
-    vramSetBankD(VRAM_D_LCD);
-    vramSetBankE(VRAM_E_LCD);
-    vramSetBankH(VRAM_H_LCD);
-    vramSetBankI(VRAM_I_LCD);
 
     delete playerCtrl;
     playerCtrl = nullptr;

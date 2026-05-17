@@ -107,16 +107,7 @@ ViewState DisclaimerView::update()
 
 void DisclaimerView::cleanup()
 {
-    // clear screen
-    setBrightness(3, 0);
-    consoleClear();
-
-    // reset vram
-    vramSetBankA(VRAM_A_LCD);
-    vramSetBankC(VRAM_C_LCD);
-    vramSetBankD(VRAM_D_LCD);
-    vramSetBankE(VRAM_E_LCD);
-    vramSetBankH(VRAM_H_LCD);
+    BaseView::cleanup();
 
     // reset backgrounds
     dmaFillHalfWords(0, bgGetMapPtr(bg[1]), 2048);

@@ -15,5 +15,6 @@ ViewState IntroVideoView::update()
 
 void IntroVideoView::cleanup()
 {
-    videoCtrl.cleanup();
+    // handles videoCtrl.cleanup()
+    BaseView::cleanup();
 }

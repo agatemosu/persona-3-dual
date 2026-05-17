@@ -186,23 +186,12 @@ ViewState MainMenuView::update()
 
 void MainMenuView::cleanup()
 {
-    // clear screen
-    setBrightness(3, 0);
-    consoleClear();
+    BaseView::cleanup();
 
     // reset backgrounds
     dmaFillHalfWords(0, bgGetMapPtr(bg[0]), 8192);
     dmaFillHalfWords(1, bgGetMapPtr(bg[1]), 2048);
     dmaFillHalfWords(2, bgGetMapPtr(bg[2]), 2048);
-
-    // reset vram
-    vramSetBankA(VRAM_A_LCD);
-    vramSetBankB(VRAM_B_LCD);
-    vramSetBankD(VRAM_D_LCD);
-    vramSetBankE(VRAM_E_LCD);
-
-    mainMenuCmpt.cancelSFX();
-    isMainMenuCmptActive = false;
 
     // disable blending
     REG_BLDCNT = 0;

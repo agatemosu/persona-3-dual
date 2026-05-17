@@ -12,5 +12,5 @@ public:
     // abstract methods, as marked by "= 0"
     virtual void init() = 0;        // view setup
     virtual ViewState update() = 0; // view update
-    virtual void cleanup() = 0;     // view cleanup
+    virtual void cleanup();         // view cleanup
 };

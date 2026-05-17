@@ -360,17 +360,7 @@ ViewState IntroView::update()
 
 void IntroView::cleanup()
 {
-    // clear screen
-    setBrightness(3, 0);
-    consoleClear();
-
-    // reset vram
-    vramSetBankA(VRAM_A_LCD);
-    vramSetBankB(VRAM_B_LCD);
-    vramSetBankC(VRAM_C_LCD);
-    vramSetBankD(VRAM_D_LCD);
-    vramSetBankE(VRAM_E_LCD);
-    vramSetBankH(VRAM_H_LCD);
+    BaseView::cleanup();
 
     // reset backgrounds
     dmaFillHalfWords(0, bgGetMapPtr(bg[0]), 8192); // silhouette
