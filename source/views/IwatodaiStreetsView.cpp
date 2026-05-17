@@ -253,6 +253,7 @@ void IwatodaiStreetsView::Cleanup()
     vramSetBankB(VRAM_B_LCD);
     vramSetBankC(VRAM_C_LCD);
     vramSetBankD(VRAM_D_LCD);
+    vramSetBankE(VRAM_E_LCD);
     vramSetBankH(VRAM_H_LCD);
     vramSetBankI(VRAM_I_LCD);
 

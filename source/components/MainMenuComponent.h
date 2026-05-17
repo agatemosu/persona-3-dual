@@ -1,11 +1,17 @@
 #include "core/BaseMenu.h"
 
-#define MAIN_MENU_OPTIONS 3
-enum
+#define MAIN_MENU_OPTIONS 2
+enum class MainMenuOptions
 {
-    OPTION_0 = 0,
-    OPTION_1,
-    OPTION_2
+    LOAD_GAME = 0,
+    RETURN_TO_TITLE,
+};
+
+#define LEVEL_OPTIONS 2
+enum class LevelOptions
+{
+    IWATODAI_DORM = 0,
+    IWATODAI_STREETS
 };
 
 class MainMenuComponent : public BaseMenu
@@ -15,13 +21,19 @@ protected:
 private:
     MenuOption mainMenuOptions[MAIN_MENU_OPTIONS] =
     {
-        {"Option 0", 0, MENU_BIND(MainMenuComponent, mainMenuOptionSelected)},
-        {"Option 1", 1, MENU_BIND(MainMenuComponent, mainMenuOptionSelected)},
-        {"Option 2", 2, MENU_BIND(MainMenuComponent, mainMenuOptionSelected)},
+        {"Load Game", -1, MENU_BIND(MainMenuComponent, mainMenuOptionSelected)},
+        {"Return to Title", -1, MENU_BIND(MainMenuComponent, mainMenuOptionSelected)},
+    };
+
+    MenuOption levelOptions[LEVEL_OPTIONS] =
+    {
+        {"Iwatodai Dorm", -1, MENU_BIND(MainMenuComponent, levelOptionSelected)},
+        {"Iwatodai Streets", -1, MENU_BIND(MainMenuComponent, levelOptionSelected)},
     };
 
     // option handlers
     ViewState mainMenuOptionSelected();
+    ViewState levelOptionSelected();
 public:
     void init(int iBgSlot, bool *isActive) override;
 };

@@ -65,9 +65,31 @@ ViewState MainMenuComponent::mainMenuOptionSelected()
     ViewState selectedView;
     switch (selectedOption)
     {
-        case OPTION_0:
-        case OPTION_1:
-        case OPTION_2:
+        case (int)MainMenuOptions::LOAD_GAME:
+            changeMenu(levelOptions, LEVEL_OPTIONS);
+            selectedView = ViewState::KEEP_CURRENT;
+            break;
+        case (int)MainMenuOptions::RETURN_TO_TITLE:
+            selectedView = ViewState::INTRO;
+            break;
+        default:
+            selectedView = ViewState::KEEP_CURRENT;
+    }
+
+    return selectedView;
+}
+
+ViewState MainMenuComponent::levelOptionSelected()
+{
+    ViewState selectedView;
+    switch (selectedOption)
+    {
+        case (int)LevelOptions::IWATODAI_DORM:
+            selectedView = ViewState::IWATODAI_DORM;
+            break;
+        case (int)LevelOptions::IWATODAI_STREETS:
+            selectedView = ViewState::IWATODAI_STREETS;
+            break;
         default:
             selectedView = ViewState::KEEP_CURRENT;
     }
