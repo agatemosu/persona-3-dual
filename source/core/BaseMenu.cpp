@@ -19,6 +19,7 @@ void BaseMenu::init(int iBgSlot, bool *isActive, const std::string &iPauseMessag
     // set default options
     selectedOption = 0;
     startIndex = 0;
+    while (!prevOptions.empty()) prevOptions.pop();
 
     pauseMessage = iPauseMessage;
     bgSlot = iBgSlot;
@@ -66,7 +67,7 @@ ViewState BaseMenu::update(int keys)
             {
                 nextViewState = result;
                 *isActivePtr = false;
-                bgHide(bgSlot);
+                if (bgSlot >= 0) bgHide(bgSlot);
             }
 
             // if we changed options, push current state to stack
@@ -99,12 +100,12 @@ ViewState BaseMenu::update(int keys)
         {
             // otherwise, close the menu
             *isActivePtr = false;
-            bgHide(bgSlot);
+            if (bgSlot >= 0) bgHide(bgSlot);
         }
     }
 
     consoleClear();
-    printf("\x1b[0;0H");
+    iprintf("\x1b[0;0H");
 
     // blink the "Pause" text
     if (frame % 60 < 30)
@@ -124,15 +125,18 @@ ViewState BaseMenu::update(int keys)
     }
 
     // load selectedOption's background
-    int bgIndex = options[selectedOption].bgIndex;
-    if (bgIndex != -1)
+    if (bgSlot >= 0)
     {
-        loadBg(bgIndex);
-        bgShow(bgSlot);
-    }
-    else
-    {
-        bgHide(bgSlot);
+        int bgIndex = options[selectedOption].bgIndex;
+        if (bgIndex != -1)
+        {
+            loadBg(bgIndex);
+            bgShow(bgSlot);
+        }
+        else
+        {
+            bgHide(bgSlot);
+        }
     }
 
     ViewState viewState = nextViewState;

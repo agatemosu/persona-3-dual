@@ -14,6 +14,7 @@ void MainMenuView::init()
     musicCtrl.init("nitro:/music/aria_of_the_soul.pcm", 0.0f, 164.940f);
 
     // setup menu
+    isMainMenuCmptActive = true;
     mainMenuCmpt.init(-1, &isMainMenuCmptActive);
 
     // transition both screens from white
