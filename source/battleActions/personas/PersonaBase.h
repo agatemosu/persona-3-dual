@@ -11,12 +11,13 @@ En	Represents endurance, which determines your defense and how much damage you c
 Ag	Represents agility, which determines your place in the turn order.
 Lu	Represents luck, which is taken into account when using certain skills involving status afflictions or insta-death abilities.*/
 
-struct PersonaBase : BattleStats
+struct PersonaBase
 {
     std::string name;
     u32 lv;
     AttackSkill **attackSkill;
     u32 attackCount;
+    BattleStats battleStats;
 
     PersonaBase() {}
     ~PersonaBase() {};

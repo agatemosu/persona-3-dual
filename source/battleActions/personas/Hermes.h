@@ -13,25 +13,25 @@ struct Hermes : PersonaBase
     {
         name = "Hermes";
         lv = 1;
-        st = 3;
-        ma = 1;
-        en = 2;
-        ag = 3;
-        lu = 1;
+        battleStats.st = 3;
+        battleStats.ma = 1;
+        battleStats.en = 2;
+        battleStats.ag = 3;
+        battleStats.lu = 1;
 
         myAttcking[0] = &power_Slash;
         attackCount = 1;
         attackSkill = myAttcking;
 
-        affinities[Element::Slash] = Neutral;
-        affinities[Element::Strike] = Neutral;
-        affinities[Element::Pierce] = Neutral;
-        affinities[Element::Fire] = Resist;
-        affinities[Element::Ice] = Neutral;
-        affinities[Element::Electricity] = Neutral;
-        affinities[Element::Wind] = Weak;
-        affinities[Element::Light] = Neutral;
-        affinities[Element::Dark] = Neutral;
+        battleStats.affinities[Element::Slash] = BattleStats::Neutral;
+        battleStats.affinities[Element::Strike] = BattleStats::Neutral;
+        battleStats.affinities[Element::Pierce] = BattleStats::Neutral;
+        battleStats.affinities[Element::Fire] = BattleStats::Resist;
+        battleStats.affinities[Element::Ice] = BattleStats::Neutral;
+        battleStats.affinities[Element::Electricity] = BattleStats::Neutral;
+        battleStats.affinities[Element::Wind] = BattleStats::Weak;
+        battleStats.affinities[Element::Light] = BattleStats::Neutral;
+        battleStats.affinities[Element::Dark] = BattleStats::Neutral;
         // add arcana
     }
 };

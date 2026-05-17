@@ -16,9 +16,9 @@ bool TargetAndAttackActionEnemy::update(u32 *keys, AttackSkill *attack, PartyMem
         iprintf(targets->at(*targetIndex)->name.c_str());
         iprintf("\n");
 
-        u32 damage = attack->calculateDamagePlayer(user->curPersona->getBattleStats(), targets->at(*targetIndex)->battleStats.getBattleStats(), &user->lv, &targets->at(*targetIndex)->lv);
+        u32 damage = attack->calculateDamagePlayer(&user->curPersona->battleStats, &targets->at(*targetIndex)->battleStats, &user->lv, &targets->at(*targetIndex)->lv);
 
-        u32 affinity = targets->at(*targetIndex)->battleStats.getBattleStats()->affinities[attack->element];
+        u32 affinity = targets->at(*targetIndex)->battleStats.affinities[attack->element];
         if (affinity == BattleStats::Affinity::Weak && !targets->at(*targetIndex)->knockedDown)
         {
             user->oneMore = true;

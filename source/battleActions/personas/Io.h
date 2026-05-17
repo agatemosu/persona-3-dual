@@ -13,25 +13,25 @@ struct Io : PersonaBase
     {
         name = "Io";
         lv = 1;
-        st = 2;
-        ma = 3;
-        en = 1;
-        ag = 2;
-        lu = 2;
+        battleStats.st = 2;
+        battleStats.ma = 3;
+        battleStats.en = 1;
+        battleStats.ag = 2;
+        battleStats.lu = 2;
 
         myAttcking[0] = &garu;
         attackCount = 1;
         attackSkill = myAttcking;
 
-        affinities[Element::Slash] = Neutral;
-        affinities[Element::Strike] = Neutral;
-        affinities[Element::Pierce] = Neutral;
-        affinities[Element::Fire] = Neutral;
-        affinities[Element::Ice] = Neutral;
-        affinities[Element::Electricity] = Weak;
-        affinities[Element::Wind] = Resist;
-        affinities[Element::Light] = Neutral;
-        affinities[Element::Dark] = Neutral;
+        battleStats.affinities[Element::Slash] = BattleStats::Neutral;
+        battleStats.affinities[Element::Strike] = BattleStats::Neutral;
+        battleStats.affinities[Element::Pierce] = BattleStats::Neutral;
+        battleStats.affinities[Element::Fire] = BattleStats::Neutral;
+        battleStats.affinities[Element::Ice] = BattleStats::Neutral;
+        battleStats.affinities[Element::Electricity] = BattleStats::Weak;
+        battleStats.affinities[Element::Wind] = BattleStats::Resist;
+        battleStats.affinities[Element::Light] = BattleStats::Neutral;
+        battleStats.affinities[Element::Dark] = BattleStats::Neutral;
         // add arcana
     }
 };

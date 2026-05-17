@@ -19,12 +19,12 @@ bool Enemy::TakeTurn(u32 *keys)
     if (randomNum == 0)
     {
         curSkill = baseAttackAction;
-        damage = curSkill->calculateDamageEnemyRegular(battleStats.getBattleStats(), target->curPersona->getBattleStats(), &lv, &target->lv, &target->armour);
+        damage = curSkill->calculateDamageEnemyRegular(&battleStats, &target->curPersona->battleStats, &lv, &target->lv, &target->armour);
     }
     else
     {
         curSkill = attackSkill[randomNum - 1];
-        damage = curSkill->calculateDamageEnemySkill(battleStats.getBattleStats(), target->curPersona->getBattleStats(), &lv, &target->lv, &target->armour);
+        damage = curSkill->calculateDamageEnemySkill(&battleStats, &target->curPersona->battleStats, &lv, &target->lv, &target->armour);
     }
 
     if (target->guarding)
@@ -71,7 +71,7 @@ bool Enemy::TakeTurn(u32 *keys)
         }
             */
 
-        u32 affinity = target->curPersona->affinities[curSkill->element];
+        u32 affinity = target->curPersona->battleStats.affinities[curSkill->element];
         if (affinity == BattleStats::Affinity::Weak && !target->knockedDown && !target->guarding)
         {
             oneMore = true;

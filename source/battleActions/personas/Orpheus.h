@@ -15,26 +15,26 @@ struct Orpheus : PersonaBase
     {
         name = "Orpheus";
         lv = 1;
-        st = 2;
-        ma = 2;
-        en = 2;
-        ag = 2;
-        lu = 2;
+        battleStats.st = 2;
+        battleStats.ma = 2;
+        battleStats.en = 2;
+        battleStats.ag = 2;
+        battleStats.lu = 2;
 
         myAttcking[0] = &agi;
         myAttcking[1] = &bash;
         attackCount = 2;
         attackSkill = myAttcking;
 
-        affinities[Element::Slash] = Neutral;
-        affinities[Element::Strike] = Neutral;
-        affinities[Element::Pierce] = Neutral;
-        affinities[Element::Fire] = Neutral;
-        affinities[Element::Ice] = Neutral;
-        affinities[Element::Electricity] = Weak;
-        affinities[Element::Wind] = Neutral;
-        affinities[Element::Light] = Neutral;
-        affinities[Element::Dark] = Weak;
+        battleStats.affinities[Element::Slash] = BattleStats::Neutral;
+        battleStats.affinities[Element::Strike] = BattleStats::Neutral;
+        battleStats.affinities[Element::Pierce] = BattleStats::Neutral;
+        battleStats.affinities[Element::Fire] = BattleStats::Neutral;
+        battleStats.affinities[Element::Ice] = BattleStats::Neutral;
+        battleStats.affinities[Element::Electricity] = BattleStats::Weak;
+        battleStats.affinities[Element::Wind] = BattleStats::Neutral;
+        battleStats.affinities[Element::Light] = BattleStats::Neutral;
+        battleStats.affinities[Element::Dark] = BattleStats::Weak;
         // add arcana
     }
 };
