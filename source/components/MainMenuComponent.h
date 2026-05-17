@@ -1,18 +1,7 @@
 #include "core/BaseMenu.h"
 
 #define MAIN_MENU_OPTIONS 2
-enum class MainMenuOptions
-{
-    LOAD_GAME = 0,
-    RETURN_TO_TITLE,
-};
-
 #define LEVEL_OPTIONS 2
-enum class LevelOptions
-{
-    IWATODAI_DORM = 0,
-    IWATODAI_STREETS
-};
 
 class MainMenuComponent : public BaseMenu
 {

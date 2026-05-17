@@ -164,40 +164,40 @@ ViewState PauseMenuComponent::systemOptionSelected()
 ViewState PauseMenuComponent::debugOptionSelected()
 {
     ViewState selectedView;
-    switch (selectedOption)
+    switch (static_cast<DebugOption>(selectedOption))
     {
-        case DISCLAIMER_VIEW:
+        case DebugOption::DISCLAIMER_VIEW:
             musicCtrl.pause();
             selectedView = ViewState::DISCLAIMER;
             break;
-        case INTRO_VIDEO_VIEW:
+        case DebugOption::INTRO_VIDEO_VIEW:
             selectedView = ViewState::INTRO_VIDEO;
             break;
-        case INTRO_VIEW:
+        case DebugOption::INTRO_VIEW:
             selectedView = ViewState::INTRO;
             break;
-        case MAIN_MENU_VIEW:
+        case DebugOption::MAIN_MENU_VIEW:
             selectedView = ViewState::MAIN_MENU;
             break;
-        case IWATODAI_DORM_VIEW:
+        case DebugOption::IWATODAI_DORM_VIEW:
             selectedView = ViewState::IWATODAI_DORM;
             break;
-        case IWATODAI_STREETS_VIEW:
+        case DebugOption::IWATODAI_STREETS_VIEW:
             selectedView = ViewState::IWATODAI_STREETS;
             break;
-        case DEBUG_DIALOGUE:
+        case DebugOption::DEBUG_DIALOGUE:
             consoleClear();
             demo_yukari_kenji_argument_load();
             dialogueCtrl.setLoader(demo_yukari_kenji_argument_load_bg);
             dialogueCtrl.start(demo_yukari_kenji_argument_first());
             selectedView = ViewState::KEEP_CURRENT;
             break;
-        case TOGGLE_BILLBOARDS:
+        case DebugOption::TOGGLE_BILLBOARDS:
             enableBillboards = !enableBillboards;
             *isActivePtr = false;
             selectedView = ViewState::KEEP_CURRENT;
             break;
-        case TOGGLE_DEBUG_PRINT:
+        case DebugOption::TOGGLE_DEBUG_PRINT:
             enableDebugPrint = true;
             *isActivePtr = false;
             selectedView = ViewState::KEEP_CURRENT;
@@ -213,35 +213,35 @@ ViewState PauseMenuComponent::characterAnimOptionSelected()
     characterAnimationCtrl.stop();
 
     ViewState selectedView = ViewState::KEEP_CURRENT;
-    switch (selectedOption)
+    switch (static_cast<CharacterAnimOption>(selectedOption))
     {
-        case TOGGLE_AUTO_ANIM:
+        case CharacterAnimOption::TOGGLE_AUTO_ANIM:
             enableCharacterAnim = !enableCharacterAnim;
             break;
-        case ANIM_1:  characterAnimationCtrl.set((Model_character)0,  true); enableCharacterAnim = false; break;
-        case ANIM_2:  characterAnimationCtrl.set((Model_character)1,  true); enableCharacterAnim = false; break;
-        case ANIM_3:  characterAnimationCtrl.set((Model_character)2,  true); enableCharacterAnim = false; break;
-        case ANIM_4:  characterAnimationCtrl.set((Model_character)3,  true); enableCharacterAnim = false; break;
-        case ANIM_5:  characterAnimationCtrl.set((Model_character)4,  true); enableCharacterAnim = false; break;
-        case ANIM_6:  characterAnimationCtrl.set((Model_character)5,  true); enableCharacterAnim = false; break;
-        case ANIM_7:  characterAnimationCtrl.set((Model_character)6,  true); enableCharacterAnim = false; break;
-        case ANIM_8:  characterAnimationCtrl.set((Model_character)7,  true); enableCharacterAnim = false; break;
-        case ANIM_9:  characterAnimationCtrl.set((Model_character)8,  true); enableCharacterAnim = false; break;
-        case ANIM_10: characterAnimationCtrl.set((Model_character)9,  true); enableCharacterAnim = false; break;
-        case ANIM_11: characterAnimationCtrl.set((Model_character)10, true); enableCharacterAnim = false; break;
-        case ANIM_12: characterAnimationCtrl.set((Model_character)11, true); enableCharacterAnim = false; break;
-        case ANIM_13: characterAnimationCtrl.set((Model_character)12, true); enableCharacterAnim = false; break;
-        case ANIM_14: characterAnimationCtrl.set((Model_character)13, true); enableCharacterAnim = false; break;
-        case ANIM_15: characterAnimationCtrl.set((Model_character)14, true); enableCharacterAnim = false; break;
-        case ANIM_16: characterAnimationCtrl.set((Model_character)15, true); enableCharacterAnim = false; break;
-        case ANIM_17: characterAnimationCtrl.set((Model_character)16, true); enableCharacterAnim = false; break;
-        case ANIM_18: characterAnimationCtrl.set((Model_character)17, true); enableCharacterAnim = false; break;
-        case ANIM_19: characterAnimationCtrl.set((Model_character)18, true); enableCharacterAnim = false; break;
-        case ANIM_20: characterAnimationCtrl.set((Model_character)19, true); enableCharacterAnim = false; break;
-        case ANIM_21: characterAnimationCtrl.set((Model_character)20, true); enableCharacterAnim = false; break;
-        case ANIM_22: characterAnimationCtrl.set((Model_character)21, true); enableCharacterAnim = false; break;
-        case ANIM_23: characterAnimationCtrl.set((Model_character)22, true); enableCharacterAnim = false; break;
-        case ANIM_24: characterAnimationCtrl.set((Model_character)23, true); enableCharacterAnim = false; break;
+        case CharacterAnimOption::ANIM_1:  characterAnimationCtrl.set((Model_character)0,  true); enableCharacterAnim = false; break;
+        case CharacterAnimOption::ANIM_2:  characterAnimationCtrl.set((Model_character)1,  true); enableCharacterAnim = false; break;
+        case CharacterAnimOption::ANIM_3:  characterAnimationCtrl.set((Model_character)2,  true); enableCharacterAnim = false; break;
+        case CharacterAnimOption::ANIM_4:  characterAnimationCtrl.set((Model_character)3,  true); enableCharacterAnim = false; break;
+        case CharacterAnimOption::ANIM_5:  characterAnimationCtrl.set((Model_character)4,  true); enableCharacterAnim = false; break;
+        case CharacterAnimOption::ANIM_6:  characterAnimationCtrl.set((Model_character)5,  true); enableCharacterAnim = false; break;
+        case CharacterAnimOption::ANIM_7:  characterAnimationCtrl.set((Model_character)6,  true); enableCharacterAnim = false; break;
+        case CharacterAnimOption::ANIM_8:  characterAnimationCtrl.set((Model_character)7,  true); enableCharacterAnim = false; break;
+        case CharacterAnimOption::ANIM_9:  characterAnimationCtrl.set((Model_character)8,  true); enableCharacterAnim = false; break;
+        case CharacterAnimOption::ANIM_10: characterAnimationCtrl.set((Model_character)9,  true); enableCharacterAnim = false; break;
+        case CharacterAnimOption::ANIM_11: characterAnimationCtrl.set((Model_character)10, true); enableCharacterAnim = false; break;
+        case CharacterAnimOption::ANIM_12: characterAnimationCtrl.set((Model_character)11, true); enableCharacterAnim = false; break;
+        case CharacterAnimOption::ANIM_13: characterAnimationCtrl.set((Model_character)12, true); enableCharacterAnim = false; break;
+        case CharacterAnimOption::ANIM_14: characterAnimationCtrl.set((Model_character)13, true); enableCharacterAnim = false; break;
+        case CharacterAnimOption::ANIM_15: characterAnimationCtrl.set((Model_character)14, true); enableCharacterAnim = false; break;
+        case CharacterAnimOption::ANIM_16: characterAnimationCtrl.set((Model_character)15, true); enableCharacterAnim = false; break;
+        case CharacterAnimOption::ANIM_17: characterAnimationCtrl.set((Model_character)16, true); enableCharacterAnim = false; break;
+        case CharacterAnimOption::ANIM_18: characterAnimationCtrl.set((Model_character)17, true); enableCharacterAnim = false; break;
+        case CharacterAnimOption::ANIM_19: characterAnimationCtrl.set((Model_character)18, true); enableCharacterAnim = false; break;
+        case CharacterAnimOption::ANIM_20: characterAnimationCtrl.set((Model_character)19, true); enableCharacterAnim = false; break;
+        case CharacterAnimOption::ANIM_21: characterAnimationCtrl.set((Model_character)20, true); enableCharacterAnim = false; break;
+        case CharacterAnimOption::ANIM_22: characterAnimationCtrl.set((Model_character)21, true); enableCharacterAnim = false; break;
+        case CharacterAnimOption::ANIM_23: characterAnimationCtrl.set((Model_character)22, true); enableCharacterAnim = false; break;
+        case CharacterAnimOption::ANIM_24: characterAnimationCtrl.set((Model_character)23, true); enableCharacterAnim = false; break;
         default:
             break;
     }
