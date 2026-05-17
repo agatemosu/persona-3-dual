@@ -1,10 +1,11 @@
 #pragma once
-#include <nds.h>
-#include <stack>
-#include "core/globals.h"
-#include "core/structs.h"
 
-#define MENU_BIND(ClassName, Method) static_cast<ViewState (BaseMenu::*)()>(&ClassName::Method)
+#define MENU_BIND(ClassName, Method) reinterpret_cast<ViewState (BaseMenu::*)()>(&ClassName::Method)
+
+#include <nds.h>
+#include <maxmod9.h>
+#include <stack>
+#include "core/structs.h"
 
 class BaseMenu
 {
@@ -27,7 +28,7 @@ private:
 
     // options
     int visibleOptions = 23;
-    stack<MenuState> prevOptions;
+    std::stack<MenuState> prevOptions;
     ViewState nextViewState = ViewState::KEEP_CURRENT;
 public:
     virtual void init(int iBgSlot, bool *isActive);
