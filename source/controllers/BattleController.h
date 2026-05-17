@@ -14,7 +14,7 @@
 #include "./battleActions/enemies/Enemy.h"
 #include "./battleActions/party/PartyMember.h"
 
-#include "./battleActions/party/characterProfiles.h"
+#include "./battleActions/party/CharacterProfiles.h"
 
 class BattleController
 {
@@ -28,6 +28,8 @@ private:
     std::vector<BattleParticipant *> enemies;
     std::vector<BattleParticipant *> partyMembers;
 
+    CharacterProfiles *characterProfiles;
+
     AttackAction attack;
     Guard guard;
     PersonaAction persona;
@@ -35,7 +37,6 @@ private:
 
     std::array<ActionBase *, 4> actions = {&attack, &guard, &persona, &switchPersona};
 
-    CharacterProfiles *characterProfiles;
     // TODO: method for selecting party members in the future
     PartyMember *player = nullptr;
     PartyMember *yukari = nullptr;

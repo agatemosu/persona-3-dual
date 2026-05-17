@@ -6,14 +6,14 @@ void PartyMember::Init(std::array<ActionBase *, 4> *iActions)
     actions = iActions;
     if (participantType == ParticipantType::Player)
     {
-        for (int i = 0; i < actions->size(); i++)
+        for (u32 i = 0; i < actions->size(); i++)
         {
             canUseAction[i] = true;
         }
     }
     else if (participantType == ParticipantType::Party)
     {
-        for (int i = 0; i < actions->size(); i++)
+        for (u32 i = 0; i < actions->size(); i++)
         {
             if (actions->at(i)->possibleUsers == ParticipantType::Party)
             {
