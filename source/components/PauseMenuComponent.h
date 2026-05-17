@@ -174,6 +174,6 @@ private:
     ViewState characterAnimOptionSelected();
 
 public:
-    void init(int iBgSlot, bool *isActive) override;
+    void init(int iBgSlot, bool *isActive, const std::string &iPauseMessage = "Pause") override;
     ViewState update(int keys) override;
 };

@@ -58,9 +58,9 @@ void PauseMenuComponent::loadBg(int bgIndex)
     }
 }
 
-void PauseMenuComponent::init(int iBgSlot, bool *isActive)
+void PauseMenuComponent::init(int iBgSlot, bool *isActive, const std::string &iPauseMessage)
 {
-    BaseMenu::init(iBgSlot, isActive);
+    BaseMenu::init(iBgSlot, isActive, iPauseMessage);
     options = menuOptions;
     optionCount = MENU_OPTIONS;
 }

@@ -9,7 +9,7 @@ void BaseMenu::cancelSFX()
     musicCtrl.stopSFX(sfxCancelHandle);
 }
 
-void BaseMenu::init(int iBgSlot, bool *isActive)
+void BaseMenu::init(int iBgSlot, bool *isActive, const std::string &iPauseMessage)
 {
     // point to music
     musicCtrl.loadSFX(SFX_MENU);
@@ -20,6 +20,7 @@ void BaseMenu::init(int iBgSlot, bool *isActive)
     selectedOption = 0;
     startIndex = 0;
 
+    pauseMessage = iPauseMessage;
     bgSlot = iBgSlot;
     isActivePtr = isActive;
 
@@ -108,7 +109,7 @@ ViewState BaseMenu::update(int keys)
     // blink the "Pause" text
     if (frame % 60 < 30)
     {
-        iprintf("Pause\n");
+        iprintf("%s \n", pauseMessage.c_str());
     }
     else
     {

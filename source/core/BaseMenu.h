@@ -5,6 +5,7 @@
 #include <nds.h>
 #include <maxmod9.h>
 #include <stack>
+#include <string>
 #include "core/structs.h"
 
 class BaseMenu
@@ -12,6 +13,7 @@ class BaseMenu
 protected:
     bool *isActivePtr;
     int bgSlot = 0;
+    std::string pauseMessage = "Pause";
 
     // options
     MenuOption *options;
@@ -31,7 +33,7 @@ private:
     std::stack<MenuState> prevOptions;
     ViewState nextViewState = ViewState::KEEP_CURRENT;
 public:
-    virtual void init(int iBgSlot, bool *isActive);
+    virtual void init(int iBgSlot, bool *isActive, const std::string &iPauseMessage = "Pause");
     virtual ViewState update(int keys);
     void cancelSFX();
     ViewState changeMenu(MenuOption* newOptions, int newOptionCount);

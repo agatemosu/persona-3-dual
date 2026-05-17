@@ -24,5 +24,5 @@ private:
     ViewState mainMenuOptionSelected();
     ViewState levelOptionSelected();
 public:
-    void init(int iBgSlot, bool *isActive) override;
+    void init(int iBgSlot, bool *isActive, const std::string &iPauseMessage = "") override;
 };
