@@ -3,24 +3,23 @@
 #include <vector>
 
 #include "ActionBase.h"
-#include "../enemies/Enemy.h"
-#include "../party/Player.h"
+#include "../party/PartyMember.h"
 #include "../TargetAndAttackEnemy.h"
 #include "../UpdateIndex.h"
 
 struct PersonaAction : ActionBase
 {
     UpdateIndex updateIndex;
-    std::vector<Enemy *> *enemies = new std::vector<Enemy *>;
-    Player *player;
     AttackSkill *selectedSkill;
     TargetAndAttackActionEnemy *targetAndAttackActionEnemy;
 
-    PersonaAction(std::vector<Enemy *> *iEnemies, Player *iPlayer) : enemies(iEnemies), player(iPlayer)
+    PersonaAction(std::vector<BattleParticipant *> *iAllParticipants, std::vector<BattleParticipant *> *iParty, std::vector<BattleParticipant *> *iEnemies) : ActionBase(iAllParticipants, iParty, iEnemies)
     {
         name = "Persona";
+        possibleUsers = ParticipantType::Party;
+
         // TODO: dont forget to clear in the future
-        targetAndAttackActionEnemy = new TargetAndAttackActionEnemy(enemies, player, &targetIndex);
+        targetAndAttackActionEnemy = new TargetAndAttackActionEnemy(enemies, &targetIndex);
     }
 
     //  TargetAndAttackActionEnemy targetAndAttackActionEnemy(player.);
@@ -33,5 +32,5 @@ struct PersonaAction : ActionBase
     MenuState menuState;
 
     void execute() override;
-    bool update(u32 *keys) override;
+    bool update(u32 *keys, PartyMember *user) override;
 };

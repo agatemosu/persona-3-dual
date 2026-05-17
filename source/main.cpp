@@ -34,6 +34,9 @@
 #include "character_texture_3.h"
 #include "character_texture_4.h"
 
+// character profiles
+#include "battleActions/party/CharacterProfiles.h"
+
 // variables
 volatile int frame = 0;
 int fps = 0;

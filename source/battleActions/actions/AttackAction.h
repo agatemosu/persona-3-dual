@@ -1,7 +1,7 @@
 #pragma once
 #include "ActionBase.h"
 #include "../enemies/Enemy.h"
-#include "../party/Player.h"
+#include "../party/PartyMember.h"
 #include <stdio.h>
 #include <vector>
 #include "../UpdateIndex.h"
@@ -10,17 +10,16 @@
 struct AttackAction : ActionBase
 {
     UpdateIndex updateIndex;
-    std::vector<Enemy *> *enemies;
-    Player *player;
     TargetAndAttackActionEnemy *targetAndAttackActionEnemy;
 
-    AttackAction(std::vector<Enemy *> *iEnemies, Player *iPlayer) : enemies(iEnemies), player(iPlayer)
+    AttackAction(std::vector<BattleParticipant *> *iAllParticipants, std::vector<BattleParticipant *> *iParty, std::vector<BattleParticipant *> *iEnemies) : ActionBase(iAllParticipants, iParty, iEnemies)
     {
         name = "AttackAction";
+        possibleUsers = ParticipantType::Party;
         // TODO: dont forget to clear in the future
-        targetAndAttackActionEnemy = new TargetAndAttackActionEnemy(enemies, player, &targetIndex);
+        targetAndAttackActionEnemy = new TargetAndAttackActionEnemy(enemies, &targetIndex);
     }
 
     void execute() override;
-    bool update(u32 *keys) override;
+    bool update(u32 *keys, PartyMember *user) override;
 };

@@ -15,26 +15,26 @@ struct Forneus : PersonaBase
     {
         name = "Forneus";
         lv = 7;
-        st = 5;
-        ma = 6;
-        en = 7;
-        ag = 6;
-        lu = 4;
+        battleStats.st = 5;
+        battleStats.ma = 6;
+        battleStats.en = 7;
+        battleStats.ag = 6;
+        battleStats.lu = 4;
 
         myAttcking[0] = &bash;
         myAttcking[1] = &bufu;
         attackCount = 2;
         attackSkill = myAttcking;
 
-        affinities[Element::Slash] = Neutral;
-        affinities[Element::Strike] = Neutral;
-        affinities[Element::Pierce] = Neutral;
-        affinities[Element::Fire] = Weak;
-        affinities[Element::Ice] = Resist;
-        affinities[Element::Electricity] = Neutral;
-        affinities[Element::Wind] = Neutral;
-        affinities[Element::Light] = Neutral;
-        affinities[Element::Dark] = Neutral;
+        battleStats.affinities[Element::Slash] = BattleStats::Neutral;
+        battleStats.affinities[Element::Strike] = BattleStats::Neutral;
+        battleStats.affinities[Element::Pierce] = BattleStats::Neutral;
+        battleStats.affinities[Element::Fire] = BattleStats::Weak;
+        battleStats.affinities[Element::Ice] = BattleStats::Resist;
+        battleStats.affinities[Element::Electricity] = BattleStats::Neutral;
+        battleStats.affinities[Element::Wind] = BattleStats::Neutral;
+        battleStats.affinities[Element::Light] = BattleStats::Neutral;
+        battleStats.affinities[Element::Dark] = BattleStats::Neutral;
         // add arcana
     }
 };

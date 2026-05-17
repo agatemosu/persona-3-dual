@@ -7,9 +7,9 @@ void Guard::execute()
     iprintf("Guarding\n");
 }
 
-bool Guard::update(u32 *keys)
+bool Guard::update(u32 *keys, PartyMember *user)
 {
-    player->guarding = true;
+    user->guarding = true;
     inProgress = false;
     return true;
 }

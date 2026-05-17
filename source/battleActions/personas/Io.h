@@ -2,28 +2,25 @@
 #include "PersonaBase.h"
 
 #include "../skills/AttackSkill.h"
-#include "../skills/Agi.h"
-#include "../skills/Bash.h"
+#include "../skills/Garu.h"
 
-struct Orpheus : PersonaBase
+struct Io : PersonaBase
 {
-    Agi agi;
-    Bash bash;
-    AttackSkill *myAttcking[2];
+    Garu garu;
+    AttackSkill *myAttcking[1];
 
-    Orpheus()
+    Io()
     {
-        name = "Orpheus";
+        name = "Io";
         lv = 1;
         battleStats.st = 2;
-        battleStats.ma = 2;
-        battleStats.en = 2;
+        battleStats.ma = 3;
+        battleStats.en = 1;
         battleStats.ag = 2;
         battleStats.lu = 2;
 
-        myAttcking[0] = &agi;
-        myAttcking[1] = &bash;
-        attackCount = 2;
+        myAttcking[0] = &garu;
+        attackCount = 1;
         attackSkill = myAttcking;
 
         battleStats.affinities[Element::Slash] = BattleStats::Neutral;
@@ -32,9 +29,9 @@ struct Orpheus : PersonaBase
         battleStats.affinities[Element::Fire] = BattleStats::Neutral;
         battleStats.affinities[Element::Ice] = BattleStats::Neutral;
         battleStats.affinities[Element::Electricity] = BattleStats::Weak;
-        battleStats.affinities[Element::Wind] = BattleStats::Neutral;
+        battleStats.affinities[Element::Wind] = BattleStats::Resist;
         battleStats.affinities[Element::Light] = BattleStats::Neutral;
-        battleStats.affinities[Element::Dark] = BattleStats::Weak;
+        battleStats.affinities[Element::Dark] = BattleStats::Neutral;
         // add arcana
     }
 };
