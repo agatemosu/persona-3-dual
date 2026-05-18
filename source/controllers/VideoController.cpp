@@ -6,11 +6,10 @@
 #include "VideoController.h"
 
 void VideoController::init(std::string iFileName, float iFps,
-                           ViewState iNextState, bool iIsSkippable)
+                           ViewState iNextState)
 {
     nextState = iNextState;
     fps = iFps; // default fallback if no header exists
-    isSkippable = iIsSkippable;
     fileEOF = false;
 
     std::string videoPath = fatBasePath + "video/" + iFileName;
@@ -139,20 +138,6 @@ void VideoController::refillBuffer()
 ViewState VideoController::update()
 {
     musicCtrl.update();
-    scanKeys();
-    int keys = keysDown();
-
-    if (isSkippable && keys)
-    {
-        musicCtrl.pause();
-        for (int i = 0; i <= 16; i++)
-        {
-            setBrightness(3, -i);
-            musicCtrl.update();
-            swiWaitForVBlank();
-        }
-        return nextState;
-    }
 
     for (int r = 0; r < READS_PER_UPDATE; r++)
     {

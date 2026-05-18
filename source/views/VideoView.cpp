@@ -5,11 +5,27 @@
 
 void VideoView::init()
 {
-    videoCtrl.init(filename, 15.0f, nextView, true);
+    videoCtrl.init(filename, 15.0f, nextView);
 }
 
 ViewState VideoView::update()
 {
+    scanKeys();
+    int keys = keysDown();
+
+    if (keys)
+    {
+        musicCtrl.pause();
+        for (int i = 0; i <= 16; i++)
+        {
+            setBrightness(3, -i);
+            musicCtrl.update();
+            swiWaitForVBlank();
+        }
+
+        return nextView;
+    }
+
     return videoCtrl.update();
 }
 
