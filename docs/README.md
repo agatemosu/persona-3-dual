@@ -103,9 +103,7 @@ The game requires FAT filesystem support to load assets at runtime. Currently, w
 > **Do NOT enable "Sync SD card to folder"**. This will wipe the contents of the folder.
 
 Now, you can open melonDS and load the `persona-3-dual.nds` ROM!
-
-<img width="559<img width="487" height="731" alt="home" src="https://github.com/user-attachments/assets/203297f6-e026-455e-bd6b-53330ded1bfb" />
-" height="530" alt="melonds" src="https://github.com/user-attachments/assets/d34997e6-d13f-4428-a2b6-41b5272405d7" />
+<img width="316" height="300" alt="melonDS" src="https://github.com/user-attachments/assets/d34997e6-d13f-4428-a2b6-41b5272405d7" />
 
 
 ### Real Hardware (DS / DSi / 3DS)
