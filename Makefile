@@ -29,13 +29,11 @@ endif
 TARGET      :=  $(shell basename $(CURDIR))
 BUILD       :=  build
 SOURCES     :=  source source/views source/controllers source/core source/data source/dialogue source/models source/environments source/components source/battleActions source/battleActions/enemies source/battleActions/party source/battleActions/skills source/battleActions/actions
-DATA        :=
 INCLUDES    :=  include source
 
 # Add environment subdirectories directly to the GRAPHICS build pipeline
 GRAPHICS    :=  assets/graphics $(wildcard assets/environments/*) $(wildcard assets/models/*)
 SFX       	:=  assets/sfx
-NITRODATA   :=
 
 GAME_TITLE     := Persona 3 Dual
 GAME_SUBTITLE1 := A Fan Recreation
@@ -59,8 +57,8 @@ ASSETS_ENVIRONMENTS := $(CURDIR)/assets/environments
 ASSETS_MODELS   := $(CURDIR)/assets/models
 ASSETS_MAPS     := $(CURDIR)/assets/maps
 
-NITRO_MUSIC     := $(CURDIR)/data/music
-NITRO_VIDEO     := $(CURDIR)/data/video
+DATA_MUSIC      := $(CURDIR)/data/music
+DATA_VIDEO      := $(CURDIR)/data/video
 
 #---------------------------------------------------------------------------------
 # MMUTIL OS select
@@ -88,8 +86,8 @@ MODEL_JSON_FILES := $(wildcard $(ASSETS_MODELS)/*/*.json)
 # Derive output paths & dynamically add environment output dirs to SOURCES
 #---------------------------------------------------------------------------------
 DIALOGUE_OUT := $(DLG_FILES:$(ASSETS_DIALOGUE)/%.dlg=$(CURDIR)/source/dialogue/%_dialogue.cpp)
-MUSIC_OUT    := $(MP3_FILES:$(ASSETS_MUSIC)/%.mp3=$(NITRO_MUSIC)/%.pcm)
-VIDEO_OUT    := $(MP4_FILES:$(ASSETS_VIDEO)/%.mp4=$(NITRO_VIDEO)/%.vid)
+MUSIC_OUT    := $(MP3_FILES:$(ASSETS_MUSIC)/%.mp3=$(DATA_MUSIC)/%.pcm)
+VIDEO_OUT    := $(MP4_FILES:$(ASSETS_VIDEO)/%.mp4=$(DATA_VIDEO)/%.vid)
 JMAP_OUT     := $(JMAP_FILES:$(ASSETS_MAPS)/%.jmap=$(CURDIR)/source/maps/%.h)
 
 MODEL_OUT    := $(foreach file,$(MODEL_JSON_FILES),$(CURDIR)/source/models/$(notdir $(file:.json=.h)))
@@ -134,10 +132,6 @@ export VPATH    :=  $(foreach dir,$(SOURCES),$(CURDIR)/$(dir)) \
 
 export DEPSDIR  :=  $(CURDIR)/$(BUILD)
 
-ifneq ($(strip $(NITRODATA)),)
-    export NITRO_FILES  :=  $(CURDIR)/$(NITRODATA)
-endif
-
 CFILES      :=  $(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.c)))
 CPPFILES    :=  $(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.cpp)))
 CPPFILES    +=  $(notdir $(DLG_FILES:$(ASSETS_DIALOGUE)/%.dlg=%_dialogue.cpp))
@@ -181,7 +175,7 @@ help:
 assets: dirs dialogue music video environments jmaps models
 
 dirs:
-	@mkdir -p $(CURDIR)/source/dialogue $(CURDIR)/source/maps $(CURDIR)/source/models $(CURDIR)/source/environments $(NITRO_MUSIC) $(NITRO_VIDEO) $(CURDIR)/data/models $(CURDIR)/data/environments
+	@mkdir -p $(CURDIR)/source/dialogue $(CURDIR)/source/maps $(CURDIR)/source/models $(CURDIR)/source/environments $(DATA_MUSIC) $(DATA_VIDEO) $(CURDIR)/data/models $(CURDIR)/data/environments
 
 #---------------------------------------------------------------------------------
 $(CURDIR)/source/dialogue/%_dialogue.cpp: $(ASSETS_DIALOGUE)/%.dlg $(wildcard $(ASSETS_DIALOGUE)/%.build.json)
@@ -192,14 +186,14 @@ $(CURDIR)/source/dialogue/%_dialogue.cpp: $(ASSETS_DIALOGUE)/%.dlg $(wildcard $(
 dialogue: $(DIALOGUE_OUT)
 
 #---------------------------------------------------------------------------------
-$(NITRO_MUSIC)/%.pcm: $(ASSETS_MUSIC)/%.mp3
+$(DATA_MUSIC)/%.pcm: $(ASSETS_MUSIC)/%.mp3
 	@echo "  PCM   $(notdir $<)"
 	@mkdir -p $(dir $@)
 	@ffmpeg -i $< -f s16le -ar 32000 -ac 2 $@ -y -loglevel error
 music: $(MUSIC_OUT)
 
 #---------------------------------------------------------------------------------
-$(NITRO_VIDEO)/%.vid: $(ASSETS_VIDEO)/%.mp4 $(wildcard $(ASSETS_VIDEO)/%.build.json)
+$(DATA_VIDEO)/%.vid: $(ASSETS_VIDEO)/%.mp4 $(wildcard $(ASSETS_VIDEO)/%.build.json)
 	@echo "  VID   $(notdir $<)"
 	@mkdir -p $(dir $@)
 	@$(VENV_PYTHON) $(TOOLS_DIR)/build_asset.py $< $(basename $@)

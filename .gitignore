@@ -16,3 +16,4 @@ persona-3-dual.lst
 *.pyc
 .DS_Store
 sdcard.img
+sdcard.img.idx
