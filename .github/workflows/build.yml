@@ -116,7 +116,7 @@ jobs:
           echo "PATH=/opt/devkitpro/tools/bin:/opt/devkitpro/devkitARM/bin:$PATH" >> $GITHUB_ENV
 
       # System tools (ffmpeg + BLAS)
-      # ffmpeg is cached via awalsh128 — subsequent runs restore in ~2s.
+      # ffmpeg & mtools is cached via awalsh128 — subsequent runs restore in ~2s.
       #
       # libblas3 / liblapack3 are intentionally NOT included in the awalsh128
       # package list. Their .so.3 symlinks are managed by update-alternatives,
@@ -129,10 +129,10 @@ jobs:
       # The fix is to install those two packages directly with apt every run.
       # They are small (~200 KB combined) and the install completes in ~1s,
       # ensuring update-alternatives always fires and the symlink is always live.
-      - name: Cache and install ffmpeg
+      - name: Cache and install ffmpeg and mtools
         uses: awalsh128/cache-apt-pkgs-action@latest
         with:
-          packages: ffmpeg
+          packages: ffmpeg mtools
           version: 1.0
 
       - name: Install BLAS dependencies
@@ -169,22 +169,25 @@ jobs:
 
       # Verify output
       - name: Verify ROM was produced
-        run: |
-          echo "NDS files found in workspace:"
-          find . -name "*.nds" -not -path "./.git/*" 2>/dev/null \
-            | sort \
-            | xargs -I{} sh -c 'echo "  {} ($(du -sh {} | cut -f1))"' \
-            || echo "  (none)"
-          echo ""
+          run: |
+            echo "NDS files found in workspace:"
+            find . -name "*.nds" -not -path "./.git/*" 2>/dev/null \
+              | sort \
+              | xargs -I{} sh -c 'echo "  {} ($(du -sh {} | cut -f1))"' \
+              || echo "  (none)"
+            echo ""
 
-          if [ ! -f persona-3-dual.nds ]; then
-            echo "::error::persona-3-dual.nds not found."
-            echo "::error::If your Makefile outputs a different filename or path, update the"
-            echo "::error::ROM filename everywhere it appears in this workflow to match."
-            exit 1
-          fi
+            if [ ! -f persona-3-dual.nds ]; then
+              echo "::error::persona-3-dual.nds not found."
+              exit 1
+            fi
+            echo "ROM verified: persona-3-dual.nds ($(du -sh persona-3-dual.nds | cut -f1))"
 
-          echo "ROM verified: persona-3-dual.nds ($(du -sh persona-3-dual.nds | cut -f1))"
+            if [ ! -f sdcard.img ]; then
+              echo "::error::sdcard.img not found — mtools may have failed."
+              exit 1
+            fi
+            echo "SD card image verified: sdcard.img ($(du -sh sdcard.img | cut -f1))"
 
       # NDS header validation
       # Uses od (standard POSIX tool, always available) to read raw bytes from
@@ -272,7 +275,9 @@ jobs:
         uses: actions/upload-artifact@v5
         with:
           name: persona-3-dual-ROM
-          path: persona-3-dual.nds
+          path: |
+            persona-3-dual.nds
+            sdcard.img
           retention-days: 30
 
       - name: Upload ROM artifact (PR build)
@@ -280,7 +285,9 @@ jobs:
         uses: actions/upload-artifact@v5
         with:
           name: persona-3-dual-ROM-PR${{ github.event.number }}
-          path: persona-3-dual.nds
+          path: |
+            persona-3-dual.nds
+            sdcard.img
           retention-days: 7
 
       # Create release
@@ -293,7 +300,9 @@ jobs:
           tag_name:   ${{ steps.version.outputs.tag }}
           name:       ${{ steps.version.outputs.release_name }}
           prerelease: false
-          files:      persona-3-dual.nds
+          files: |
+            persona-3-dual.nds
+            sdcard.img
           body_path:  release-notes.md
 
       # Job summary
@@ -308,6 +317,7 @@ jobs:
         run: |
           IS_PR="${{ github.event_name == 'pull_request' }}"
           ROM_SIZE=$(du -sh persona-3-dual.nds 2>/dev/null | cut -f1 || echo "N/A")
+          SD_SIZE=$(du -sh sdcard.img 2>/dev/null | cut -f1 || echo "N/A")
           SHA256="${{ steps.checksums.outputs.sha256 }}"
           MD5="${{ steps.checksums.outputs.md5 }}"
           TAG="${{ steps.version.outputs.tag }}"
@@ -325,6 +335,7 @@ jobs:
             echo "| Branch    | \`${{ github.ref_name }}\` |"
             echo "| Triggered | \`${{ github.actor }}\` |"
             echo "| ROM Size  | ${ROM_SIZE} |"
+            echo "| SD Image  | ${SD_SIZE} |"
             [ -n "$SHA256" ] && echo "| SHA-256   | \`${SHA256}\` |" || true
             [ -n "$MD5"    ] && echo "| MD5       | \`${MD5}\` |"    || true
           } >> $GITHUB_STEP_SUMMARY
