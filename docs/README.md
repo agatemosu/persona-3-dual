@@ -29,8 +29,7 @@ The name is a nod to the online joke about a DS version of Persona 3 called "Per
 
 | Home | Menu | Iwatodai Dorm |
 |------|------|----------------------|
-| ![Home](https://github.com/user-attachments/assets/735128dd-a5aa-403f-8d94-748d6294e27c) | ![Menu](https://github.com/user-attachments/assets/72eb8264-9e56-4666-84a9-07bfe96a0a78) | ![Dorm](https://github.com/user-attachments/assets/dad1562b-67ae-4566-9d04-f2a9966ba916) |
-
+| ![Home](https://github.com/user-attachments/assets/6841906c-111e-4388-b549-1a99ad301ffb) | ![Menu](https://github.com/user-attachments/assets/cf379a87-7c03-4833-87c2-b918bdbd3929) | ![Dorm](https://github.com/user-attachments/assets/bef757fc-944c-4264-b167-ce7b34a3d187) |
 
 | BASE | FES | PORTABLE |
 |------|-----|----------|
@@ -104,6 +103,10 @@ The game requires FAT filesystem support to load assets at runtime. Currently, w
 > **Do NOT enable "Sync SD card to folder"**. This will wipe the contents of the folder.
 
 Now, you can open melonDS and load the `persona-3-dual.nds` ROM!
+
+<img width="559<img width="487" height="731" alt="home" src="https://github.com/user-attachments/assets/203297f6-e026-455e-bd6b-53330ded1bfb" />
+" height="530" alt="melonds" src="https://github.com/user-attachments/assets/d34997e6-d13f-4428-a2b6-41b5272405d7" />
+
 
 ### Real Hardware (DS / DSi / 3DS)
 
