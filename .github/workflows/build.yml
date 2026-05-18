@@ -1,9 +1,9 @@
 name: Build ROM
 
 #  Triggers
-#  • push to main/master  →  full build + tag + release
-#  • pull_request         →  build + artifact only (no tag, no release)
-#  • workflow_dispatch    →  manual trigger, behaves like a push
+#  • push to main/master  ->  full build + tag + release
+#  • pull_request         ->  build + artifact only (no tag, no release)
+#  • workflow_dispatch    ->  manual trigger, behaves like a push
 on:
   push:
     branches: [main, master]
@@ -35,7 +35,7 @@ jobs:
           lfs: true        # Fetch real LFS files (mp4, etc.) not just pointer stubs
 
       # Version tag (push / workflow_dispatch only)
-      # Format: YYwWWn  →  e.g. "26w18a"
+      # Format: YYwWWn  ->  e.g. "26w18a"
       #   YY = 2-digit year   WW = ISO week number   n = per-week build letter
       # Skipped entirely on pull_request events so no tag is reserved or leaked.
       #
@@ -77,7 +77,7 @@ jobs:
 
       # Upload the version tag so notify.yml can read it.
       # Skipped on PRs since they don't generate a tag.
-      # Retention of 1 day is enough — notify.yml fires within seconds of this
+      # Retention of 1 day is enough - notify.yml fires within seconds of this
       # job completing. Using a short retention avoids cluttering artifact storage.
       - name: Upload version artifact
         if: github.event_name != 'pull_request'
@@ -116,7 +116,7 @@ jobs:
           echo "PATH=/opt/devkitpro/tools/bin:/opt/devkitpro/devkitARM/bin:$PATH" >> $GITHUB_ENV
 
       # System tools (ffmpeg + mtools)
-      # Both are cached via awalsh128 — subsequent runs restore in ~2s.
+      # Both are cached via awalsh128 - subsequent runs restore in ~2s.
       #
       # libblas3 / liblapack3 are intentionally NOT included in the awalsh128
       # package list. Their .so.3 symlinks are managed by update-alternatives,
@@ -124,7 +124,7 @@ jobs:
       # Without the hook, ffmpeg fails at runtime with:
       #   libblas.so.3: cannot open shared object file: No such file or directory
       # sudo ldconfig alone does not fix this because the symlink itself is never
-      # created — ldconfig only updates the linker cache, not the alternatives.
+      # created - ldconfig only updates the linker cache, not the alternatives.
       #
       # The fix is to install those two packages directly with apt every run.
       # They are small (~200 KB combined) and the install completes in ~1s,
@@ -141,7 +141,7 @@ jobs:
       # Python venv
       # Cache is keyed to requirements.txt so it auto-invalidates on dep changes.
       # Key is versioned (v2) because the venv path moved from .venv (workspace)
-      # to ~/.venv (home) — bumping forces a clean write at the new location and
+      # to ~/.venv (home) - bumping forces a clean write at the new location and
       # avoids perpetual cache misses against stale v1 entries.
       - name: Cache Python venv
         uses: actions/cache@v5
@@ -167,8 +167,16 @@ jobs:
       - name: Compile ROM
         run: make
 
+      # Compress sdcard.img before packaging.
+      # The raw image is exactly 2 GB (GitHub's release asset limit is <2 GB).
+      # Since most of the FAT image is empty space, gzip typically reduces it
+      # to roughly the size of the actual game data - a small fraction of 2 GB.
+      # Users decompress once with: gzip -d sdcard.img.gz
+      - name: Compress SD card image
+        run: gzip -9 sdcard.img
+
       # Package the data folder as a zip for hardware users.
-      # Released alongside the ROM and sdcard.img so that TWiLight Menu++ users
+      # Released alongside the ROM and sdcard.img.gz so that TWiLight Menu++ users
       # can download data.zip, extract it, and drop the data/ folder next to the
       # .nds on their SD card without needing to build from source.
       - name: Package data folder
@@ -192,14 +200,14 @@ jobs:
           fi
           echo "ROM verified: persona-3-dual.nds ($(du -sh persona-3-dual.nds | cut -f1))"
 
-          if [ ! -f sdcard.img ]; then
-            echo "::error::sdcard.img not found — mtools may have failed."
+          if [ ! -f sdcard.img.gz ]; then
+            echo "::error::sdcard.img.gz not found - gzip step may have failed."
             exit 1
           fi
-          echo "SD card image verified: sdcard.img ($(du -sh sdcard.img | cut -f1))"
+          echo "SD card image verified: sdcard.img.gz ($(du -sh sdcard.img.gz | cut -f1))"
 
           if [ ! -f data.zip ]; then
-            echo "::error::data.zip not found — zip step may have failed."
+            echo "::error::data.zip not found - zip step may have failed."
             exit 1
           fi
           echo "Data archive verified: data.zip ($(du -sh data.zip | cut -f1))"
@@ -217,7 +225,7 @@ jobs:
 
           ACTUAL_SIZE=$(stat -c%s "$ROM")
           if [ "$ACTUAL_SIZE" -lt 512 ]; then
-            echo "::error::ROM is only ${ACTUAL_SIZE} bytes — header is truncated"
+            echo "::error::ROM is only ${ACTUAL_SIZE} bytes - header is truncated"
             exit 1
           fi
 
@@ -227,7 +235,7 @@ jobs:
           echo "Logo CRC  : 0x${LOGO_CRC^^}  (expected 0xCF56)"
 
           if [ "${LOGO_CRC,,}" != "cf56" ]; then
-            echo "::error::Nintendo logo CRC mismatch — ROM is likely corrupt or malformed"
+            echo "::error::Nintendo logo CRC mismatch - ROM is likely corrupt or malformed"
             exit 1
           fi
 
@@ -275,9 +283,9 @@ jobs:
             echo "## Release Assets"
             echo "| File | Use for |"
             echo "|------|---------|"
-            echo "| \`persona-3-dual.nds\` | ROM — required for both emulator and hardware |"
-            echo "| \`sdcard.img\` | melonDS emulator — mount via DLDI settings |"
-            echo "| \`data.zip\` | Real hardware — extract and place \`data/\` next to the ROM on your SD card |"
+            echo "| \`persona-3-dual.nds\` | ROM - required for both emulator and hardware |"
+            echo "| \`sdcard.img.gz\` | melonDS emulator - decompress with \`gzip -d sdcard.img.gz\`, then mount via DLDI settings |"
+            echo "| \`data.zip\` | Real hardware - extract and place \`data/\` next to the ROM on your SD card |"
             echo ""
             echo "## Checksums"
             echo "| Algorithm | Hash |"
@@ -299,7 +307,7 @@ jobs:
           name: persona-3-dual-ROM
           path: |
             persona-3-dual.nds
-            sdcard.img
+            sdcard.img.gz
             data.zip
           retention-days: 30
 
@@ -310,7 +318,7 @@ jobs:
           name: persona-3-dual-ROM-PR${{ github.event.number }}
           path: |
             persona-3-dual.nds
-            sdcard.img
+            sdcard.img.gz
             data.zip
           retention-days: 7
 
@@ -326,7 +334,7 @@ jobs:
           prerelease: false
           files: |
             persona-3-dual.nds
-            sdcard.img
+            sdcard.img.gz
             data.zip
           body_path:  release-notes.md
 
@@ -342,7 +350,7 @@ jobs:
         run: |
           IS_PR="${{ github.event_name == 'pull_request' }}"
           ROM_SIZE=$(du -sh persona-3-dual.nds 2>/dev/null | cut -f1 || echo "N/A")
-          SD_SIZE=$(du -sh sdcard.img 2>/dev/null | cut -f1 || echo "N/A")
+          SD_SIZE=$(du -sh sdcard.img.gz 2>/dev/null | cut -f1 || echo "N/A")
           DATA_SIZE=$(du -sh data.zip 2>/dev/null | cut -f1 || echo "N/A")
           SHA256="${{ steps.checksums.outputs.sha256 }}"
           MD5="${{ steps.checksums.outputs.md5 }}"

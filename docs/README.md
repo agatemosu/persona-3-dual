@@ -97,7 +97,8 @@ The game requires FAT filesystem support to load assets at runtime. Currently, w
 
 ### melonDS (Emulator)
 
-1. Build the project with `make` - this produces both `persona-3-dual.nds` and `sdcard.img`.
+1. Download `persona-3-dual.nds` and `sdcard.img.gz` from the latest release, & decompress `sdcard.img.gz`
+**Developers**: Build the project with `make` - this produces both `persona-3-dual.nds` and `sdcard.img`.
 2. In melonDS, go to **Settings → DLDI** and enable DLDI.
 3. Set the SD card image path to the generated `sdcard.img`.
 > **Do NOT enable "Sync SD card to folder"**. This will wipe the contents of the folder.
@@ -110,9 +111,11 @@ Now, you can open melonDS and load the `persona-3-dual.nds` ROM!
 
 Requires [TWiLight Menu++](https://wiki.ds-homebrew.com/twilightmenu/) with DLDI patching enabled.
 
-1. In TWiLight Menu++ settings, ensure **DLDI access** is set to **ARM9** & the **Game Loader** is set to **nds-bootstrap**
-2. On your SD card, navigate to your `/roms/nds/` folder (or equivalent).
-3. Copy `persona-3-dual.nds` and the entire `/data` folder into that directory:
+1. Download `persona-3-dual.nds` and `data.zip` from the latest release, & decompress `data.zip`
+**Developers**: Build the project with `make` - this produces the `persona-3-dual.nds` and the content in `/data`.
+2. In TWiLight Menu++ settings, ensure **DLDI access** is set to **ARM9** & the **Game Loader** is set to **nds-bootstrap**
+3. On your SD card, navigate to your `/roms/nds/` folder (or equivalent).
+4. Copy `persona-3-dual.nds` and the entire `/data` folder into that directory:
    ```
    /roms/nds/
    ├── persona-3-dual.nds
@@ -121,7 +124,7 @@ Requires [TWiLight Menu++](https://wiki.ds-homebrew.com/twilightmenu/) with DLDI
        ├── video/
        └── ...
    ```
-4. Launch the game through TWiLight Menu++ as normal.
+5. Launch the game through TWiLight Menu++ as normal.
 
 ---
 
