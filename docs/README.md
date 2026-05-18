@@ -29,8 +29,7 @@ The name is a nod to the online joke about a DS version of Persona 3 called "Per
 
 | Home | Menu | Iwatodai Dorm |
 |------|------|----------------------|
-| ![Home](https://github.com/user-attachments/assets/735128dd-a5aa-403f-8d94-748d6294e27c) | ![Menu](https://github.com/user-attachments/assets/72eb8264-9e56-4666-84a9-07bfe96a0a78) | ![Dorm](https://github.com/user-attachments/assets/dad1562b-67ae-4566-9d04-f2a9966ba916) |
-
+| ![Home](https://github.com/user-attachments/assets/6841906c-111e-4388-b549-1a99ad301ffb) | ![Menu](https://github.com/user-attachments/assets/cf379a87-7c03-4833-87c2-b918bdbd3929) | ![Dorm](https://github.com/user-attachments/assets/bef757fc-944c-4264-b167-ce7b34a3d187) |
 
 | BASE | FES | PORTABLE |
 |------|-----|----------|
@@ -57,21 +56,22 @@ The name is a nod to the online joke about a DS version of Persona 3 called "Per
 
 **Windows:**
 1. Install [devkitPro](https://devkitpro.org/wiki/Getting_Started) using the official graphical installer (ensure `nds-dev` is checked).
-2. Install Python 3 from the [official website](https://www.python.org/downloads/) (Check "Add Python to PATH" during install).
-3. Install FFmpeg: Open Command Prompt or PowerShell and run `winget install ffmpeg`.
-4. Install [melonDS](https://melonds.kuribo64.net/downloads.php) (and optionally add melonDS to Path for debugger setup)
+2. Install Python 3 from the [official website](https://www.python.org/downloads/) (check "Add Python to PATH" during install).
+3. Install FFmpeg: open Command Prompt or PowerShell and run `winget install ffmpeg`.
+4. Install mtools: `winget install mtools`
+5. Install [melonDS](https://melonds.kuribo64.net/downloads.php) (and optionally add melonDS to PATH for debugger setup).
 
 **macOS:**
 1. Install [devkitPro](https://devkitpro.org/wiki/Getting_Started) via the official pacman pkg.
-2. Install Python and FFmpeg using Homebrew:
-   `brew install python ffmpeg`
-3. Install [melonDS](https://melonds.kuribo64.net/downloads.php)
+2. Install Python, FFmpeg, and mtools using Homebrew:
+   `brew install python ffmpeg mtools`
+3. Install [melonDS](https://melonds.kuribo64.net/downloads.php).
 
 **Linux (Ubuntu/Debian):**
 1. Install devkitPro by following the [Unix-like platforms guide](https://devkitpro.org/wiki/Getting_Started#Unix-like_platforms).
-2. Install Python and FFmpeg:
-   `sudo apt update && sudo apt install python3 python3-venv ffmpeg`
-3. Install [melonDS](https://melonds.kuribo64.net/downloads.php)
+2. Install Python, FFmpeg, and mtools:
+   `sudo apt update && sudo apt install python3 python3-venv ffmpeg mtools`
+3. Install [melonDS](https://melonds.kuribo64.net/downloads.php).
 
 ### 2. Setup the Project
 Once the system tools are installed, open your terminal, clone the repo, navigate to the project folder, and set up the Python environment:
@@ -82,35 +82,54 @@ source .venv/bin/activate
 pip install -r tools/requirements.txt
 ```
 
-You can then build a .nds rom by running ```make clean && make``` in the project folder.
+You can then build by running `make clean && make` in the project folder. This will compile the ROM **and** automatically generate a `sdcard.img` FAT32 SD card image containing all required game data.
 
 ---
 
-## Features
+## Running the Game
 
-- **Animated Intro & Main Menu** — Multi-layer 2D compositing with sinusoidal sprite/background animations, fade effects, and a custom logo split across two stitched sprites. The sub-screen has a static layer plus an animated attributions layer. "Press Start" animates independently of screen brightness.
-- **State Machine Architecture** — View-based state machine with clean scene separation (Disclaimers → Intro → Main Menu → Iwatodai Dorm). Each scene has its own `.cpp`/`.h` pair with dedicated init and cleanup functions.
-- **2D Graphics Pipeline** — Manual VRAM bank allocation supporting 4 simultaneous background layers with extended palette support. VRAM placement is calculated via tile-count analysis to prevent memory corruption.
-- **3D Environment** — Fixed-function 3D rendering with display list geometry, UV-mapped textures, and free camera controls (rotate + translate). The camera orbits and follows the player, updating movement direction relative to facing angle.
-- **Collision & Interaction System** — Tile-based 2D collision map overlaid on the 3D world. Zones are typed (wall, save point, scene transition, NPC trigger) to drive interactivity like zone loading and character encounters.
-- **Dialogue Controller** — Fully-featured dialogue system with character-by-character text animation, per-line character portraits, branching dialogue trees with d-pad navigation, scrollable history, and automatic word-wrapping. Dialogue is authored in plain Markdown and converted to header files via a custom generator.
-- **Decoupled Controller Architecture** — Character movement, camera, dialogue, music, and video are each in separate controller files, making the codebase modular and easy to extend.
-- **Audio** — PCM audio streaming via NitroFS with loop point support for seamless section looping. Also supports SFX via Maxmod.
-- **Video** — Optimised video playback at 8-bit colour, 15fps, with audio and video frames interleaved in a single file and streamed via a ring buffer. Uses NitroFS.
-- **Custom Tooling** — Python utilities + Blender/Blockbench plugins built alongside the engine. Asset conversion is integrated into the build system via `make`.
+The game requires FAT filesystem support to load assets at runtime. Currently, we only support:
 
-Key changes made (v0.2):
-- **State Machine** — added Disclaimers as the first scene
-- **Dialogue Controller** — added auto word-wrapping and Markdown sourcing
-- **Audio** — updated from mp3/libmad to PCM streaming with loop points and Maxmod SFX
-- **Video** — replaced the old frame-streaming description with the optimised interleaved ring-buffer approach
-- **Custom Tooling** — added the Markdown dialogue generator, world offset calculator, and build system integration; also cleaned up the `obj2bin.py` link formatting
+- **[melonDS](https://melonds.kuribo64.net/downloads.php)** (multiplatform emulator)
+- **Real DS / DSi / 3DS hardware** via [TWiLight Menu++](https://wiki.ds-homebrew.com/twilightmenu/)
+
+> NOTE: Other flashcard launchers may work, but are untested
+
+### melonDS (Emulator)
+
+1. Build the project with `make` - this produces both `persona-3-dual.nds` and `sdcard.img`.
+2. In melonDS, go to **Settings → DLDI** and enable DLDI.
+3. Set the SD card image path to the generated `sdcard.img`.
+> **Do NOT enable "Sync SD card to folder"**. This will wipe the contents of the folder.
+
+Now, you can open melonDS and load the `persona-3-dual.nds` ROM!
+
+<img width="316" height="300" alt="melonDS" src="https://github.com/user-attachments/assets/d34997e6-d13f-4428-a2b6-41b5272405d7" />
+
+### Real Hardware (DS / DSi / 3DS)
+
+Requires [TWiLight Menu++](https://wiki.ds-homebrew.com/twilightmenu/) with DLDI patching enabled.
+
+1. In TWiLight Menu++ settings, ensure **DLDI access** is set to **ARM9** & the **Game Loader** is set to **nds-bootstrap**
+2. On your SD card, navigate to your `/roms/nds/` folder (or equivalent).
+3. Copy `persona-3-dual.nds` and the entire `/data` folder into that directory:
+   ```
+   /roms/nds/
+   ├── persona-3-dual.nds
+   └── data/
+       ├── music/
+       ├── video/
+       └── ...
+   ```
+4. Launch the game through TWiLight Menu++ as normal.
 
 ---
 
 ## Roadmap
 
 See the [Project Board](https://github.com/users/TheBossT910/projects/2) for current progress and open issues.
+
+### ✅ Major Completed Features
 
 - [x] Intro sequence with animated backgrounds and sprites
 - [x] Disclaimers screen
@@ -121,16 +140,53 @@ See the [Project Board](https://github.com/users/TheBossT910/projects/2) for cur
 - [x] Collision + interaction detection
 - [x] Dialogue system with branching, portraits, and scrollable history
 - [x] Auto word-wrap + Markdown → header dialogue generator
-- [x] Music/SFX playback (PCM streaming via NitroFS, loop points, Maxmod SFX)
+- [x] Music/SFX playback (PCM streaming via FAT, loop points, Maxmod SFX)
 - [x] Video playback (8-bit, 15fps, interleaved audio+video, ring buffer)
-- [x] Custom intro video (Persona 3 Dual logo added)
+- [x] Custom intro video (Persona 3 Dual logo)
 - [x] Automated asset conversion pipeline (integrated into `make`)
 - [x] Character walk animation + AnimationController
-- [ ] Proper character 3D model
-- [ ] Combat system (UI layout, selection wheel, battle logic)
-- [ ] Iwatodai Dorm — fully detailed environment with proper textures
-- [ ] Additional scenes (world map, school classroom, Tartarus)
-- [ ] Transition polish (remove garbage frame between Disclaimers → Video)
+- [x] 3D environment & model tooling
+- [x] Automated dialogue generation pipeline
+- [x] Basic battle system
+- [x] Basic collision/mapping system
+- [x] Basic menu system
+
+---
+
+### 🎯 Milestone 1 - Playable Demo
+
+The goal of Milestone 1 is a polished, presentable demo showcasing core scenes and interactions.
+
+#### 3D & Environments
+
+- [ ] Fix Iwatodai Dorm (source correct model) and Iwatodai Streets view
+  - [ ] Model trimming & billboarding
+  - [ ] Fixed camera views
+  - [ ] Correct player positioning & scale
+  - [ ] Collision mapping
+- [ ] Add Gekkoukan High School interior (entrance area)
+- [ ] Replace Kotone with Makoto model
+  - [ ] Correct animations properly mapped to new model
+  - [ ] Reduce poly count while preserving textures and animation accuracy
+- [ ] Create the move-in intro sequence (Makoto arrives at the dorm)
+  - [ ] Script events up to move-in
+  - [ ] Add Gekkoukan section once the environment model is ready
+
+#### UI
+
+- [x] World UI - calendar and date display (top-right corner / sub-screen)
+- [ ] Battle UI - console-style layout using `BaseMenu` (similar to PauseMenu/MainMenu)
+- [ ] Dialogue UI - custom per-environment background (dorm, outdoors, etc.) replacing the black backdrop
+
+#### Engine
+
+- [ ] Stair support - character height changes when traversing stairs
+- [ ] Dummy battle zone with placeholder enemy encounter
+- [ ] Basic NPCs (billboard or 3D) with branching dialogue interactions
+
+#### Misc
+- [ ] Ship with a single intro video only (reduces ROM size)
+- [ ] Ship with a single music zone only (reduces ROM size)
 
 ---
 
