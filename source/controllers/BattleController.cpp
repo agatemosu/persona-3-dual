@@ -51,13 +51,18 @@ void BattleController::update(u32 keys)
 
         for (u32 i = 0; i < battleParticipants->size(); i++)
         {
+
             if (battleParticipants->at(i)->hp <= 0)
             {
                 // adjusts the index for the next round so it wont skip an entry
                 turnsTaken--;
                 BattleParticipant *dead = battleParticipants->at(i);
 
-                if (dead->participantType == ParticipantType::Enemy)
+                if (dead->participantType == ParticipantType::Player)
+                {
+                    exit();
+                }
+                else if (dead->participantType == ParticipantType::Enemy)
                 {
                     for (u32 j = 0; j < enemies.size(); j++)
                     {
@@ -71,7 +76,8 @@ void BattleController::update(u32 keys)
                     if (enemies.size() == 0)
                         exit();
                 }
-                else if (dead->participantType == ParticipantType::Party || dead->participantType == ParticipantType::Player)
+
+                else if (dead->participantType == ParticipantType::Party)
                 {
                     for (u32 j = 0; j < partyMembers.size(); j++)
                     {
