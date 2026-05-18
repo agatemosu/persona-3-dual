@@ -6,6 +6,7 @@
 #include <string>
 #include "../Element.h"
 #include "../BattleStats.h"
+#include "../shoes/Shoe.h"
 
 struct AttackSkill
 {
@@ -27,6 +28,21 @@ struct AttackSkill
         damageSetup(attackerStats, defenderStats, attackerLevel, defenderLevel);
         // todo: level diffrence never goes under 0 for either party during boss fights
         return (u32)floor(sqrt((float)(moveDamage * 15 * Atk) / defenderStats->en) * 2 * levelDifference * affinityMtp);
+    }
+
+    // TODO: hopefully correct, should be looked at by someone that knows some  math
+    u32 calculateHitratePlayer(BattleStats *attackerStats, BattleStats *defenderStats, u32 hitRate)
+    {
+        float accuracy = (float)(attackerStats->ag + 200) / (defenderStats->ag + 200);
+        return (u32)(accuracy * hitRate);
+    }
+
+    // TODO: hopefully correct, should be looked at by someone that knows some  math
+    u32 calculateHitrateEnemy(BattleStats *attackerStats, BattleStats *defenderStats, Shoe *shoe, u32 hitRate)
+    {
+        float baseAccuracy = (float)(attackerStats->ag + 200) / (defenderStats->ag + 200);
+        float shoeMultiplier = (float)(attackerStats->ag + 200) / (shoe->evasion / 2.0f + 200);
+        return (u32)(baseAccuracy * hitRate * shoeMultiplier);
     }
 
     u32 calculateDamageEnemySkill(BattleStats *attackerStats, BattleStats *defenderStats, u32 *attackerLevel, u32 *defenderLevel, Armour *armour = nullptr)
