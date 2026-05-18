@@ -2,14 +2,15 @@
 #include "core/BaseView.h"
 #include "core/globals.h"
 
-class IntroVideoView : public BaseView
+class VideoView : public BaseView
 {
 public:
-    IntroVideoView(const char *filename) : filename(filename) {}
+    VideoView(const char *filename, const ViewState nextView) : filename(filename), nextView(nextView) {}
     void init() override;
     ViewState update() override;
     void cleanup() override;
 
 private:
     const char *filename;
+    const ViewState nextView;
 };

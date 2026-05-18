@@ -9,6 +9,7 @@ enum class ViewState
     MAIN_MENU,
     IWATODAI_DORM,
     IWATODAI_STREETS,
+    CUTSCENE_1
 };
 
 enum class SpriteType
@@ -130,7 +131,8 @@ enum class MainMenuOptions
 enum class LevelOptions
 {
     IWATODAI_DORM = 0,
-    IWATODAI_STREETS
+    IWATODAI_STREETS,
+    CUTSCENE_1
 };
 
 enum class PauseMenuOption

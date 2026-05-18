@@ -1,7 +1,7 @@
 #include "core/BaseMenu.h"
 
 #define MAIN_MENU_OPTIONS 2
-#define LEVEL_OPTIONS 2
+#define LEVEL_OPTIONS 3
 
 class MainMenuComponent : public BaseMenu
 {
@@ -18,6 +18,7 @@ private:
     {
         {"Iwatodai Dorm", -1, MENU_BIND(MainMenuComponent, levelOptionSelected)},
         {"Iwatodai Streets", -1, MENU_BIND(MainMenuComponent, levelOptionSelected)},
+        {"Cutscene 1", -1, MENU_BIND(MainMenuComponent, levelOptionSelected)},
     };
 
     // option handlers

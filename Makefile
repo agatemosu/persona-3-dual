@@ -270,7 +270,9 @@ endif
 #---------------------------------------------------------------------------------
 # Generate a FAT32 SD Card image
 #---------------------------------------------------------------------------------
+ifneq ($(BUILD),$(notdir $(CURDIR)))
 DATA_FILES := $(shell find $(CURDIR)/data -type f)
+endif
 sdcard.img: $(OUTPUT).nds $(DATA_FILES)
 	@echo "Generating sdcard.img (2GB)..."
 	@$(VENV_PYTHON) -c "with open('sdcard.img', 'wb') as f: f.truncate(512 * 1024 * 1024 * 4)"

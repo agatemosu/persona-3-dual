@@ -10,7 +10,7 @@
 // states
 #include "core/BaseView.h"
 #include "views/DisclaimerView.h"
-#include "views/IntroVideoView.h"
+#include "views/VideoView.h"
 #include "views/IntroView.h"
 #include "views/MainMenuView.h"
 #include "views/IwatodaiDormView.h"
@@ -163,7 +163,11 @@ int main(int argc, char *argv[])
             {
                 const char *intros[] = {"fes.vid", "base.vid", "portable.vid"};
                 const char *introFile = intros[rand() % 3];
-                SwitchView(new IntroVideoView(introFile));
+                SwitchView(new VideoView("cutscene-1.vid", ViewState::INTRO));
+            }
+            else if (nextState == ViewState::CUTSCENE_1)
+            {
+                SwitchView(new VideoView("cutscene-1.vid", ViewState::MAIN_MENU));
             }
         }
 
