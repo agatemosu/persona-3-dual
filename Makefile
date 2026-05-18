@@ -148,7 +148,6 @@ else
     export LD := $(CXX)
 endif
 
-# Cleaned up redundant environment rules; native GRAPHICS mapping handles this flawlessly
 export OFILES   :=  $(addsuffix .o,$(BINFILES)) \
                     $(PNGFILES:.png=.o) \
                     $(CPPFILES:.cpp=.o) $(CFILES:.c=.o) $(SFILES:.s=.o)
@@ -160,13 +159,14 @@ export INCLUDE  :=  $(foreach dir,$(INCLUDES),-I$(CURDIR)/$(dir)) \
 
 export LIBPATHS :=  $(foreach dir,$(LIBDIRS),-L$(dir)/lib)
 
-.PHONY: $(BUILD) clean assets dialogue music video environments jmaps models help
+.PHONY: $(BUILD) clean assets dialogue music video environments jmaps models sdcard help
 
 #---------------------------------------------------------------------------------
 $(BUILD):
 	@$(MAKE) --no-print-directory assets
 	@[ -d $@ ] || mkdir -p $@
 	@$(MAKE) --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile
+	@$(MAKE) --no-print-directory sdcard.img
 
 help:
 	@echo "  make              Build everything"
@@ -177,6 +177,7 @@ assets: dirs dialogue music video environments jmaps models
 dirs:
 	@mkdir -p $(CURDIR)/source/dialogue $(CURDIR)/source/maps $(CURDIR)/source/models $(CURDIR)/source/environments $(DATA_MUSIC) $(DATA_VIDEO) $(CURDIR)/data/models $(CURDIR)/data/environments
 
+sdcard: sdcard.img
 #---------------------------------------------------------------------------------
 $(CURDIR)/source/dialogue/%_dialogue.cpp: $(ASSETS_DIALOGUE)/%.dlg $(wildcard $(ASSETS_DIALOGUE)/%.build.json)
 	@echo "  DLG   $(notdir $<)"
@@ -269,18 +270,11 @@ endif
 #---------------------------------------------------------------------------------
 # Generate a FAT32 SD Card image
 #---------------------------------------------------------------------------------
-sdcard: $(OUTPUT).nds
+DATA_FILES := $(shell find $(CURDIR)/data -type f)
+sdcard.img: $(OUTPUT).nds $(DATA_FILES)
 	@echo "Generating sdcard.img (2GB)..."
-	@# 1. Allocate a 2GB file
 	@$(VENV_PYTHON) -c "with open('sdcard.img', 'wb') as f: f.truncate(512 * 1024 * 1024 * 4)"
-
-	@# 2. Format the file as a FAT filesystem named P3D_SD
 	@mformat -i sdcard.img -v P3D_SD -F ::
-
-	@# 3. Inject the compiled ROM directly into the root of the image
 	@mcopy -i sdcard.img $(OUTPUT).nds ::/
-
-	@# 4. Inject the data folder directly into the root next to the ROM
 	@mcopy -s -i sdcard.img $(CURDIR)/data ::/
-
 	@echo "Successfully built sdcard.img"
