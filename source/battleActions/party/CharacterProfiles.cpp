@@ -4,6 +4,7 @@ void CharacterProfiles::InitializeProfiles()
 {
 
     RashGuard rashGuard;
+    RubberSole rubberSole;
 
     /*--------------MC-----------------*/
 
@@ -18,6 +19,7 @@ void CharacterProfiles::InitializeProfiles()
     PlainShirt plainShirt;
     player.armourType = ArmourType::Male;
     player.armour = plainShirt;
+    player.shoe = rubberSole;
 
     player.personas.push_back(new Orpheus);
     player.personas.push_back(new Forneus);
@@ -36,6 +38,7 @@ void CharacterProfiles::InitializeProfiles()
 
     yukari.armourType = ArmourType::Female;
     yukari.armour = rashGuard;
+    yukari.shoe = rubberSole;
 
     yukari.personas.push_back(new Io);
 
@@ -52,6 +55,7 @@ void CharacterProfiles::InitializeProfiles()
 
     junpei.armourType = ArmourType::Male;
     junpei.armour = rashGuard;
+    junpei.shoe = rubberSole;
 
     junpei.personas.push_back(new Hermes);
 
