@@ -29,13 +29,11 @@ endif
 TARGET      :=  $(shell basename $(CURDIR))
 BUILD       :=  build
 SOURCES     :=  source source/views source/controllers source/core source/data source/dialogue source/models source/environments source/components source/battleActions source/battleActions/enemies source/battleActions/party source/battleActions/skills source/battleActions/actions
-DATA        :=
 INCLUDES    :=  include source
 
 # Add environment subdirectories directly to the GRAPHICS build pipeline
 GRAPHICS    :=  assets/graphics $(wildcard assets/environments/*) $(wildcard assets/models/*)
 SFX       	:=  assets/sfx
-NITRODATA   :=  nitrofiles
 
 GAME_TITLE     := Persona 3 Dual
 GAME_SUBTITLE1 := A Fan Recreation
@@ -59,8 +57,8 @@ ASSETS_ENVIRONMENTS := $(CURDIR)/assets/environments
 ASSETS_MODELS   := $(CURDIR)/assets/models
 ASSETS_MAPS     := $(CURDIR)/assets/maps
 
-NITRO_MUSIC     := $(CURDIR)/nitrofiles/music
-NITRO_VIDEO     := $(CURDIR)/nitrofiles/video
+DATA_MUSIC      := $(CURDIR)/data/music
+DATA_VIDEO      := $(CURDIR)/data/video
 
 #---------------------------------------------------------------------------------
 # MMUTIL OS select
@@ -88,8 +86,8 @@ MODEL_JSON_FILES := $(wildcard $(ASSETS_MODELS)/*/*.json)
 # Derive output paths & dynamically add environment output dirs to SOURCES
 #---------------------------------------------------------------------------------
 DIALOGUE_OUT := $(DLG_FILES:$(ASSETS_DIALOGUE)/%.dlg=$(CURDIR)/source/dialogue/%_dialogue.cpp)
-MUSIC_OUT    := $(MP3_FILES:$(ASSETS_MUSIC)/%.mp3=$(NITRO_MUSIC)/%.pcm)
-VIDEO_OUT    := $(MP4_FILES:$(ASSETS_VIDEO)/%.mp4=$(NITRO_VIDEO)/%.vid)
+MUSIC_OUT    := $(MP3_FILES:$(ASSETS_MUSIC)/%.mp3=$(DATA_MUSIC)/%.pcm)
+VIDEO_OUT    := $(MP4_FILES:$(ASSETS_VIDEO)/%.mp4=$(DATA_VIDEO)/%.vid)
 JMAP_OUT     := $(JMAP_FILES:$(ASSETS_MAPS)/%.jmap=$(CURDIR)/source/maps/%.h)
 
 MODEL_OUT    := $(foreach file,$(MODEL_JSON_FILES),$(CURDIR)/source/models/$(notdir $(file:.json=.h)))
@@ -134,10 +132,6 @@ export VPATH    :=  $(foreach dir,$(SOURCES),$(CURDIR)/$(dir)) \
 
 export DEPSDIR  :=  $(CURDIR)/$(BUILD)
 
-ifneq ($(strip $(NITRODATA)),)
-    export NITRO_FILES  :=  $(CURDIR)/$(NITRODATA)
-endif
-
 CFILES      :=  $(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.c)))
 CPPFILES    :=  $(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.cpp)))
 CPPFILES    +=  $(notdir $(DLG_FILES:$(ASSETS_DIALOGUE)/%.dlg=%_dialogue.cpp))
@@ -154,7 +148,6 @@ else
     export LD := $(CXX)
 endif
 
-# Cleaned up redundant environment rules; native GRAPHICS mapping handles this flawlessly
 export OFILES   :=  $(addsuffix .o,$(BINFILES)) \
                     $(PNGFILES:.png=.o) \
                     $(CPPFILES:.cpp=.o) $(CFILES:.c=.o) $(SFILES:.s=.o)
@@ -166,13 +159,14 @@ export INCLUDE  :=  $(foreach dir,$(INCLUDES),-I$(CURDIR)/$(dir)) \
 
 export LIBPATHS :=  $(foreach dir,$(LIBDIRS),-L$(dir)/lib)
 
-.PHONY: $(BUILD) clean assets dialogue music video environments jmaps models help
+.PHONY: $(BUILD) clean assets dialogue music video environments jmaps models sdcard help
 
 #---------------------------------------------------------------------------------
 $(BUILD):
 	@$(MAKE) --no-print-directory assets
 	@[ -d $@ ] || mkdir -p $@
 	@$(MAKE) --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile
+	@$(MAKE) --no-print-directory sdcard.img
 
 help:
 	@echo "  make              Build everything"
@@ -181,8 +175,9 @@ help:
 assets: dirs dialogue music video environments jmaps models
 
 dirs:
-	@mkdir -p $(CURDIR)/source/dialogue $(CURDIR)/source/maps $(CURDIR)/source/models $(CURDIR)/source/environments $(NITRO_MUSIC) $(NITRO_VIDEO) $(CURDIR)/nitrofiles/models $(CURDIR)/nitrofiles/environments
+	@mkdir -p $(CURDIR)/source/dialogue $(CURDIR)/source/maps $(CURDIR)/source/models $(CURDIR)/source/environments $(DATA_MUSIC) $(DATA_VIDEO) $(CURDIR)/data/models $(CURDIR)/data/environments
 
+sdcard: sdcard.img
 #---------------------------------------------------------------------------------
 $(CURDIR)/source/dialogue/%_dialogue.cpp: $(ASSETS_DIALOGUE)/%.dlg $(wildcard $(ASSETS_DIALOGUE)/%.build.json)
 	@echo "  DLG   $(notdir $<)"
@@ -192,14 +187,14 @@ $(CURDIR)/source/dialogue/%_dialogue.cpp: $(ASSETS_DIALOGUE)/%.dlg $(wildcard $(
 dialogue: $(DIALOGUE_OUT)
 
 #---------------------------------------------------------------------------------
-$(NITRO_MUSIC)/%.pcm: $(ASSETS_MUSIC)/%.mp3
+$(DATA_MUSIC)/%.pcm: $(ASSETS_MUSIC)/%.mp3
 	@echo "  PCM   $(notdir $<)"
 	@mkdir -p $(dir $@)
 	@ffmpeg -i $< -f s16le -ar 32000 -ac 2 $@ -y -loglevel error
 music: $(MUSIC_OUT)
 
 #---------------------------------------------------------------------------------
-$(NITRO_VIDEO)/%.vid: $(ASSETS_VIDEO)/%.mp4 $(wildcard $(ASSETS_VIDEO)/%.build.json)
+$(DATA_VIDEO)/%.vid: $(ASSETS_VIDEO)/%.mp4 $(wildcard $(ASSETS_VIDEO)/%.build.json)
 	@echo "  VID   $(notdir $<)"
 	@mkdir -p $(dir $@)
 	@$(VENV_PYTHON) $(TOOLS_DIR)/build_asset.py $< $(basename $@)
@@ -212,9 +207,9 @@ $(CURDIR)/source/environments/%.h: $(ASSETS_ENVIRONMENTS)/%/$$*.obj \
 		$$(wildcard $(ASSETS_ENVIRONMENTS)/%/$$*.build.json) \
 		$$(wildcard $(ASSETS_ENVIRONMENTS)/$$*.build.json)
 	@echo "  ENV   $*"
-	@mkdir -p $(dir $@) $(CURDIR)/nitrofiles/environments
-	@$(VENV_PYTHON) $(TOOLS_DIR)/build_asset.py $< $(CURDIR)/nitrofiles/environments
-	@mv $(CURDIR)/nitrofiles/environments/$*.h $@
+	@mkdir -p $(dir $@) $(CURDIR)/data/environments
+	@$(VENV_PYTHON) $(TOOLS_DIR)/build_asset.py $< $(CURDIR)/data/environments
+	@mv $(CURDIR)/data/environments/$*.h $@
 	@touch $@
 
 environments: $(ENVIRONMENT_OUT)
@@ -224,9 +219,9 @@ $(CURDIR)/source/models/%.h: $(ASSETS_MODELS)/%/$$*.json \
 		$$(wildcard $(ASSETS_MODELS)/%/$$*.build.json) \
 		$$(wildcard $(ASSETS_MODELS)/$$*.build.json)
 	@echo "  MODEL $*"
-	@mkdir -p $(dir $@) $(CURDIR)/nitrofiles/models
-	@$(VENV_PYTHON) $(TOOLS_DIR)/build_asset.py $< $(CURDIR)/nitrofiles/models/$*.bin
-	@mv $(CURDIR)/nitrofiles/models/$*.h $@
+	@mkdir -p $(dir $@) $(CURDIR)/data/models
+	@$(VENV_PYTHON) $(TOOLS_DIR)/build_asset.py $< $(CURDIR)/data/models/$*.bin
+	@mv $(CURDIR)/data/models/$*.h $@
 	@touch $@
 
 models: $(MODEL_OUT)
@@ -244,7 +239,8 @@ clean:
 	@echo clean ...
 	@rm -fr $(BUILD) $(TARGET).elf $(TARGET).nds $(TARGET).ds.gba
 	@rm -f $(MUSIC_OUT) $(VIDEO_OUT) $(JMAP_OUT) $(MODEL_OUT) $(DIALOGUE_OUT) $(CURDIR)/source/dialogue/*_dialogue.h
-	@rm -rf $(CURDIR)/source/environments/* $(CURDIR)/nitrofiles/models/* $(CURDIR)/nitrofiles/environments/*
+	@rm -rf $(CURDIR)/source/environments/* $(CURDIR)/data/models/* $(CURDIR)/data/environments/*
+	@rm -f sdcard.img sdcard.img.idx
 
 #---------------------------------------------------------------------------------
 else
@@ -252,7 +248,6 @@ else
 DEPENDS :=  $(OFILES:.o=.d)
 
 $(OUTPUT).nds   :   $(OUTPUT).elf
-$(OUTPUT).nds   :   $(shell find $(TOPDIR)/$(NITRODATA))
 $(OUTPUT).elf   :   $(OFILES)
 
 soundbank.bin soundbank.h : $(SFXFILES)
@@ -271,3 +266,15 @@ soundbank.bin soundbank.h : $(SFXFILES)
 
 -include $(DEPENDS)
 endif
+
+#---------------------------------------------------------------------------------
+# Generate a FAT32 SD Card image
+#---------------------------------------------------------------------------------
+DATA_FILES := $(shell find $(CURDIR)/data -type f)
+sdcard.img: $(OUTPUT).nds $(DATA_FILES)
+	@echo "Generating sdcard.img (2GB)..."
+	@$(VENV_PYTHON) -c "with open('sdcard.img', 'wb') as f: f.truncate(512 * 1024 * 1024 * 4)"
+	@mformat -i sdcard.img -v P3D_SD -F ::
+	@mcopy -i sdcard.img $(OUTPUT).nds ::/
+	@mcopy -s -i sdcard.img $(CURDIR)/data ::/
+	@echo "Successfully built sdcard.img"
