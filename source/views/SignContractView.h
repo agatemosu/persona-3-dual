@@ -1,11 +1,15 @@
 #pragma once
 #include "core/BaseView.h"
-// #include "core/globals.h"
 
 class SignContractView : public BaseView
 {
 private:
     int bg[3];
+    bool isLastName = true;
+    bool isNameConfirmed = false;
+    std::string lastName;
+    std::string firstName;
+
     // sfx
     mm_sfxhand sfxMenuHandle;
     mm_sfxhand sfxSelectHandle;

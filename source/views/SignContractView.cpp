@@ -9,11 +9,6 @@
 // sfx
 #include "soundbank.h"
 
-// DEBUG
-bool isLastName = true;
-bool isNameConfirmed = false;
-std::string lastName;
-std::string firstName;
 
 void SignContractView::cancelSFX()
 {
@@ -31,13 +26,10 @@ void SignContractView::init()
     musicCtrl.loadSFX(SFX_MENU);
     musicCtrl.loadSFX(SFX_SELECT);
     musicCtrl.loadSFX(SFX_CANCEL);
-    // TODO: add correct music
-    musicCtrl.init((fatBasePath + "music/aria_of_the_soul.pcm").c_str(), 0.0f, 164.940f);
+    musicCtrl.init((fatBasePath + "music/mistic.pcm").c_str(), 0.0f, -1.0f);
 
     // set video mode for 2 text layers and 2 extended rotation layer
     videoSetMode(MODE_5_2D);
-    // set sub video mode for 4 text layers
-    videoSetModeSub(MODE_0_2D);
 
     // map vram bank A to main engine background (slot 0)
     vramSetBankA(VRAM_A_MAIN_BG_0x06000000);
@@ -161,10 +153,22 @@ ViewState SignContractView::update()
         }
         else
         {
-            // TODO: go to next cutscene
             cancelSFX();
+            // transition both screens to black
+            for (int i = 0; i <= 16; i++)
+            {
+                setBrightness(3, -i);
+
+                // wait a few frames
+                for (int duration = 0; duration <= 2; duration++)
+                {
+                    swiWaitForVBlank();
+                    musicCtrl.update();
+                }
+            }
             musicCtrl.pause();
-            return ViewState::MAIN_MENU;
+
+            return ViewState::CUTSCENE_2;
         }
     }
     else if (key > 0)

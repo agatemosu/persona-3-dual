@@ -10,7 +10,8 @@ enum class ViewState
     IWATODAI_DORM,
     IWATODAI_STREETS,
     CUTSCENE_1,
-    SIGN_CONTRACT
+    SIGN_CONTRACT,
+    CUTSCENE_2
 };
 
 enum class SpriteType
@@ -134,7 +135,9 @@ enum class LevelOptions
 {
     IWATODAI_DORM = 0,
     IWATODAI_STREETS,
-    CUTSCENE_1
+    CUTSCENE_1,
+    SIGN_CONTRACT,
+    CUTSCENE_2
 };
 
 enum class SettingIntroOptions

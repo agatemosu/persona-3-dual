@@ -131,7 +131,7 @@ int main(int argc, char *argv[])
     srand(TIMER0_DATA);
 
     // start with DisclaimerView
-    SwitchView(new SignContractView());
+    SwitchView(new DisclaimerView());
 
     while (pmMainLoop())
     {
@@ -172,6 +172,10 @@ int main(int argc, char *argv[])
             else if (nextState == ViewState::SIGN_CONTRACT)
             {
                 SwitchView(new SignContractView());
+            }
+            else if (nextState == ViewState::CUTSCENE_2)
+            {
+                SwitchView(new VideoView("cutscene-2.vid", ViewState::IWATODAI_DORM));
             }
         }
 
