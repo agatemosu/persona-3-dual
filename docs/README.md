@@ -4,10 +4,10 @@ A Nintendo DS demake of **Persona 3**, developed in C++ using devkitPro. This pr
 
 The name is a nod to the online joke about a DS version of Persona 3 called "Persona 3 Dual".
 
-![Stars](https://img.shields.io/github/stars/TheBossT910/persona-3-dual?style=flat-square&color=gold)
-![Forks](https://img.shields.io/github/forks/TheBossT910/persona-3-dual?style=flat-square&color=blue)
-![Last Commit](https://img.shields.io/github/last-commit/TheBossT910/persona-3-dual?style=flat-square&color=green)
-![License](https://img.shields.io/github/license/TheBossT910/persona-3-dual?style=flat-square)
+![Stars](https://img.shields.io/github/stars/p3d-project/persona-3-dual?style=flat-square&color=gold)
+![Forks](https://img.shields.io/github/forks/p3d-project/persona-3-dual?style=flat-square&color=blue)
+![Last Commit](https://img.shields.io/github/last-commit/p3d-project/persona-3-dual?style=flat-square&color=green)
+![License](https://img.shields.io/github/license/p3d-project/persona-3-dual?style=flat-square)
 
 [![C++](https://img.shields.io/badge/C++-%2300599C.svg?logo=c%2B%2B&logoColor=white)](#)
 ![Platform](https://img.shields.io/badge/platform-Nintendo%20DS-red?style=flat-square)
