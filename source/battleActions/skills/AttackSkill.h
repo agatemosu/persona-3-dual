@@ -8,32 +8,37 @@
 #include "../Element.h"
 #include "../BattleStats.h"
 #include "../shoes/Shoe.h"
+#include "SkillTarget.h"
 
 struct AttackSkill
 {
-    float moveDamage;
     enum Race
     {
         phys,
         mag
     };
 
+    std::string name;
     s32 cost;
     Race race;
     u32 element;
     u32 hitRate;
-    std::string name;
+    u32 movePower;
+    SkillTarget skillTarget;
 
     u32 calculateDamagePlayer(BattleStats *attackerStats, BattleStats *defenderStats, u32 *attackerLevel, u32 *defenderLevel)
     {
         damageSetup(attackerStats, defenderStats, attackerLevel, defenderLevel);
         // todo: level diffrence never goes under 0 for either party during boss fights
-        return (u32)floor(sqrt((float)(moveDamage * 15 * Atk) / defenderStats->en) * 2 * levelDifference * affinityMtp);
+        return (u32)floor(sqrt((float)(movePower * 15 * Atk) / defenderStats->en) * 2 * levelDifference * affinityMtp);
     }
 
     // TODO: hopefully correct, should be looked at by someone that knows some  math
     u32 calculateHitratePlayer(BattleStats *attackerStats, BattleStats *defenderStats)
     {
+        if (hitRate == 100)
+            return true;
+
         float baseAccuracy = (float)(attackerStats->ag + 200) / (defenderStats->ag + 200);
         u32 multipliedAccuracy = (u32)(baseAccuracy * hitRate);
         return std::clamp(multipliedAccuracy, (u32)50, (u32)99);
@@ -42,6 +47,9 @@ struct AttackSkill
     // TODO: hopefully correct, should be looked at by someone that knows some  math
     u32 calculateHitrateEnemy(BattleStats *attackerStats, BattleStats *defenderStats, Shoe *shoe)
     {
+        if (hitRate == 100)
+            return true;
+
         float baseAccuracy = (float)(attackerStats->ag + 200) / (defenderStats->ag + 200);
         float shoeMultiplier = (float)(attackerStats->ag + 200) / (shoe->evasion / 2.0f + 200);
         u32 multipliedAccuracy = baseAccuracy * hitRate * shoeMultiplier;
@@ -55,7 +63,7 @@ struct AttackSkill
 
         damageSetup(attackerStats, defenderStats, attackerLevel, defenderLevel);
         // todo: level diffrence never goes under 0 for either party during boss fights
-        return (u32)floor((sqrt((float)(moveDamage * 6 * Atk) / (8 * defenderStats->en + armourValue)) * 9 * levelDifference - 10) * affinityMtp);
+        return (u32)floor((sqrt((float)(movePower * 6 * Atk) / (8 * defenderStats->en + armourValue)) * 9 * levelDifference - 10) * affinityMtp);
     }
 
     u32 calculateDamageEnemyRegular(BattleStats *attackerStats, BattleStats *defenderStats, u32 *attackerLevel, u32 *defenderLevel, Armour *armour = nullptr)
@@ -65,7 +73,7 @@ struct AttackSkill
 
         damageSetup(attackerStats, defenderStats, attackerLevel, defenderLevel);
         // todo: level diffrence never goes under 0 for either party during boss fights
-        return (u32)floor((sqrt((float)(moveDamage * 6 * Atk) / (8 * defenderStats->en + armourValue)) * 9 * levelDifference) * affinityMtp);
+        return (u32)floor((sqrt((float)(movePower * 6 * Atk) / (8 * defenderStats->en + armourValue)) * 9 * levelDifference) * affinityMtp);
     }
 
     virtual ~AttackSkill() = default;

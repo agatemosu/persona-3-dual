@@ -5,11 +5,12 @@ struct Garu : AttackSkill
 {
     Garu()
     {
-        moveDamage = 40;
+        movePower = 40;
         race = mag;
         element = Wind;
         cost = 3;
         name = "Garu";
         hitRate = 99;
+        skillTarget = SkillTarget::OppositionTeam;
     }
 };

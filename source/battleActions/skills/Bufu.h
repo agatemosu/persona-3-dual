@@ -5,11 +5,12 @@ struct Bufu : AttackSkill
 {
     Bufu()
     {
-        moveDamage = 40;
+        movePower = 40;
         race = mag;
         element = Ice;
         cost = 3;
         name = "Bufu";
         hitRate = 99;
+        skillTarget = SkillTarget::OppositionTeam;
     }
 };
