@@ -28,45 +28,37 @@ void SignContractView::init()
     musicCtrl.loadSFX(SFX_CANCEL);
     musicCtrl.init((fatBasePath + "music/mistic.pcm").c_str(), 0.0f, -1.0f);
 
-    // set video mode for 2 text layers and 2 extended rotation layer
     videoSetMode(MODE_5_2D);
+    videoSetModeSub(MODE_0_2D);
 
-    // map vram bank A to main engine background (slot 0)
+    // map vram banks to main engine background
     vramSetBankA(VRAM_A_MAIN_BG_0x06000000);
     vramSetBankD(VRAM_D_MAIN_BG_0x06020000);
+    // map vram to sub screen
+    vramSetBankC(VRAM_C_SUB_BG);
 
     // enable extended palettes
     bgExtPaletteEnable();
 
     // initialize backgrounds
-    // check https://mtheall.com/vram.html to ensure bg fit in vram
     bg[0] = bgInit(0, BgType_Text8bpp, BgSize_T_256x256, 9, 2);
+    bgSetPriority(bg[0], 0);
 
-    // need to set priority to properly display
-    // 0 is highest, 3 is lowest
-    bgSetPriority(bg[0], 0); // silhouette
-
-    // reset background vram
+    // set backgrounds
     dmaFillHalfWords(0, bgGetMapPtr(bg[0]), 8192);
-
-    // copy graphics to vram
     dmaCopy(contractTiles, bgGetGfxPtr(bg[0]), contractTilesLen);
-
-    // copy maps to vram
     dmaCopy(contractMap, bgGetMapPtr(bg[0]), contractMapLen);
 
-    vramSetBankE(VRAM_E_LCD); // for main engine
-
-    // copy palettes to extended palette area
+    vramSetBankE(VRAM_E_LCD);
     dmaCopy(contractPal, &VRAM_E_EXT_PALETTE[0][0], contractPalLen);
-
-    // map vram to extended palette
     vramSetBankE(VRAM_E_BG_EXT_PALETTE);
 
     // setup console
-    // TODO: setup properly without DemoInit() fns
-    consoleDemoInit();
-    keyboardDemoInit();
+    consoleInit(&console, 0, BgType_Text4bpp, BgSize_T_256x256, 2, 0, false, true);
+    consoleSelect(&console);
+    keyboardInit(&keyboard, 1, BgType_Text4bpp, BgSize_T_256x512, 3, 1, false, true);
+    bgSetPriority(console.bgId, 0);
+    bgSetPriority(keyboard.background, 1);
     keyboardShow();
 
     iprintf("\x1b[11;6HEnter your last name");
@@ -88,11 +80,14 @@ void SignContractView::init()
 
 ViewState SignContractView::update()
 {
+    scanKeys();
     int key = keyboardUpdate();
+    int pressed = keysDown();
 
-    // Bksp = 8, Return = 10
-    if (key == 8)
+    // Bksp (8) or "B"
+    if ((key == 8) || (pressed & KEY_B))
     {
+        key = 8;
         cancelSFX();
         sfxCancelHandle = musicCtrl.playSFX(SFX_CANCEL, 255, 128);
 
@@ -126,8 +121,10 @@ ViewState SignContractView::update()
             iprintf("\x1b[0;0H%s", firstName.c_str());
         }
     }
-    else if (key == 10)
+    // Return (10) or "A"
+    else if ((key == 10) || (pressed & KEY_A))
     {
+        key = 10;
         cancelSFX();
         sfxSelectHandle = musicCtrl.playSFX(SFX_SELECT, 255, 128);
 
@@ -171,6 +168,7 @@ ViewState SignContractView::update()
             return ViewState::CUTSCENE_2;
         }
     }
+    // on any other keyboard entry
     else if (key > 0)
     {
         cancelSFX();

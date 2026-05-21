@@ -8,6 +8,10 @@ private:
     bool isLastName = true;
     bool isNameConfirmed = false;
 
+    // console
+    PrintConsole console;
+    Keyboard keyboard;
+
     // sfx
     mm_sfxhand sfxMenuHandle;
     mm_sfxhand sfxSelectHandle;
