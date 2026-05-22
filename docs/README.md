@@ -75,7 +75,7 @@ docker --version
 #### 2. Clone the Repo
 
 ```bash
-git clone https://github.com/TheBossT910/persona-3-dual.git
+git clone https://github.com/p3d-project/persona-3-dual.git
 cd persona-3-dual
 ```
 
@@ -208,7 +208,7 @@ Requires [TWiLight Menu++](https://wiki.ds-homebrew.com/twilightmenu/) with DLDI
 
 ## Roadmap
 
-See the [Project Board](https://github.com/users/TheBossT910/projects/2) for current progress and open issues.
+See the [Project Board](https://github.com/orgs/p3d-project/projects/1) for current progress and open issues.
 
 ### ✅ Major Completed Features
 
@@ -273,11 +273,11 @@ The goal of Milestone 1 is a polished, presentable demo showcasing core scenes a
 
 ## Star History
 
-<a href="https://www.star-history.com/?repos=TheBossT910%2Fpersona-3-dual&type=date&legend=top-left">
+<a href="https://www.star-history.com/?repos=p3d-project%2Fpersona-3-dual&type=date&legend=top-left">
  <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=TheBossT910/persona-3-dual&type=date&theme=dark&legend=top-left" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=TheBossT910/persona-3-dual&type=date&legend=top-left" />
-   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=TheBossT910/persona-3-dual&type=date&legend=top-left" />
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=p3d-project/persona-3-dual&type=date&theme=dark&legend=top-left" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=p3d-project/persona-3-dual&type=date&legend=top-left" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=p3d-project/persona-3-dual&type=date&legend=top-left" />
  </picture>
 </a>
 
