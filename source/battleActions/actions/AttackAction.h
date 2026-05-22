@@ -17,7 +17,7 @@ struct AttackAction : ActionBase
         name = "AttackAction";
         possibleUsers = ParticipantType::Party;
         // TODO: dont forget to clear in the future
-        targetAndExecute = new TargetAndExecute(enemies, &targetIndex);
+        targetAndExecute = new TargetAndExecute(&targetIndex);
     }
 
     void execute() override;

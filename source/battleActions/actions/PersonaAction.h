@@ -10,7 +10,7 @@
 struct PersonaAction : ActionBase
 {
     UpdateIndex updateIndex;
-    AttackSkill *selectedSkill;
+    Skill *selectedSkill;
     TargetAndExecute *targetAndExecute;
 
     PersonaAction(std::vector<BattleParticipant *> *iAllParticipants, std::vector<BattleParticipant *> *iParty, std::vector<BattleParticipant *> *iEnemies) : ActionBase(iAllParticipants, iParty, iEnemies)
@@ -19,7 +19,7 @@ struct PersonaAction : ActionBase
         possibleUsers = ParticipantType::Party;
 
         // TODO: dont forget to clear in the future
-        targetAndExecute = new TargetAndExecute(enemies, &targetIndex);
+        targetAndExecute = new TargetAndExecute(&targetIndex);
     }
 
     enum MenuState

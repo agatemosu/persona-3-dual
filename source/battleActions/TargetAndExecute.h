@@ -2,6 +2,7 @@
 #include <nds.h>
 #include <stdio.h>
 #include <vector>
+#include "skills/Skill.h"
 #include "skills/AttackSkill.h"
 #include "BattleParticipant.h"
 #include "party/PartyMember.h"
@@ -12,7 +13,7 @@ struct TargetAndExecute
     std::vector<BattleParticipant *> *targets;
     u32 *targetIndex;
 
-    TargetAndExecute(std::vector<BattleParticipant *> *iTargets, u32 *iTargetIndex) : targets(iTargets), targetIndex(iTargetIndex) {}
+    TargetAndExecute(u32 *iTargetIndex) : targetIndex(iTargetIndex) {}
 
-    bool update(u32 *keys, AttackSkill *attack, PartyMember *user);
+    bool update(u32 *keys, Skill *skill, PartyMember *user, std::vector<BattleParticipant *> *targets);
 };

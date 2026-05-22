@@ -26,12 +26,12 @@ bool PersonaAction::update(u32 *keys, PartyMember *user)
 
         if (*keys & KEY_A)
         {
-            if (curSkill->race == AttackSkill::mag)
+            if (curSkill->skillRace == SkillRace::mag)
             {
                 if (!DeductAttackCost(&user->sp, curSkill->cost, "not enough SP\n"))
                     return false;
             }
-            else if (curSkill->race == AttackSkill::phys)
+            else if (curSkill->skillRace == SkillRace::phys)
             {
                 if (!DeductAttackCost(&user->hp, curSkill->cost, "not enough HP\n"))
                     return false;
@@ -52,7 +52,7 @@ bool PersonaAction::update(u32 *keys, PartyMember *user)
 
         updateIndex.update(*keys, targetIndex, enemyCount);
 
-        bool madeAction = targetAndExecute->update(keys, selectedSkill, user);
+        bool madeAction = targetAndExecute->update(keys, selectedSkill, user, enemies);
         if (madeAction)
         {
             targetIndex = 0;

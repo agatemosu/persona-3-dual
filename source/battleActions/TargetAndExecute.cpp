@@ -1,6 +1,6 @@
 #include "TargetAndExecute.h"
 
-bool TargetAndExecute::update(u32 *keys, AttackSkill *attack, PartyMember *user)
+bool TargetAndExecute::update(u32 *keys, Skill *skill, PartyMember *user, std::vector<BattleParticipant *> *targets)
 {
 
     if (*keys & KEY_LEFT || *keys & KEY_RIGHT)
@@ -12,7 +12,7 @@ bool TargetAndExecute::update(u32 *keys, AttackSkill *attack, PartyMember *user)
 
     if (*keys & KEY_A)
     {
-        iprintf("Attacking: ");
+        iprintf("Selected: ");
         iprintf(targets->at(*targetIndex)->name.c_str());
         iprintf("\n");
 
