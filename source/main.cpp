@@ -15,6 +15,7 @@
 #include "views/MainMenuView.h"
 #include "views/IwatodaiDormView.h"
 #include "views/IwatodaiStreetsView.h"
+#include "views/StationView.h"
 
 // controllers
 #include "controllers/MusicController.h"
@@ -164,6 +165,10 @@ int main(int argc, char *argv[])
                 const char *intros[] = {"fes.vid", "base.vid", "portable.vid"};
                 const char *introFile = intros[rand() % 3];
                 SwitchView(new IntroVideoView(introFile));
+            }
+            else if (nextState == ViewState::STATION)
+            {
+                SwitchView(new StationView());
             }
         }
 
