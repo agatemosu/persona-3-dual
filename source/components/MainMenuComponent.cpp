@@ -115,6 +115,9 @@ ViewState MainMenuComponent::settingOptionSelected()
     case SettingOptions::CHANGE_INTRO_VIDEO:
         changeMenu(settingIntroOptions, SETTING_INTRO_OPTIONS);
         selectedView = ViewState::KEEP_CURRENT;
+        case (int)LevelOptions::STATION:
+            selectedView = ViewState::STATION;
+            break;
     default:
         selectedView = ViewState::KEEP_CURRENT;
     }
@@ -141,6 +144,6 @@ ViewState MainMenuComponent::settingIntroOptionSelected()
     default:
         saveData.introVideoPath = "reload.vid";
     }
-    
+
     return ViewState::KEEP_CURRENT;
 }

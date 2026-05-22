@@ -11,7 +11,8 @@ enum class ViewState
     IWATODAI_STREETS,
     CUTSCENE_1,
     SIGN_CONTRACT,
-    CUTSCENE_2
+    CUTSCENE_2,
+    STATION
 };
 
 enum class SpriteType
@@ -136,6 +137,7 @@ enum class LevelOptions
     START_GAME = 0,
     IWATODAI_DORM,
     IWATODAI_STREETS,
+    STATION,
     SIGN_CONTRACT,
 };
 
@@ -218,10 +220,11 @@ enum class DebugOption
     INTRO_VIDEO,
     CUTSCENE_1,
     CUTSCENE_2,
+    STATION_VIEW,
     DEBUG_DIALOGUE,
     TOGGLE_BILLBOARDS,
     TOGGLE_DEBUG_PRINT,
-    PLAY_CHARACTER_ANIM,
+    PLAY_CHARACTER_ANIM
 };
 
 enum class CharacterAnimOption

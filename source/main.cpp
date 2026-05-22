@@ -16,6 +16,7 @@
 #include "views/IwatodaiDormView.h"
 #include "views/IwatodaiStreetsView.h"
 #include "views/SignContractView.h"
+#include "views/StationView.h"
 
 // controllers
 #include "controllers/MusicController.h"
@@ -181,6 +182,10 @@ int main(int argc, char *argv[])
             else if (nextState == ViewState::CUTSCENE_2)
             {
                 SwitchView(new VideoView("cutscene-2.vid", ViewState::IWATODAI_DORM));
+            }
+            else if (nextState == ViewState::STATION)
+            {
+                SwitchView(new StationView());
             }
         }
 

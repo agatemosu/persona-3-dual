@@ -11,6 +11,7 @@
 
 #include "../armours/PlainShirt.h"
 #include "../armours/RashGuard.h"
+#include "../shoes/RubberSole.h"
 
 struct CharacterProfiles
 {

@@ -4,6 +4,7 @@
 #include "../personas/PersonaBase.h"
 #include "../ArmourType.h"
 #include "../armours/Armour.h"
+#include "../shoes/Shoe.h"
 #include "../BattleParticipant.h"
 #include "../ParticipantType.h"
 #include "./battleActions/UpdateIndex.h"
@@ -17,6 +18,7 @@ struct PartyMember : BattleParticipant
     u32 index = 0;
 
     Armour armour;
+    Shoe shoe;
     std::vector<PersonaBase *> personas;
     PersonaBase *curPersona;
 
