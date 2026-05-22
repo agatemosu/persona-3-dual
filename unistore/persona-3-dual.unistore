@@ -36,8 +36,7 @@
           {
             "type": "extractFile",
             "file": "sdmc:/roms/nds/data.zip",
-            "input": "data/",
-            "output": "sdmc:/roms/nds/data/",
+            "output": "sdmc:/roms/nds/",
             "message": "Extracting game data..."
           },
           {
