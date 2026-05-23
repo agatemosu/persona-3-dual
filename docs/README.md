@@ -18,7 +18,7 @@ The name is a nod to the online joke about a DS version of Persona 3 called "Per
 
 [![Discord](https://img.shields.io/discord/1498850477545357482?label=Discord&logo=discord&style=flat-square&color=5865F2)](https://discord.gg/Xtmu76PveV)
 
-### Want to help? Join the [Discord!](https://discord.gg/Xtmu76PveV) Any help, big or small, would be greatly appreciated!
+### Want to help? Join the [Discord!](https://discord.gg/CQnkc5gS6a) Any help, big or small, would be greatly appreciated!
 
 
 <img width="444" height="519" alt="20260417_231005" src="https://github.com/user-attachments/assets/8dd225c8-f3eb-4b80-8ec4-feb381e4b71d" />
