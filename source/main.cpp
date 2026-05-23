@@ -17,6 +17,7 @@
 #include "views/IwatodaiStreetsView.h"
 #include "views/SignContractView.h"
 #include "views/StationView.h"
+#include "views/DebugView.h"
 
 // controllers
 #include "controllers/MusicController.h"
@@ -137,7 +138,7 @@ int main(int argc, char *argv[])
     srand(TIMER0_DATA);
 
     // start with DisclaimerView
-    SwitchView(new IwatodaiDormView());
+    SwitchView(new DisclaimerView());
 
     while (pmMainLoop())
     {
@@ -186,6 +187,10 @@ int main(int argc, char *argv[])
             else if (nextState == ViewState::STATION)
             {
                 SwitchView(new StationView());
+            }
+            else if (nextState == ViewState::DEBUG_VIEW)
+            {
+                SwitchView(new DebugView());
             }
         }
 

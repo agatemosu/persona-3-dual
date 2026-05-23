@@ -4,7 +4,7 @@
 #include "controllers/DialogueController.h"
 #include "controllers/CharacterController.h"
 // environments
-#include "environments/iwatodai_dorm.h"
+#include "environments/iwatodai_dorm_floor_1.h"
 // battle-related
 #include "./battleActions/enemies/Enemy.h"
 #include "./battleActions/enemies/Cowardly_Maya.h"
@@ -27,6 +27,10 @@ private:
     int bgMenuHUD;
     PrintConsole console;
 
+    // 3D
+    int characterTextureId;
+    iwatodai_dorm_floor_1_Environment iwatodaiDormFloor1Env;
+
     // init Character Profiles
     CharacterProfiles characterProfiles;
     // Battle participants
@@ -41,8 +45,8 @@ private:
     cameraPosition camPos;
     // world
     const float tileSize = 0.062500f;
-    const float worldOffsetX = IWATODAI_DORM_WORLD_OFFSET_X;
-    const float worldOffsetZ = IWATODAI_DORM_WORLD_OFFSET_Z;
+    const float worldOffsetX = IWATODAI_DORM_FLOOR_1_WORLD_OFFSET_X;
+    const float worldOffsetZ = IWATODAI_DORM_FLOOR_1_WORLD_OFFSET_Z;
     const Point2D<float> characterSize = Point2D<float>(0.1f, 0.1f);
     // movement and viewpoint
     const float speed = 0.04f;

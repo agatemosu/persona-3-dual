@@ -9,8 +9,6 @@
 #include "models/character.h"
 // dialogue
 #include "dialogue/demo_dialogue.h"
-// environment
-#include "environments/iwatodai_dorm_floor_1.h"
 // environment textures
 #include "f007_002bolt03.h"
 #include "f007_002door01.h"
@@ -47,10 +45,6 @@
 #include "f007_002wall06.h"
 #include "f007_002bolt02.h"
 #include "f007_002bolt01.h"
-
-// TODO: move to header
-int characterTextureId;
-iwatodai_dorm_floor_1_Environment iwatodaiDormFloor1Env;
 
 // TODO: dont forget to clear in future
 IwatodaiDormView::IwatodaiDormView() : battleParticipants(new std::vector<BattleParticipant *>({&merciless_Maya, &cowardly_Maya})),
