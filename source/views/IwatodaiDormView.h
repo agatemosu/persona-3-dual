@@ -45,12 +45,13 @@ private:
     const float worldOffsetZ = IWATODAI_DORM_WORLD_OFFSET_Z;
     const Point2D<float> characterSize = Point2D<float>(0.1f, 0.1f);
     // movement and viewpoint
-    const float speed = 0.02f;
-    const float angleIncrement = 0.05f;
+    const float speed = 0.04f;
+    const float angleIncrement = 0.10f;
     const float distance = 0.7f;
     const float lookAhead = 0.3f;
     // set character initial translation position
     const Point2D<float> characterTranslate = Point2D<float>(0, 0);
+    const float height = 0.5;
     const float angle = -1.6;
     const float characterFacingAngle = 91.67;
     DialogueController dialogueCtrl;
