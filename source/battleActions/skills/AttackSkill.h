@@ -63,7 +63,10 @@ struct AttackSkill : Skill
         return (u32)floor((sqrt((float)(movePower * 6 * Atk) / (8 * defenderStats->en + armourValue)) * 9 * levelDifference) * affinityMtp);
     }
 
-    virtual ~AttackSkill() = default;
+    AttackSkill()
+    {
+        skillType = SkillType::Attack;
+    }
 
 private:
     static const float levelMultipliers[24];

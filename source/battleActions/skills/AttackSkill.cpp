@@ -9,7 +9,7 @@ const float AttackSkill::levelMultipliers[24] = {
 
 void AttackSkill::damageSetup(BattleStats *attackerStats, BattleStats *defenderStats, u32 *attackerLevel, u32 *defenderLevel)
 {
-    if (race == phys)
+    if (skillRace == SkillRace::phys)
         Atk = attackerStats->st;
     else
         Atk = attackerStats->ma;

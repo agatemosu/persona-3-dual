@@ -13,6 +13,5 @@ struct Power_Slash : AttackSkill
         hitRate = 92;
         skillRace = SkillRace::phys;
         skillTarget = SkillTarget::OppositionTeam;
-        skillType = SkillType::Attack;
     }
 };

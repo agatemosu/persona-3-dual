@@ -12,6 +12,5 @@ struct Bufu : AttackSkill
         hitRate = 99;
         skillRace = SkillRace::phys;
         skillTarget = SkillTarget::OppositionTeam;
-        skillType = SkillType::Attack;
     }
 };

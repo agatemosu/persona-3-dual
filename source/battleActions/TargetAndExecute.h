@@ -4,6 +4,7 @@
 #include <vector>
 #include "skills/Skill.h"
 #include "skills/AttackSkill.h"
+#include "skills/HealSkill.h"
 #include "BattleParticipant.h"
 #include "party/PartyMember.h"
 #include "DeductAttackCost.h"
