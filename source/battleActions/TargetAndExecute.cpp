@@ -18,10 +18,11 @@ bool TargetAndExecute::update(u32 *keys, Skill *skill, PartyMember *user, std::v
 
         if (skill->skillType == SkillType::Attack)
         {
-            AttackSkill *attackSkill = static_cast<AttackSkill *>(skill);
+            AttackSkill &attackSkill = static_cast<AttackSkill &>(*skill);
+            Enemy &target = static_cast<Enemy &>(*targets->at(*targetIndex));
 
-            u32 damage = attackSkill->calculateDamagePlayer(&user->curPersona->battleStats, &targets->at(*targetIndex)->battleStats, &user->lv, &targets->at(*targetIndex)->lv);
-            u32 accuracy = attackSkill->calculateHitratePlayer(&user->curPersona->battleStats, &targets->at(*targetIndex)->battleStats);
+            u32 damage = attackSkill.calculateDamagePlayer(&user->curPersona->battleStats, &target.battleStats, &user->lv, &targets->at(*targetIndex)->lv);
+            u32 accuracy = attackSkill.calculateHitratePlayer(&user->curPersona->battleStats, &target.battleStats);
 
             bool hitted = accuracy > u32(rand() % 100);
 
@@ -31,27 +32,37 @@ bool TargetAndExecute::update(u32 *keys, Skill *skill, PartyMember *user, std::v
                 return true;
             }
 
-            u32 affinity = targets->at(*targetIndex)->battleStats.affinities[attackSkill->element];
-            if (affinity == BattleStats::Affinity::Weak && !targets->at(*targetIndex)->knockedDown)
+            u32 affinity = target.battleStats.affinities[attackSkill.element];
+            if (affinity == BattleStats::Affinity::Weak && !target.knockedDown)
             {
                 user->oneMore = true;
                 iprintf("one more!\n");
-                targets->at(*targetIndex)->knockedDown = true;
+                target.knockedDown = true;
             }
 
-            targets->at(*targetIndex)->hp -= (s32)damage;
+            target.hp -= (s32)damage;
 
             char str1[25];
             std::sprintf(str1, "Damage: %ld \n", damage);
             iprintf(str1);
 
             char str2[50];
-            std::sprintf(str2, "remaing Enemy hp: %ld \n", targets->at(*targetIndex)->hp);
+            std::sprintf(str2, "remaing Enemy hp: %ld \n", target.hp);
             iprintf(str2);
         }
         else if (skill->skillType == SkillType::Heal)
         {
             HealSkill *healSkill = static_cast<HealSkill *>(skill);
+            u32 hpHealed = healSkill->calculateHealing(*user);
+
+            targets->at(*targetIndex)->hp += hpHealed;
+            char str1[25];
+            std::sprintf(str1, "Hp Healed: %ld \n", hpHealed);
+            iprintf(str1);
+
+            char str2[50];
+            std::sprintf(str2, "New hp: %ld \n", targets->at(*targetIndex)->hp);
+            iprintf(str2);
         }
 
         return true;

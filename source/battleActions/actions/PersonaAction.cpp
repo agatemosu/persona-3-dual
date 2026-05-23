@@ -15,7 +15,7 @@ bool PersonaAction::update(u32 *keys, PartyMember *user)
         u32 skillCount = user->curPersona->attackCount;
         updateIndex.update(*keys, targetIndex, skillCount);
 
-        AttackSkill *curSkill = user->curPersona->attackSkill[targetIndex];
+        Skill *curSkill = user->curPersona->skills[targetIndex];
 
         if (*keys & KEY_LEFT || *keys & KEY_RIGHT)
         {
@@ -48,11 +48,21 @@ bool PersonaAction::update(u32 *keys, PartyMember *user)
     }
     else if (menuState == SelectTarget)
     {
-        u32 enemyCount = enemies->size();
+        bool madeAction = false;
 
-        updateIndex.update(*keys, targetIndex, enemyCount);
+        if (selectedSkill->skillType == SkillType::Attack)
+        {
+            u32 enemyCount = enemies->size();
+            updateIndex.update(*keys, targetIndex, enemyCount);
+            madeAction = targetAndExecute->update(keys, selectedSkill, user, enemies);
+        }
+        else if (selectedSkill->skillType == SkillType::Heal)
+        {
+            u32 partyCount = party->size();
+            updateIndex.update(*keys, targetIndex, partyCount);
+            madeAction = targetAndExecute->update(keys, selectedSkill, user, party);
+        }
 
-        bool madeAction = targetAndExecute->update(keys, selectedSkill, user, enemies);
         if (madeAction)
         {
             targetIndex = 0;

@@ -1,7 +1,7 @@
 #pragma once
 #include "HealSkill.h"
 
-struct Dia : Skill
+struct Dia : HealSkill
 {
     Dia()
     {

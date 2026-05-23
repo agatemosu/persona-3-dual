@@ -1,5 +1,6 @@
 #pragma once
 #include <nds.h>
+#include <string>
 #include "SkillTarget.h"
 #include "SkillType.h"
 #include "SkillRace.h"

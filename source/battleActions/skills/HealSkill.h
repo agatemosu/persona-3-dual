@@ -1,7 +1,9 @@
 #pragma once
 #include <nds.h>
 #include "Skill.h"
+#include "../BattleParticipant.h"
 #include "../party/PartyMember.h"
+#include "../enemies/Enemy.h"
 
 struct HealSkill : Skill
 {
