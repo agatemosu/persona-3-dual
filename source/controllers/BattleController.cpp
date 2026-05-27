@@ -265,6 +265,7 @@ void BattleController::advanceTurn()
     {
         currentParticipantTurn->oneMore = false;
         actionIndex = 0;
+        phase = BattlePhase::ChooseAction;
         return;
     }
 
@@ -354,9 +355,17 @@ void BattleController::handleDeadParticipants()
             return;
         }
 
-        // Todo: check fro dead enemies
+        bool enemiesAlive = false;
+        for (BattleParticipant *enemy : enemies)
+        {
+            if (enemy->hp > 0)
+            {
+                enemiesAlive = true;
+                break;
+            }
+        }
 
-        if (enemies.empty())
+        if (!enemiesAlive)
         {
             exit();
         }
