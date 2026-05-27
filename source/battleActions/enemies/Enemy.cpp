@@ -18,10 +18,6 @@ BattleResult Enemy::resolve(BattleParticipant *target, AttackSkill *skill)
     PartyMember *party = static_cast<PartyMember *>(target);
 
     iprintf("targeting: %s\n", target->name.c_str());
-    iprintf("armour defense: %ld\n", (long)party->armour->defense);
-    iprintf("en: %ld\n", (long)party->curPersona->battleStats.en);
-    iprintf("ma: %ld\n", (long)battleStats.ma);
-    iprintf("movePower: %ld\n", (long)skill->movePower);
 
     bool canAttack = false;
     if (skill->skillRace == SkillRace::mag)

@@ -42,7 +42,6 @@ u32 AttackSkill::calculateDamageEnemySkill(BattleStats *attackerStats, BattleSta
 
     damageSetup(attackerStats, defenderStats, attackerLevel, defenderLevel);
     // todo: level diffrence never goes under 0 for either party during boss fights
-    iprintf("levelDiff: %f\n", levelDifference);
 
     return (u32)floor((sqrt((float)(movePower * 6 * Atk) / (8 * defenderStats->en + armourValue)) * 9 * levelDifference - 10) * affinityMtp);
 }
