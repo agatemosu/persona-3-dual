@@ -135,24 +135,24 @@ void BattleController::update(u32 keys)
             iprintf("\n");
         }
 
+        if (keys & KEY_B)
+            phase = BattlePhase::ChooseAction;
+
         if (keys & KEY_A)
         {
             if (actor->curPersona == actor->personas[personaIndex])
             {
                 iprintf("already selected this Persona\n");
+                return;
             }
-            else
-            {
-                actor->curPersona = actor->personas[personaIndex];
-                iprintf("Switched to: ");
-                iprintf(actor->curPersona->name.c_str());
-                iprintf("\n");
-                advanceTurn();
-            }
+
+            actor->curPersona = actor->personas[personaIndex];
+            iprintf("Switched to: ");
+            iprintf(actor->curPersona->name.c_str());
+            iprintf("\n");
+            advanceTurn();
         }
 
-        if (keys & KEY_B)
-            phase = BattlePhase::ChooseAction;
         break;
     }
 

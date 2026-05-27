@@ -35,6 +35,7 @@ private:
     static constexpr u32 ACTION_SWITCH = 3;
 
     bool active = false;
+    bool ambush = false;
     u32 turnsTaken = 0;
 
     BattlePhase phase;
@@ -45,6 +46,10 @@ private:
     u32 personaIndex = 0;
     u32 targetIndex = 0;
     Skill *selectedSkill = nullptr;
+
+    u32 turnOrderIndex = 0;
+    u32 roundCount = 0;
+    std::vector<BattleParticipant *> turnOrder;
 
     UpdateIndex updateIndex;
 
@@ -68,6 +73,7 @@ private:
     bool actorCanUse(PartyMember *actor, u32 idx);
     void applyResult(const BattleResult &r, BattleParticipant *target = nullptr);
     void advanceTurn();
+    void calculateTurnOrder();
     void removeDeadParticipants();
 
 public:

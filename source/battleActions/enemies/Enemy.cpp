@@ -18,6 +18,10 @@ BattleResult Enemy::resolve(BattleParticipant *target, AttackSkill *skill)
     PartyMember *party = static_cast<PartyMember *>(target);
 
     iprintf("targeting: %s\n", target->name.c_str());
+    iprintf("armour defense: %ld\n", (long)party->armour->defense);
+    iprintf("en: %ld\n", (long)party->curPersona->battleStats.en);
+    iprintf("ma: %ld\n", (long)battleStats.ma);
+    iprintf("movePower: %ld\n", (long)skill->movePower);
 
     bool canAttack = false;
     if (skill->skillRace == SkillRace::mag)
@@ -28,15 +32,15 @@ BattleResult Enemy::resolve(BattleParticipant *target, AttackSkill *skill)
     if (!canAttack)
         return {false, 0, false, skill->name};
 
-    u32 accuracy = skill->calculateHitrateEnemy(&battleStats, &party->curPersona->battleStats, &party->shoe);
+    u32 accuracy = skill->calculateHitrateEnemy(&battleStats, &party->curPersona->battleStats, party->shoe);
     bool hit = accuracy > u32(rand() % 100);
 
     if (!hit)
         return {false, 0, false, "Miss"};
 
     u32 damage = (skill == baseAttackAction)
-                     ? skill->calculateDamageEnemyRegular(&battleStats, &party->curPersona->battleStats, &lv, &target->lv, &party->armour)
-                     : skill->calculateDamageEnemySkill(&battleStats, &party->curPersona->battleStats, &lv, &target->lv, &party->armour);
+                     ? skill->calculateDamageEnemyRegular(&battleStats, &party->curPersona->battleStats, &lv, &target->lv, party->armour)
+                     : skill->calculateDamageEnemySkill(&battleStats, &party->curPersona->battleStats, &lv, &target->lv, party->armour);
 
     if (party->guarding)
         damage = (u32)(damage * 0.4f);
