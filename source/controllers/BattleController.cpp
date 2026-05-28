@@ -287,15 +287,6 @@ void BattleController::calculateTurnOrder()
 {
     // random boost from 1.2 to 1.4 that priorizes party
     float boost = 1.2f + (randf() * 0.2f);
-    // TODO: check seeding
-    /*
-    iprintf("boost:%d\n", (int)(boost * 10));
-    while (!(keysDown() & KEY_A))
-    {
-        scanKeys();
-    }
-
-    */
 
     for (BattleParticipant *battleParticipant : *battleParticipants)
     {
