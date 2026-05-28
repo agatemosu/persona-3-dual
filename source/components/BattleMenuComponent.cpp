@@ -16,15 +16,17 @@ void BattleMenuComponent::loadBg(int bgIndex)
 void BattleMenuComponent::init(int iBgSlot, bool *isActive, const std::string &iPauseMessage)
 {
     BaseMenu::init(iBgSlot, isActive, iPauseMessage);
+
     options = nullptr;
     optionCount = 0;
+    startIndex = 0;
 }
 
 // option loaders
 void BattleMenuComponent::loadActionOptions(std::array<ActionBase*, 4>* actions, std::string name)
 {
     // skip if action options have already been loaded
-    if (loadedOption == 1)
+    if (loadedOption == BattleMenuOptions::ACTION)
     {
         return;
     };
@@ -33,7 +35,7 @@ void BattleMenuComponent::loadActionOptions(std::array<ActionBase*, 4>* actions,
     battleOptions.clear();
 
     // indicate we loaded option
-    loadedOption = 1;
+    loadedOption = BattleMenuOptions::ACTION;
     pauseMessage = name.c_str();
     int count = actions->size();
 
@@ -55,7 +57,7 @@ void BattleMenuComponent::loadActionOptions(std::array<ActionBase*, 4>* actions,
 void BattleMenuComponent::loadSkillOptions(PersonaBase* persona)
 {
     // skip if action options have already been loaded
-    if (loadedOption == 2)
+    if (loadedOption == BattleMenuOptions::SKILL)
     {
         return;
     };
@@ -64,7 +66,7 @@ void BattleMenuComponent::loadSkillOptions(PersonaBase* persona)
     battleOptions.clear();
 
     // indicate we loaded option
-    loadedOption = 2;
+    loadedOption = BattleMenuOptions::SKILL;
     pauseMessage = "Skills";
     int count = persona->attackCount;
 
@@ -85,11 +87,11 @@ void BattleMenuComponent::loadSkillOptions(PersonaBase* persona)
 
 void BattleMenuComponent::loadPersonaOptions(std::vector<PersonaBase*>* personas)
 {
-    if (loadedOption == 3)
+    if (loadedOption == BattleMenuOptions::PERSONA)
         return;
 
     battleOptions.clear();
-    loadedOption = 3;
+    loadedOption = BattleMenuOptions::PERSONA;
     pauseMessage = "Persona";
     int count = (int)personas->size();
 
@@ -110,7 +112,7 @@ void BattleMenuComponent::loadPersonaOptions(std::vector<PersonaBase*>* personas
 
 void BattleMenuComponent::loadTargetOptions(std::vector<BattleParticipant*>* targets, bool healTarget)
 {
-    int targetLoadedOption = healTarget ? 5 : 4;
+    BattleMenuOptions targetLoadedOption = healTarget ? BattleMenuOptions::TARGET_HEAL : BattleMenuOptions::TARGET_ENEMY;
     if (loadedOption == targetLoadedOption)
         return;
 
@@ -136,14 +138,18 @@ void BattleMenuComponent::loadTargetOptions(std::vector<BattleParticipant*>* tar
 
 void BattleMenuComponent::loadAlertOptions(const std::string& text)
 {
-    if (loadedOption == 6)
+    if (loadedOption == BattleMenuOptions::ALERT)
+    {
         return;
+    }
 
     battleOptions.clear();
-    loadedOption = 6;
+    loadedOption = BattleMenuOptions::ALERT;
     pauseMessage = text;
-    optionCount = 0;
     alertStartFrame = frame;
+
+    options = nullptr;
+    optionCount = 0;
 }
 
 bool BattleMenuComponent::isAlertExpired(int durationFrames) const
@@ -153,20 +159,21 @@ bool BattleMenuComponent::isAlertExpired(int durationFrames) const
 
 void BattleMenuComponent::reset()
 {
-    loadedOption = 0;
+    loadedOption = BattleMenuOptions::NONE;
     selectedOption = 0;
     startIndex = 0;
 }
 
 ViewState BattleMenuComponent::update(int keys)
 {
-    if (loadedOption == 6)
+    if (loadedOption == BattleMenuOptions::ALERT)
     {
         consoleClear();
         iprintf("\x1b[0;0H");
         iprintf("%s", pauseMessage.c_str());
         return ViewState::KEEP_CURRENT;
     }
+
     return BaseMenu::update(keys);
 }
 

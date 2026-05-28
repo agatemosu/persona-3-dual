@@ -9,7 +9,7 @@ protected:
     void loadBg(int bgIndex) override;
 private:
     // TODO: create enum
-    int loadedOption = 0;   // 1 = actionOptions, 2 = skillOptions, 3 = personaOptions, 4 = targetOptions (enemies), 5 = targetOptions (heal), 6 = alert
+    BattleMenuOptions loadedOption = BattleMenuOptions::NONE; 
 
     std::vector<MenuOption> battleOptions;
     int alertStartFrame = 0;
