@@ -23,7 +23,7 @@ void BattleMenuComponent::init(int iBgSlot, bool *isActive, const std::string &i
 }
 
 // option loaders
-void BattleMenuComponent::loadActionOptions(std::array<ActionBase*, 4>* actions, std::string name)
+void BattleMenuComponent::loadActionOptions(std::array<ActionBase *, 4> *actions, std::string name)
 {
     // skip if action options have already been loaded
     if (loadedOption == BattleMenuOptions::ACTION)
@@ -42,11 +42,10 @@ void BattleMenuComponent::loadActionOptions(std::array<ActionBase*, 4>* actions,
     for (int i = 0; i < count; i++)
     {
         MenuOption option =
-        {
-            actions->at(i)->name.c_str(),
-            -1,
-            MENU_BIND(BattleMenuComponent, battleOptionSelected)
-        };
+            {
+                actions->at(i)->name.c_str(),
+                -1,
+                MENU_BIND(BattleMenuComponent, battleOptionSelected)};
         battleOptions.push_back(option);
     }
 
@@ -54,7 +53,7 @@ void BattleMenuComponent::loadActionOptions(std::array<ActionBase*, 4>* actions,
     optionCount = count;
 }
 
-void BattleMenuComponent::loadSkillOptions(PersonaBase* persona)
+void BattleMenuComponent::loadSkillOptions(PersonaBase *persona)
 {
     // skip if action options have already been loaded
     if (loadedOption == BattleMenuOptions::SKILL)
@@ -73,11 +72,10 @@ void BattleMenuComponent::loadSkillOptions(PersonaBase* persona)
     for (int i = 0; i < count; i++)
     {
         MenuOption option =
-        {
-            persona->skills[i]->name.c_str(),
-            -1,
-            MENU_BIND(BattleMenuComponent, battleOptionSelected)
-        };
+            {
+                persona->skills[i]->name.c_str(),
+                -1,
+                MENU_BIND(BattleMenuComponent, battleOptionSelected)};
         battleOptions.push_back(option);
     }
 
@@ -85,7 +83,7 @@ void BattleMenuComponent::loadSkillOptions(PersonaBase* persona)
     optionCount = count;
 }
 
-void BattleMenuComponent::loadPersonaOptions(std::vector<PersonaBase*>* personas)
+void BattleMenuComponent::loadPersonaOptions(std::vector<PersonaBase *> *personas)
 {
     if (loadedOption == BattleMenuOptions::PERSONA)
         return;
@@ -98,11 +96,10 @@ void BattleMenuComponent::loadPersonaOptions(std::vector<PersonaBase*>* personas
     for (int i = 0; i < count; i++)
     {
         MenuOption option =
-        {
-            personas->at(i)->name.c_str(),
-            -1,
-            MENU_BIND(BattleMenuComponent, battleOptionSelected)
-        };
+            {
+                personas->at(i)->name.c_str(),
+                -1,
+                MENU_BIND(BattleMenuComponent, battleOptionSelected)};
         battleOptions.push_back(option);
     }
 
@@ -110,7 +107,7 @@ void BattleMenuComponent::loadPersonaOptions(std::vector<PersonaBase*>* personas
     optionCount = count;
 }
 
-void BattleMenuComponent::loadTargetOptions(std::vector<BattleParticipant*>* targets, bool healTarget)
+void BattleMenuComponent::loadTargetOptions(std::vector<BattleParticipant *> *targets, bool healTarget)
 {
     BattleMenuOptions targetLoadedOption = healTarget ? BattleMenuOptions::TARGET_HEAL : BattleMenuOptions::TARGET_ENEMY;
     if (loadedOption == targetLoadedOption)
@@ -124,11 +121,10 @@ void BattleMenuComponent::loadTargetOptions(std::vector<BattleParticipant*>* tar
     for (int i = 0; i < count; i++)
     {
         MenuOption option =
-        {
-            targets->at(i)->name.c_str(),
-            -1,
-            MENU_BIND(BattleMenuComponent, battleOptionSelected)
-        };
+            {
+                targets->at(i)->name.c_str(),
+                -1,
+                MENU_BIND(BattleMenuComponent, battleOptionSelected)};
         battleOptions.push_back(option);
     }
 
@@ -136,7 +132,7 @@ void BattleMenuComponent::loadTargetOptions(std::vector<BattleParticipant*>* tar
     optionCount = count;
 }
 
-void BattleMenuComponent::loadAlertOptions(const std::string& text)
+void BattleMenuComponent::loadAlertOptions(const std::string &text)
 {
     if (loadedOption == BattleMenuOptions::ALERT)
     {
