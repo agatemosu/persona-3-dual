@@ -7,7 +7,9 @@
 struct BattleParticipant
 {
     std::string name;
+    s32 maxHp;
     s32 hp;
+    s32 maxSp;
     s32 sp;
     u32 lv;
     // TODO: dont think so that all bosses have a basattack, possibly move in the future

@@ -23,6 +23,5 @@ BattleResult AttackAction::resolve(PartyMember* user, BattleParticipant* target,
         enemy->knockedDown = true;
     }
 
-    target->hp -= (s32)damage;
     return {true, -(s32)damage, oneMore, atk->name};
 }
