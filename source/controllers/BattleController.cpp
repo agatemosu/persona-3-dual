@@ -151,6 +151,8 @@ void BattleController::update(u32 keys)
             }
         }
 
+        if (keys & KEY_B)
+            phase = BattlePhase::ChooseAction;
         break;
     }
 
