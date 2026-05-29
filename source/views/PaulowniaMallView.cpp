@@ -50,7 +50,7 @@
 // TODO: dont forget to clear in future
 PaulowniaMallView::PaulowniaMallView()
     : battleParticipants(new std::vector<BattleParticipant*>({&merciless_Maya, &cowardly_Maya})),
-      battleController(battleParticipants, &characterProfiles, battleStartCondition)
+      battleController(battleParticipants, &characterProfiles)
 {
 }
 
@@ -120,7 +120,6 @@ void PaulowniaMallView::init()
                                          distance,
                                          lookAhead,
                                          angle,
-                                         height,
                                          characterTranslate,
                                          characterFacingAngle);
 

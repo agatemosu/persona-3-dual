@@ -7,7 +7,7 @@
 #include "../shoes/Shoe.h"
 #include "../BattleParticipant.h"
 #include "../ParticipantType.h"
-#include "./battleActions/UpdateIndex.h"
+#include "../UpdateIndex.h"
 #include "CharacterProfile.h"
 
 struct ActionBase;

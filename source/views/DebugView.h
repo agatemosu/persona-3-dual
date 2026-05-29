@@ -39,9 +39,6 @@ class DebugView : public BaseView
     Merciless_Maya merciless_Maya;
     std::vector<BattleParticipant*>* battleParticipants;
 
-    BattleStartCondition battleStartCondition = BattleStartCondition::Even;
-
-    // controllers
     BattleController battleController;
     CharacterController* playerCtrl;
     // camera pos
@@ -58,7 +55,6 @@ class DebugView : public BaseView
     const float lookAhead = 0.3f;
     // set character initial translation position
     const Point2D<float> characterTranslate = Point2D<float>(0, 0);
-    const float height = 0.1f;
     const float angle = -1.6;
     const float characterFacingAngle = 91.67;
     DialogueController dialogueCtrl;

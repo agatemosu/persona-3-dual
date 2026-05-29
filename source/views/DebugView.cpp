@@ -17,7 +17,7 @@
 // TODO: dont forget to clear in future
 DebugView::DebugView()
     : battleParticipants(new std::vector<BattleParticipant*>({&merciless_Maya, &cowardly_Maya})),
-      battleController(battleParticipants, &characterProfiles, battleStartCondition)
+      battleController(battleParticipants, &characterProfiles)
 {
 }
 
@@ -86,7 +86,6 @@ void DebugView::init()
                                          distance,
                                          lookAhead,
                                          angle,
-                                         height,
                                          characterTranslate,
                                          characterFacingAngle);
 

@@ -100,7 +100,6 @@ void IwatodaiStreetsView::init()
                                          distance,
                                          lookAhead,
                                          angle,
-                                         height,
                                          characterTranslate,
                                          characterFacingAngle);
 
