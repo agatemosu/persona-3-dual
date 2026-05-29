@@ -57,6 +57,5 @@ BattleResult Enemy::resolve(BattleParticipant *target, AttackSkill *skill)
         party->knockedDown = true;
     }
 
-    target->hp -= (s32)damage;
     return {true, -(s32)damage, oneMoreResult, targetLog + skill->name};
 }

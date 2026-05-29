@@ -177,15 +177,15 @@ void BattleController::update(u32 keys)
         targetIndex = -1;
         targetIndex = (int)battleMenuCmpt.update(keys);
 
-        if (((int)targetIndex != -1) && (keys & KEY_A))
+        if ((int)targetIndex != -1 && (keys & KEY_A))
         {
             BattleParticipant *target = targets[targetIndex];
-            BattleResult battleResult;
-            if (actionIndex == ACTION_ATTACK)
-                battleResult = attack.resolve(actor, target);
-            else
-                battleResult = persona.resolve(actor, target, selectedSkill);
-
+            // Check so you cant heal target that has max hp
+            if (selectedSkill && selectedSkill->skillType == SkillType::Heal && target->hp >= target->maxHp)
+                return;
+            BattleResult battleResult = (actionIndex == ACTION_ATTACK)
+                                            ? attack.resolve(actor, target)
+                                            : persona.resolve(actor, target, selectedSkill);
             applyResult(battleResult, target);
             advanceTurn();
         }
@@ -248,11 +248,21 @@ void BattleController::applyResult(const BattleResult &battleResult, BattleParti
 
     if (battleResult.hit && target && battleResult.hpDelta != 0)
     {
+        s32 hpBefore = target->hp;
+        s32 actuallyHealedHp = battleResult.hpDelta;
+        target->hp += battleResult.hpDelta;
+
+        if (target->hp > target->maxHp)
+        {
+            target->hp = target->maxHp;
+            actuallyHealedHp = target->maxHp - hpBefore;
+        }
+
         char buf[48];
         if (battleResult.hpDelta < 0)
             std::sprintf(buf, "Damage: %ld\n", (long)-battleResult.hpDelta);
         else
-            std::sprintf(buf, "HP healed: %ld\n", (long)battleResult.hpDelta);
+            std::sprintf(buf, "HP healed: %ld\n", (long)actuallyHealedHp);
         pendingAlert += buf;
 
         std::sprintf(buf, "%s HP: %ld\n", target->name.c_str(), (long)target->hp);

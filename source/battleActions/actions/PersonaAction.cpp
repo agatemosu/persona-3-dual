@@ -24,14 +24,12 @@ BattleResult PersonaAction::resolve(PartyMember *user, BattleParticipant *target
             enemy->knockedDown = true;
         }
 
-        target->hp -= (s32)damage;
         return {true, -(s32)damage, oneMore, atk->name};
     }
     else if (skill->skillType == SkillType::Heal)
     {
         HealSkill *heal = static_cast<HealSkill *>(skill);
         u32 healed = heal->calculateHealing(*user);
-        target->hp += (s32)healed;
         return {true, (s32)healed, false, skill->name};
     }
 
