@@ -16,6 +16,7 @@
 #include "logoSpriteLeft.h"
 #include "logoSpriteRight.h"
 #include "logoSpriteRightFEMC.h"
+#include "logoSpriteLeftFEMC.h"
 // sub screen
 #include "attributionBackground.h"
 #include "skyBackgroundSub.h"
@@ -129,7 +130,7 @@ void IntroView::init()
     logoSprite[0].gfx = oamAllocateGfx(&oamMain, SpriteSize_64x64, SpriteColorFormat_256Color);
     logoSprite[1].gfx = oamAllocateGfx(&oamMain, SpriteSize_64x64, SpriteColorFormat_256Color);
 
-    dmaCopy(logoSpriteLeftTiles, logoSprite[0].gfx, logoSpriteLeftTilesLen);
+    dmaCopy(femc ? logoSpriteLeftFEMCTiles : logoSpriteLeftTiles, logoSprite[0].gfx, femc ? logoSpriteLeftFEMCTilesLen : logoSpriteLeftTilesLen);
     dmaCopy(femc ? logoSpriteRightFEMCTiles : logoSpriteRightTiles, logoSprite[1].gfx, femc ? logoSpriteRightFEMCTilesLen : logoSpriteRightTilesLen);
 
     // NOTE: left and right will use the same palette. Just ensure that the order of colours when indexed
