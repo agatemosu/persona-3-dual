@@ -273,7 +273,7 @@ ViewState IwatodaiDormView::update()
 
         // update camera position
         gluLookAt(camPos.cameraX,
-                  camPos.cameraY,
+                  camPos.cameraY + 0.1f,
                   camPos.cameraZ,
                   camPos.targetX,
                   camPos.targetY,
