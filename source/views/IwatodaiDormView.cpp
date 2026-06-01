@@ -120,7 +120,8 @@ void IwatodaiDormView::init()
                                          angle,
                                          height,
                                          characterTranslate,
-                                         characterFacingAngle);
+                                         characterFacingAngle,
+                                        true);
 
     // setup music
     musicCtrl.init((fatBasePath + "music/iwatodai_dorm.pcm").c_str(), 0.0f, 920.973f);

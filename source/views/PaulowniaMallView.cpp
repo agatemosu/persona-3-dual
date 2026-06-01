@@ -122,7 +122,8 @@ void PaulowniaMallView::init()
                                          angle,
                                          height,
                                          characterTranslate,
-                                         characterFacingAngle);
+                                         characterFacingAngle,
+                                        false);
 
     // setup music
     musicCtrl.init((fatBasePath + "music/color_your_night.pcm").c_str(), 0.0f, 920.973f);

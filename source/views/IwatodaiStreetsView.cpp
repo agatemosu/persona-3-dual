@@ -102,7 +102,8 @@ void IwatodaiStreetsView::init()
                                          angle,
                                          height,
                                          characterTranslate,
-                                         characterFacingAngle);
+                                         characterFacingAngle,
+                                        false);
 
     // setup music
     musicCtrl.init((fatBasePath + "/music/changing_seasons.pcm").c_str(), 0.0f, -1.0f);
