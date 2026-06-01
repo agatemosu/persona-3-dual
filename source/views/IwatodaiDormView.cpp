@@ -36,7 +36,6 @@
 #include "f007_002obj13.h"
 #include "f007_002obj14.h"
 #include "f007_002obj15.h"
-#include "f007_002shadow01.h"
 #include "f007_002step01.h"
 #include "f007_002step02.h"
 #include "f007_002wall01.h"
@@ -153,7 +152,7 @@ void IwatodaiDormView::init()
         f007_002door01Bitmap,
         f007_002obj03Bitmap,
         f007_002obj09Bitmap,
-        f007_002shadow01Bitmap,
+        NULL,
         f007_002bolt01Bitmap,
         f007_002glow02Bitmap,
         f007_002floor01Bitmap,
