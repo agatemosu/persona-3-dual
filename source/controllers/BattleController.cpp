@@ -65,7 +65,7 @@ void BattleController::update(u32 keys)
             consoleClear();
             if (actionIndex == ACTION_ATTACK)
             {
-                selectedSkill = nullptr;
+                selectedSkill = actor->baseAttackAction;
                 targetIndex = -1;
                 phase = BattlePhase::ChooseTarget;
             }
@@ -95,6 +95,7 @@ void BattleController::update(u32 keys)
 
         // render battleMenu
         battleMenuCmpt.loadSkillOptions(actor->curPersona);
+        //TODO: why not just return nullptr if nothing happens instead of setting -1 manually everywhere?
         skillIndex = -1;
         skillIndex = (int)battleMenuCmpt.update(keys);
 
