@@ -28,7 +28,7 @@ endif
 #---------------------------------------------------------------------------------
 TARGET      :=  persona-3-dual
 BUILD       :=  build
-SOURCES     :=  source source/views source/controllers source/core source/data source/dialogue source/models source/environments source/components source/battleActions source/battleActions/enemies source/battleActions/party source/battleActions/skills source/battleActions/actions
+SOURCES     :=  source source/views source/controllers source/core source/data source/dialogue source/models source/environments source/components source/battleActions source/battleActions/enemies source/battleActions/party source/battleActions/skills source/battleActions/actions source/helpers
 INCLUDES    :=  include source
 
 # Add environment subdirectories directly to the GRAPHICS build pipeline
@@ -165,18 +165,8 @@ export LIBPATHS :=  $(foreach dir,$(LIBDIRS),-L$(dir)/lib)
 $(BUILD):
 	@$(MAKE) --no-print-directory assets
 	@[ -d $@ ] || mkdir -p $@
-	@$(MAKE) --no-print-directory grit_headers
 	@$(MAKE) --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile
 	@$(MAKE) --no-print-directory sdcard.img
-
-grit_headers:
-	@for png in $(foreach dir,$(GRAPHICS),$(wildcard $(CURDIR)/$(dir)/*.png)); do \
-		grit=${png%.png}.grit; \
-		base=$(basename ${png%.png}); \
-		if [ -f "$grit" ]; then \
-			grit $png -fts -o$(CURDIR)/$(BUILD)/$base 2>/dev/null || true; \
-		fi; \
-	done
 
 help:
 	@echo "  make              Build everything"

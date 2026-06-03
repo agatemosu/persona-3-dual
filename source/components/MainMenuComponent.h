@@ -1,12 +1,10 @@
-#pragma once
 #include "core/BaseMenu.h"
 #include "core/globals.h"
 
 #define MAIN_MENU_OPTIONS 3
 #define LEVEL_OPTIONS 7
-#define SETTING_OPTIONS 2
+#define SETTING_OPTIONS 1
 #define SETTING_INTRO_OPTIONS 4
-#define SETTING_FEMC_OPTIONS 2
 
 class MainMenuComponent : public BaseMenu
 {
@@ -32,12 +30,6 @@ class MainMenuComponent : public BaseMenu
 
     MenuOption settingOptions[SETTING_OPTIONS] = {
         {"Change Intro Video", -1, MENU_BIND(MainMenuComponent, settingOptionSelected)},
-        {"Femc Mode", -1, MENU_BIND(MainMenuComponent, settingOptionSelected)},
-    };
-
-    MenuOption settingFemcOptions[SETTING_FEMC_OPTIONS] = {
-        {"Off", -1, MENU_BIND(MainMenuComponent, settingFemcOptionSelected)},
-        {"On", -1, MENU_BIND(MainMenuComponent, settingFemcOptionSelected)},
     };
 
     MenuOption settingIntroOptions[SETTING_INTRO_OPTIONS] = {
@@ -52,7 +44,6 @@ class MainMenuComponent : public BaseMenu
     ViewState levelOptionSelected();
     ViewState settingOptionSelected();
     ViewState settingIntroOptionSelected();
-    ViewState settingFemcOptionSelected();
 
   public:
     void init(int iBgSlot, bool* isActive, const std::string& iPauseMessage = "") override;
