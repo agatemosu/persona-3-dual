@@ -47,7 +47,7 @@ volatile int frame = 0;
 int fps = 0;
 int fpsTimer = 0;
 std::string fatBasePath = "";
-Save saveData = {"reload.vid", "", "", false};
+Save saveData = {"reload.vid", "", "", true};
 // controllers
 MusicController musicCtrl;
 VideoController videoCtrl;
