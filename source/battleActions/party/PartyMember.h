@@ -1,14 +1,14 @@
 #pragma once
-#include <nds.h>
-#include <array>
-#include "../personas/PersonaBase.h"
 #include "../ArmourType.h"
-#include "../armours/Armour.h"
-#include "../shoes/Shoe.h"
 #include "../BattleParticipant.h"
 #include "../ParticipantType.h"
 #include "../UpdateIndex.h"
+#include "../armours/Armour.h"
+#include "../personas/PersonaBase.h"
+#include "../shoes/Shoe.h"
 #include "CharacterProfile.h"
+#include <array>
+#include <nds.h>
 
 struct ActionBase;
 
@@ -19,17 +19,17 @@ struct PartyMember : BattleParticipant
 
     Armour armour;
     Shoe shoe;
-    std::vector<PersonaBase *> personas;
-    PersonaBase *curPersona;
+    std::vector<PersonaBase*> personas;
+    PersonaBase* curPersona;
 
     bool guarding = false;
 
-    CharacterProfile *characterProfile;
+    CharacterProfile* characterProfile;
 
     bool canUseAction[4];
-    std::array<ActionBase *, 4> *actions = nullptr;
+    std::array<ActionBase*, 4>* actions = nullptr;
 
-    PartyMember(CharacterProfile *iCharacterProfile) : characterProfile(iCharacterProfile)
+    PartyMember(CharacterProfile* iCharacterProfile) : characterProfile(iCharacterProfile)
     {
         name = characterProfile->name;
         maxHp = characterProfile->maxHp;
@@ -47,6 +47,6 @@ struct PartyMember : BattleParticipant
     }
     ~PartyMember() {};
 
-    void Init(std::array<ActionBase *, 4> *iActions);
-    bool TakeTurn(u32 *keys) override;
+    void Init(std::array<ActionBase*, 4>* iActions);
+    bool TakeTurn(u32* keys) override;
 };

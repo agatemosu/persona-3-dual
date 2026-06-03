@@ -1,30 +1,32 @@
 #include "Enemy.h"
 
-void Enemy::Init(std::vector<BattleParticipant *> *iEnemies, std::vector<BattleParticipant *> *iPartyMembers)
+void Enemy::Init(std::vector<BattleParticipant*>* iEnemies, std::vector<BattleParticipant*>* iPartyMembers)
 {
     enemies = iEnemies;
     partyMembers = iPartyMembers;
 }
 
-bool Enemy::TakeTurn(u32 *keys)
+bool Enemy::TakeTurn(u32* keys)
 {
     u32 randomNum = rand() % (attackCount + 1);
 
-    PartyMember *target = static_cast<PartyMember *>(partyMembers->at(rand() % partyMembers->size()));
+    PartyMember* target = static_cast<PartyMember*>(partyMembers->at(rand() % partyMembers->size()));
 
     u32 damage;
-    AttackSkill *curSkill;
+    AttackSkill* curSkill;
 
     // TODO: enemy ai. ugly way but this is temporary anyway since we dont have any actuall ai yet
     if (randomNum == 0)
     {
         curSkill = baseAttackAction;
-        damage = curSkill->calculateDamageEnemyRegular(&battleStats, &target->curPersona->battleStats, &lv, &target->lv, &target->armour);
+        damage = curSkill->calculateDamageEnemyRegular(
+            &battleStats, &target->curPersona->battleStats, &lv, &target->lv, &target->armour);
     }
     else
     {
         curSkill = attackSkill[randomNum - 1];
-        damage = curSkill->calculateDamageEnemySkill(&battleStats, &target->curPersona->battleStats, &lv, &target->lv, &target->armour);
+        damage = curSkill->calculateDamageEnemySkill(
+            &battleStats, &target->curPersona->battleStats, &lv, &target->lv, &target->armour);
     }
 
     if (target->guarding)
@@ -92,8 +94,8 @@ bool Enemy::TakeTurn(u32 *keys)
     // just directly always ends for now
     return true;
 }
-#include "Enemy.h"
 #include "../party/PartyMember.h"
+#include "Enemy.h"
 #include <stdlib.h>
 
 AttackSkill* Enemy::pickSkill()

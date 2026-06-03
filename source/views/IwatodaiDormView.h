@@ -39,6 +39,10 @@ class IwatodaiDormView : public BaseView
     Merciless_Maya merciless_Maya;
     std::vector<BattleParticipant*>* battleParticipants;
 
+    // hardcoded for now, we will have to build a battle creater for tartarus anyways
+    BattleStartCondition battleStartCondition = BattleStartCondition::Even;
+
+    // controllers
     BattleController battleController;
     CharacterController* playerCtrl;
     // camera pos
@@ -49,14 +53,15 @@ class IwatodaiDormView : public BaseView
     const float worldOffsetZ = IWATODAI_DORM_FLOOR_1_WORLD_OFFSET_Z;
     const Point2D<float> characterSize = Point2D<float>(0.1f, 0.1f);
     // movement and viewpoint
-    const float speed = 0.04f;
-    const float angleIncrement = 0.10f;
-    const float distance = 0.7f;
-    const float lookAhead = 0.3f;
+    const float speed = 0.03f;
+    const float angleIncrement = 0.07f;
+    const float distance = 0.8f;
+    const float lookAhead = 0.2f;
     // set character initial translation position
-    const Point2D<float> characterTranslate = Point2D<float>(0, 0);
+    const Point2D<float> characterTranslate = Point2D<float>(0.4f, 2.8f);
+    const float height = 0.7;
     const float angle = -1.6;
-    const float characterFacingAngle = 91.67;
+    const float characterFacingAngle = 180.0f;
     DialogueController dialogueCtrl;
     int bgSharedSlot;
     int totalPolyCount = 0;

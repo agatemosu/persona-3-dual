@@ -121,7 +121,8 @@ void PaulowniaMallView::init()
                                          lookAhead,
                                          angle,
                                          characterTranslate,
-                                         characterFacingAngle);
+                                         characterFacingAngle,
+                                         false);
 
     // setup music
     musicCtrl.init((fatBasePath + "music/color_your_night.pcm").c_str(), 0.0f, 920.973f);
@@ -247,7 +248,7 @@ ViewState PaulowniaMallView::update()
 
         // update camera position
         gluLookAt(camPos.cameraX,
-                  camPos.cameraY,
+                  camPos.cameraY + 0.3f,
                   camPos.cameraZ,
                   camPos.targetX,
                   camPos.targetY,

@@ -3,17 +3,17 @@
 #include <nds.h>
 #include <stdio.h>
 
-void PartyMember::Init(std::array<ActionBase *, 4> *iActions)
+void PartyMember::Init(std::array<ActionBase*, 4>* iActions)
 {
     actions = iActions;
 }
 
-bool PartyMember::TakeTurn(u32 *keys)
+bool PartyMember::TakeTurn(u32* keys)
 {
     // if an action is already in progress, continue it
     for (u32 i = 0; i < actions->size(); i++)
     {
-        ActionBase *action = actions->at(i);
+        ActionBase* action = actions->at(i);
         if (action->inProgress)
         {
             return action->update(keys, this);

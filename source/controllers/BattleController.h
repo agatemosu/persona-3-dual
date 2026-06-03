@@ -1,6 +1,5 @@
 #pragma once
 
-#include <stdio.h>
 #include <nds.h>
 #include <stdio.h>
 #include <vector>
@@ -18,35 +17,40 @@
 
 class BattleController
 {
-private:
+  private:
     u32 turnsTaken = 0;
-    BattleParticipant *currentParticipantTurn;
+    BattleParticipant* currentParticipantTurn;
     bool active = false;
     bool isEnemyTurn = false;
 
-    std::vector<BattleParticipant *> *battleParticipants;
-    std::vector<BattleParticipant *> enemies;
-    std::vector<BattleParticipant *> partyMembers;
+    std::vector<BattleParticipant*>* battleParticipants;
+    std::vector<BattleParticipant*> enemies;
+    std::vector<BattleParticipant*> partyMembers;
 
-    CharacterProfiles *characterProfiles;
+    CharacterProfiles* characterProfiles;
 
     AttackAction attack;
     Guard guard;
     PersonaAction persona;
     SwitchPersona switchPersona;
 
-    std::array<ActionBase *, 4> actions = {&attack, &guard, &persona, &switchPersona};
+    std::array<ActionBase*, 4> actions = {&attack, &guard, &persona, &switchPersona};
 
     // TODO: method for selecting party members in the future
-    PartyMember *player = nullptr;
-    PartyMember *yukari = nullptr;
-    PartyMember *junpei = nullptr;
+    PartyMember* player = nullptr;
+    PartyMember* yukari = nullptr;
+    PartyMember* junpei = nullptr;
 
-public:
-    bool isActive() { return active; };
+  public:
+    bool isActive()
+    {
+        return active;
+    };
     void execute();
     void update(u32 keys);
     void exit();
-    BattleController(std::vector<BattleParticipant *> *iBattleParticipants, CharacterProfiles *iCharacterProfiles);
-    ~BattleController() {}
+    BattleController(std::vector<BattleParticipant*>* iBattleParticipants, CharacterProfiles* iCharacterProfiles);
+    ~BattleController()
+    {
+    }
 };

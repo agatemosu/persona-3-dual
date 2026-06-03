@@ -8,14 +8,14 @@ void PersonaAction::execute()
     menuState = SelectSkill;
 }
 
-bool PersonaAction::update(u32 *keys, PartyMember *user)
+bool PersonaAction::update(u32* keys, PartyMember* user)
 {
     if (menuState == SelectSkill)
     {
         u32 skillCount = user->curPersona->attackCount;
         updateIndex.update(*keys, targetIndex, skillCount);
 
-        Skill *curSkill = user->curPersona->skills[targetIndex];
+        Skill* curSkill = user->curPersona->skills[targetIndex];
 
         if (*keys & KEY_LEFT || *keys & KEY_RIGHT)
         {

@@ -105,9 +105,9 @@ void MenuHUDComponent::loadBg(int* bgId)
 {
     bool femc = saveData.femcMode;
     dmaCopy(femc ? menuHUDFEMCTiles : menuHUDTiles, bgGetGfxPtr(*bgId), femc ? menuHUDFEMCTilesLen : menuHUDTilesLen);
-    dmaCopy(femc ? menuHUDFEMCMap   : menuHUDMap,   bgGetMapPtr(*bgId), femc ? menuHUDFEMCMapLen   : menuHUDMapLen);
+    dmaCopy(femc ? menuHUDFEMCMap : menuHUDMap, bgGetMapPtr(*bgId), femc ? menuHUDFEMCMapLen : menuHUDMapLen);
     vramSetBankH(VRAM_H_LCD);
-    dmaCopy(femc ? menuHUDFEMCPal   : menuHUDPal,   &VRAM_H_EXT_PALETTE[2][0], femc ? menuHUDFEMCPalLen : menuHUDPalLen);
+    dmaCopy(femc ? menuHUDFEMCPal : menuHUDPal, &VRAM_H_EXT_PALETTE[2][0], femc ? menuHUDFEMCPalLen : menuHUDPalLen);
     vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
 }
 

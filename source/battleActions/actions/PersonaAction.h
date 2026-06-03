@@ -2,18 +2,21 @@
 #include <stdio.h>
 #include <vector>
 
-#include "ActionBase.h"
-#include "../party/PartyMember.h"
 #include "../TargetAndExecute.h"
 #include "../UpdateIndex.h"
+#include "../party/PartyMember.h"
+#include "ActionBase.h"
 
 struct PersonaAction : ActionBase
 {
     UpdateIndex updateIndex;
-    Skill *selectedSkill;
-    TargetAndExecute *targetAndExecute;
+    Skill* selectedSkill;
+    TargetAndExecute* targetAndExecute;
 
-    PersonaAction(std::vector<BattleParticipant *> *iAllParticipants, std::vector<BattleParticipant *> *iParty, std::vector<BattleParticipant *> *iEnemies) : ActionBase(iAllParticipants, iParty, iEnemies)
+    PersonaAction(std::vector<BattleParticipant*>* iAllParticipants,
+                  std::vector<BattleParticipant*>* iParty,
+                  std::vector<BattleParticipant*>* iEnemies)
+        : ActionBase(iAllParticipants, iParty, iEnemies)
     {
         name = "Persona";
         possibleUsers = ParticipantType::Party;
@@ -30,5 +33,5 @@ struct PersonaAction : ActionBase
     MenuState menuState;
 
     void execute() override;
-    bool update(u32 *keys, PartyMember *user) override;
+    bool update(u32* keys, PartyMember* user) override;
 };

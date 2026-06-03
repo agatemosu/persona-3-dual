@@ -6,7 +6,7 @@ void SwitchPersona::execute()
     targetIndex = 0;
 }
 
-bool SwitchPersona::update(u32 *keys, PartyMember *user)
+bool SwitchPersona::update(u32* keys, PartyMember* user)
 {
     updateIndex.update(*keys, targetIndex, user->personas.size());
 

@@ -1,8 +1,8 @@
 #include "BattleController.h"
-#include <nds.h>
+#include <array>
 #include <cstdlib>
 #include <ctime>
-#include <array>
+#include <nds.h>
 
 void BattleController::execute()
 {
@@ -19,20 +19,21 @@ void BattleController::execute()
     battleParticipants->push_back(player);
     battleParticipants->push_back(yukari);
     battleParticipants->push_back(junpei);
-    for (BattleParticipant *participant : *battleParticipants)
+    for (BattleParticipant* participant : *battleParticipants)
     {
         if (participant->participantType == ParticipantType::Enemy)
         {
             enemies.push_back(participant);
         }
-        else if (participant->participantType == ParticipantType::Party || participant->participantType == ParticipantType::Player)
+        else if (participant->participantType == ParticipantType::Party ||
+                 participant->participantType == ParticipantType::Player)
         {
             partyMembers.push_back(participant);
         }
     }
-    for (BattleParticipant *participant : enemies)
+    for (BattleParticipant* participant : enemies)
     {
-        static_cast<Enemy *>(participant)->Init(&enemies, &partyMembers);
+        static_cast<Enemy*>(participant)->Init(&enemies, &partyMembers);
     }
 }
 
@@ -50,12 +51,11 @@ void BattleController::update(u32 keys)
 
         for (u32 i = 0; i < battleParticipants->size(); i++)
         {
-
             if (battleParticipants->at(i)->hp <= 0)
             {
                 // adjusts the index for the next round so it wont skip an entry
                 turnsTaken--;
-                BattleParticipant *dead = battleParticipants->at(i);
+                BattleParticipant* dead = battleParticipants->at(i);
 
                 if (dead->participantType == ParticipantType::Player)
                 {
@@ -113,15 +113,15 @@ void BattleController::exit()
     active = false;
 }
 
-BattleController::BattleController(std::vector<BattleParticipant *> *iBattleParticipant, CharacterProfiles *iCharacterProfiles)
-    : battleParticipants(iBattleParticipant),
-      characterProfiles(iCharacterProfiles),
-      attack(battleParticipants, &partyMembers, &enemies),
-      guard(battleParticipants, &partyMembers, &enemies),
-      persona(battleParticipants, &partyMembers, &enemies),
-      switchPersona(battleParticipants, &partyMembers, &enemies) {}
-#include "BattleController.h"
+BattleController::BattleController(std::vector<BattleParticipant*>* iBattleParticipant,
+                                   CharacterProfiles* iCharacterProfiles)
+    : battleParticipants(iBattleParticipant), characterProfiles(iCharacterProfiles),
+      attack(battleParticipants, &partyMembers, &enemies), guard(battleParticipants, &partyMembers, &enemies),
+      persona(battleParticipants, &partyMembers, &enemies), switchPersona(battleParticipants, &partyMembers, &enemies)
+{
+}
 #include "./helpers/random.h"
+#include "BattleController.h"
 #include "core/globals.h"
 #include <cstdlib>
 #include <ctime>

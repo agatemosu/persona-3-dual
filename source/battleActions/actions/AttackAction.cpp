@@ -8,7 +8,7 @@ void AttackAction::execute()
     targetIndex = 0;
 }
 
-bool AttackAction::update(u32 *keys, PartyMember *user)
+bool AttackAction::update(u32* keys, PartyMember* user)
 {
     updateIndex.update(*keys, targetIndex, enemies->size());
 

@@ -1,10 +1,10 @@
 #pragma once
-#include <nds.h>
-#include "core/globals.h"
 #include "core/enums.h"
+#include "core/globals.h"
 #include "core/structs.h"
 #include "menuHUD.h"
 #include "menuHUDFEMC.h"
+#include <nds.h>
 
 class MenuHUDComponent
 {

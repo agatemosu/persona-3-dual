@@ -1,21 +1,23 @@
 #include "AttackSkill.h"
 
-const float AttackSkill::levelMultipliers[24] = {
-    0.5f, 0.51f, 0.53f, 0.59f, 0.66f,
-    0.75f, 0.84f, 0.91f, 0.97f, 0.99f,
-    1.0f, 1.0f, 1.0f, 1.0f,
-    1.01f, 1.03f, 1.09f, 1.16f, 1.25f,
-    1.34f, 1.41f, 1.47f, 1.49f, 1.5f};
+const float AttackSkill::levelMultipliers[24] = {0.5f,  0.51f, 0.53f, 0.59f, 0.66f, 0.75f, 0.84f, 0.91f,
+                                                 0.97f, 0.99f, 1.0f,  1.0f,  1.0f,  1.0f,  1.01f, 1.03f,
+                                                 1.09f, 1.16f, 1.25f, 1.34f, 1.41f, 1.47f, 1.49f, 1.5f};
 
-u32 AttackSkill::calculateDamagePlayer(BattleStats *attackerStats, BattleStats *defenderStats, u32 *attackerLevel, u32 *defenderLevel)
+u32 AttackSkill::calculateDamagePlayer(BattleStats* attackerStats,
+                                       BattleStats* defenderStats,
+                                       u32* attackerLevel,
+                                       u32* defenderLevel)
 {
     damageSetup(attackerStats, defenderStats, attackerLevel, defenderLevel);
     // todo: level diffrence never goes under 0 for either party during boss fights
-    return (u32)floor(sqrt((float)(movePower * 15 * Atk) / defenderStats->en) * 2 * levelDifference * affinityMtp);
+    float base = floor(sqrt((float)(movePower * 15 * Atk) / defenderStats->en) * 2 * levelDifference * affinityMtp);
+    float range = 95 + (u32)(rand() % 11);
+    return (u32)floor(base * range / 100.0f);
 }
 
 // TODO: hopefully correct, should be looked at by someone that knows some  math
-u32 AttackSkill::calculateHitratePlayer(BattleStats *attackerStats, BattleStats *defenderStats)
+u32 AttackSkill::calculateHitratePlayer(BattleStats* attackerStats, BattleStats* defenderStats)
 {
     if (hitRate == 100)
         return true;
@@ -25,28 +27,39 @@ u32 AttackSkill::calculateHitratePlayer(BattleStats *attackerStats, BattleStats 
     return std::clamp(multipliedAccuracy, (u32)50, (u32)99);
 }
 
-u32 AttackSkill::calculateDamageEnemyRegular(BattleStats *attackerStats, BattleStats *defenderStats, u32 *attackerLevel, u32 *defenderLevel, Armour *armour)
+u32 AttackSkill::calculateDamageEnemyRegular(
+    BattleStats* attackerStats, BattleStats* defenderStats, u32* attackerLevel, u32* defenderLevel, Armour* armour)
 {
     // This value is used if an enemy attacks another enemy
     u32 armourValue = (armour != nullptr) ? armour->defense : 10;
 
     damageSetup(attackerStats, defenderStats, attackerLevel, defenderLevel);
     // todo: level diffrence never goes under 0 for either party during boss fights
-    return (u32)floor((sqrt((float)(movePower * 6 * Atk) / (8 * defenderStats->en + armourValue)) * 9 * levelDifference) * affinityMtp);
+
+    float base = (sqrt((float)(movePower * 6 * Atk) / (8 * defenderStats->en + armourValue)) * 9 * levelDifference) *
+                 affinityMtp;
+    float range = 95 + (u32)(rand() % 11);
+    return (u32)floor(base * range / 100.0f);
 }
 
-u32 AttackSkill::calculateDamageEnemySkill(BattleStats *attackerStats, BattleStats *defenderStats, u32 *attackerLevel, u32 *defenderLevel, Armour *armour)
+u32 AttackSkill::calculateDamageEnemySkill(
+    BattleStats* attackerStats, BattleStats* defenderStats, u32* attackerLevel, u32* defenderLevel, Armour* armour)
 {
     // This value is used if an enemy attacks another enemy
     u32 armourValue = (armour != nullptr) ? armour->defense : 10;
 
     damageSetup(attackerStats, defenderStats, attackerLevel, defenderLevel);
     // todo: level diffrence never goes under 0 for either party during boss fights
-    return (u32)floor((sqrt((float)(movePower * 6 * Atk) / (8 * defenderStats->en + armourValue)) * 9 * levelDifference - 10) * affinityMtp);
+
+    float base =
+        ((sqrt((float)(movePower * 6 * Atk) / (8 * defenderStats->en + armourValue)) * 9 * levelDifference - 10) *
+         affinityMtp);
+    float range = 95 + (u32)(rand() % 11);
+    return (u32)floor(base * range / 100.0f);
 }
 
 // TODO: hopefully correct, should be looked at by someone that knows some  math
-u32 AttackSkill::calculateHitrateEnemy(BattleStats *attackerStats, BattleStats *defenderStats, Shoe *shoe)
+u32 AttackSkill::calculateHitrateEnemy(BattleStats* attackerStats, BattleStats* defenderStats, Shoe* shoe)
 {
     if (hitRate == 100)
         return true;
@@ -57,13 +70,17 @@ u32 AttackSkill::calculateHitrateEnemy(BattleStats *attackerStats, BattleStats *
     return std::clamp(multipliedAccuracy, (u32)50, (u32)99);
 }
 
-void AttackSkill::damageSetup(BattleStats *attackerStats, BattleStats *defenderStats, u32 *attackerLevel, u32 *defenderLevel)
+void AttackSkill::damageSetup(BattleStats* attackerStats,
+                              BattleStats* defenderStats,
+                              u32* attackerLevel,
+                              u32* defenderLevel)
 {
     if (skillRace == SkillRace::phys)
         Atk = attackerStats->st;
     else
         Atk = attackerStats->ma;
 
+    // TODO: std clamp
     diff = *attackerLevel - *defenderLevel;
     if (diff < -13)
         diff = -13;
