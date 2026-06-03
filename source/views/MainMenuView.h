@@ -26,11 +26,6 @@ class MainMenuView : public BaseView
     int baseSpeed = 20;
     int fluctuation = 50;
 
-    // track last known FEMC state so we can detect changes
-    bool lastFemcMode = false;
-
-    void loadSilhouette();
-
   public:
     void init() override;
     ViewState update() override;

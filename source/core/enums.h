@@ -159,12 +159,6 @@ enum class SettingOptions
     FEMC_MODE
 };
 
-enum class SettingFemcOptions
-{
-    OFF = 0,
-    ON
-};
-
 enum class BattleMenuOptions
 {
     NONE = 0,

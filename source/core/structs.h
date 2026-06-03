@@ -133,5 +133,5 @@ struct Save
     std::string introVideoPath;
     std::string lastName;
     std::string firstName;
-    bool femcMode = false;
+    bool femcMode;
 };

@@ -8,25 +8,6 @@
 #include "fogBackground.h"
 #include "menuSilhouetteBackground.h"
 
-void MainMenuView::loadSilhouette()
-{
-    bool femc = saveData.femcMode;
-    const void* silTiles = (const void*)menuSilhouetteBackgroundTiles;
-    u32 silTilesLen = menuSilhouetteBackgroundTilesLen;
-    const void* silMap = (const void*)menuSilhouetteBackgroundMap;
-    u32 silMapLen = menuSilhouetteBackgroundMapLen;
-    const void* silPal = (const void*)menuSilhouetteBackgroundPal;
-    u32 silPalLen = menuSilhouetteBackgroundPalLen;
-
-    dmaFillHalfWords(0, bgGetMapPtr(bg[0]), 8192);
-    dmaCopy(silTiles, bgGetGfxPtr(bg[0]), silTilesLen);
-    dmaCopy(silMap, bgGetMapPtr(bg[0]), silMapLen);
-
-    vramSetBankE(VRAM_E_LCD);
-    dmaCopy(silPal, &VRAM_E_EXT_PALETTE[0][0], silPalLen);
-    vramSetBankE(VRAM_E_BG_EXT_PALETTE);
-}
-
 void MainMenuView::init()
 {
     // setup music
@@ -90,9 +71,14 @@ void MainMenuView::init()
     dmaFillHalfWords(1, bgGetMapPtr(bg[1]), 2048);
     dmaFillHalfWords(2, bgGetMapPtr(bg[2]), 2048);
 
-    // load silhouette (FEMC-aware)
-    loadSilhouette();
-    lastFemcMode = saveData.femcMode;
+    // load silhouette
+    dmaFillHalfWords(0, bgGetMapPtr(bg[0]), 8192);
+    dmaCopy(menuSilhouetteBackgroundTiles, bgGetGfxPtr(bg[0]), menuSilhouetteBackgroundTilesLen);
+    dmaCopy(menuSilhouetteBackgroundMap, bgGetMapPtr(bg[0]), menuSilhouetteBackgroundMapLen);
+
+    vramSetBankE(VRAM_E_LCD);
+    dmaCopy(menuSilhouetteBackgroundPal, &VRAM_E_EXT_PALETTE[0][0], menuSilhouetteBackgroundPalLen);
+    vramSetBankE(VRAM_E_BG_EXT_PALETTE);
 
     // copy door and fog graphics to vram
     dmaCopy(doorBackgroundTiles, bgGetGfxPtr(bg[1]), doorBackgroundTilesLen);
@@ -143,13 +129,6 @@ ViewState MainMenuView::update()
         return result;
     }
     musicCtrl.update();
-
-    // reload silhouette if FEMC mode was toggled in settings
-    if (saveData.femcMode != lastFemcMode)
-    {
-        lastFemcMode = saveData.femcMode;
-        loadSilhouette();
-    }
 
     // scroll silhouette background
     // animate X (moving right towards 0)
