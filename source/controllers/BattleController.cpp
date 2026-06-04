@@ -195,7 +195,7 @@ void BattleController::update(u32 keys)
                 bool canHealAnyTarget = false;
                 for (BattleParticipant* target : targets)
                 {
-                    if (target->hp < target->maxHp && target->hp > 0)
+                    if (target->hp < target->maxHp)
                     {
                         canHealAnyTarget = true;
                         break;
