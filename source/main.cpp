@@ -36,7 +36,9 @@
 // sfx
 #include "soundbank_bin.h"
 
+// character models
 #include "models/character.h"
+#include "models/makoto.h"
 
 // variables
 volatile int frame = 0;
@@ -50,14 +52,18 @@ SaveController saveCtrl;
 MusicController musicCtrl;
 VideoController videoCtrl;
 AnimationController characterAnimationCtrl;
-const unsigned int* bitmapsCharacter[MODEL_CHARACTER_TEX_COUNT];
-static GraphicAsset characterTextureAssets[MODEL_CHARACTER_TEX_COUNT];
 SpriteController spriteCtrl;
 GraphicsController graphicsCtrl;
 
-static const unsigned int* loadCharacterTexture(const std::string& name, GraphicAsset& asset)
+// models
+// TODO: switch enum values depending on femcMode
+const unsigned int* bitmapsCharacter[MODEL_CHARACTER_TEX_COUNT];
+static GraphicAsset characterTextureAssets[MODEL_CHARACTER_TEX_COUNT];
+
+static const unsigned int* loadCharacterTexture(const std::string& name, GraphicAsset& asset, bool isFemc)
 {
-    asset = graphicsCtrl.loadGrit(fatBasePath + "models/character/" + name);
+    std::string basePath = fatBasePath + "models/" + (isFemc ? "character/" : "makoto/");
+    asset = graphicsCtrl.loadGrit(basePath + name);
     return reinterpret_cast<const unsigned int*>(asset.tiles);
 }
 
@@ -71,6 +77,7 @@ MenuHUDComponent menuHUDCmpt;
 BattleMenuComponent battleMenuCmpt;
 
 BaseView* currentView = nullptr;
+bool prevFemcMode;
 
 void SwitchView(BaseView* newView)
 {
@@ -95,6 +102,38 @@ void SwitchView(BaseView* newView)
 void Vblank()
 {
     frame++;
+}
+
+void loadModels(bool isFemc)
+{
+    // Kotone
+    if (isFemc)
+    {
+        bitmapsCharacter[MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_0] = loadCharacterTexture(
+            "character_texture_0", characterTextureAssets[MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_0], true);
+        bitmapsCharacter[MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_1] = loadCharacterTexture(
+            "character_texture_1", characterTextureAssets[MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_1], true);
+        bitmapsCharacter[MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_2] = loadCharacterTexture(
+            "character_texture_2", characterTextureAssets[MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_2], true);
+        bitmapsCharacter[MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_3] = loadCharacterTexture(
+            "character_texture_3", characterTextureAssets[MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_3], true);
+        bitmapsCharacter[MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_4] = loadCharacterTexture(
+            "character_texture_4", characterTextureAssets[MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_4], true);
+    }
+    // Makoto
+    else
+    {
+        bitmapsCharacter[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_0] =
+            loadCharacterTexture("makoto_texture_0", characterTextureAssets[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_0], false);
+        bitmapsCharacter[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_1] =
+            loadCharacterTexture("makoto_texture_1", characterTextureAssets[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_1], false);
+        bitmapsCharacter[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_2] =
+            loadCharacterTexture("makoto_texture_2", characterTextureAssets[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_2], false);
+        bitmapsCharacter[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_3] =
+            loadCharacterTexture("makoto_texture_3", characterTextureAssets[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_3], false);
+        bitmapsCharacter[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_4] =
+            loadCharacterTexture("makoto_texture_4", characterTextureAssets[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_4], false);
+    }
 }
 
 int main(int argc, char* argv[])
@@ -143,17 +182,10 @@ int main(int argc, char* argv[])
         }
     }
 
+    prevFemcMode = saveData.femcMode;
+
     // setup character model
-    bitmapsCharacter[MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_0] =
-        loadCharacterTexture("character_texture_0", characterTextureAssets[MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_0]);
-    bitmapsCharacter[MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_1] =
-        loadCharacterTexture("character_texture_1", characterTextureAssets[MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_1]);
-    bitmapsCharacter[MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_2] =
-        loadCharacterTexture("character_texture_2", characterTextureAssets[MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_2]);
-    bitmapsCharacter[MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_3] =
-        loadCharacterTexture("character_texture_3", characterTextureAssets[MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_3]);
-    bitmapsCharacter[MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_4] =
-        loadCharacterTexture("character_texture_4", characterTextureAssets[MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_4]);
+    loadModels(saveData.femcMode);
 
     // use DS hardware timer for reliable randomness (time() can return 0 on DS)
     TIMER0_CR = TIMER_ENABLE | TIMER_DIV_1;
@@ -165,6 +197,12 @@ int main(int argc, char* argv[])
     while (pmMainLoop())
     {
         swiWaitForVBlank();
+
+        if (saveData.femcMode != prevFemcMode)
+        {
+            loadModels(saveData.femcMode);
+            prevFemcMode = saveData.femcMode;
+        }
 
         // check state of currentView
         if (currentView != nullptr)
