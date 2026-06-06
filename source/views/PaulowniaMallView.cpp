@@ -11,7 +11,7 @@
 #include "dialogue/demo_dialogue.h"
 #include <string>
 
-static const unsigned int* loadEnvironmentBitmap(const std::string& path, GritAsset& asset)
+static const unsigned int* loadEnvironmentBitmap(const std::string& path, GraphicAsset& asset)
 {
     asset = graphicsCtrl.loadGrit(path);
     return reinterpret_cast<const unsigned int*>(asset.tiles);
@@ -103,7 +103,7 @@ void PaulowniaMallView::init()
     character_loadTextures(characterAnimationCtrl, bitmapsCharacter);
 
     // setup environment model
-    GritAsset envTextures[PAULOWNIA_MALL_TEX_COUNT] = {};
+    GraphicAsset envTextures[PAULOWNIA_MALL_TEX_COUNT] = {};
     const unsigned int* bitmapsEnv[PAULOWNIA_MALL_TEX_COUNT] = {nullptr};
 
     bitmapsEnv[PAULOWNIA_MALL_TEX_F008_001_FL02] = loadEnvironmentBitmap(

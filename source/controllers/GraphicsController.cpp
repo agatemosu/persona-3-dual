@@ -80,9 +80,9 @@ void GraphicsController::unloadFromRAM(void* buffer)
     }
 }
 
-GritAsset GraphicsController::loadGrit(const std::string& basePath)
+GraphicAsset GraphicsController::loadGrit(const std::string& basePath)
 {
-    GritAsset asset = {NULL, 0, NULL, 0, NULL, 0};
+    GraphicAsset asset = {NULL, 0, NULL, 0, NULL, 0};
 
     asset.tiles = loadToRAM(assetFilePath(basePath, ".img.bin"), &asset.tilesLen);
     asset.pal = loadToRAM(assetFilePath(basePath, ".pal.bin"), &asset.palLen);
@@ -91,7 +91,7 @@ GritAsset GraphicsController::loadGrit(const std::string& basePath)
     return asset;
 }
 
-void GraphicsController::unloadGrit(GritAsset& asset)
+void GraphicsController::unloadGrit(GraphicAsset& asset)
 {
     unloadFromRAM(asset.tiles);
     unloadFromRAM(asset.pal);

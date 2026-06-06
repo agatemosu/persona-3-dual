@@ -39,7 +39,7 @@ void PauseMenuComponent::loadBg(int bgIndex)
         return;
     }
 
-    GritAsset bg = graphicsCtrl.loadGrit(fatBasePath + "graphics/Dialogue/backgrounds/" + bgName + "/" + bgName);
+    GraphicAsset bg = graphicsCtrl.loadGrit(fatBasePath + "graphics/Dialogue/backgrounds/" + bgName + "/" + bgName);
     ;
     dmaCopy(bg.tiles, bgGetGfxPtr(bgSlot), bg.tilesLen);
     dmaCopy(bg.map, bgGetMapPtr(bgSlot), bg.mapLen);

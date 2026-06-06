@@ -24,7 +24,7 @@ void demo_yukari_kenji_argument_load()
 {
     demo_yukari_kenji_argument_bg_loaders[0] = []()
     {
-        GritAsset bg = graphicsCtrl.loadGrit(fatBasePath + "graphics/dialogue/backgrounds/bgAkihiko");
+        GraphicAsset bg = graphicsCtrl.loadGrit(fatBasePath + "graphics/dialogue/backgrounds/bgAkihiko");
         if (bg.tiles)
         {
             dmaCopy(bg.tiles, bgGetGfxPtr(demo_dialogue_bg_slot), bg.tilesLen);
@@ -38,7 +38,7 @@ void demo_yukari_kenji_argument_load()
     };
     demo_yukari_kenji_argument_bg_loaders[1] = []()
     {
-        GritAsset bg = graphicsCtrl.loadGrit(fatBasePath + "graphics/dialogue/backgrounds/bgKenji");
+        GraphicAsset bg = graphicsCtrl.loadGrit(fatBasePath + "graphics/dialogue/backgrounds/bgKenji");
         if (bg.tiles)
         {
             dmaCopy(bg.tiles, bgGetGfxPtr(demo_dialogue_bg_slot), bg.tilesLen);
@@ -52,7 +52,7 @@ void demo_yukari_kenji_argument_load()
     };
     demo_yukari_kenji_argument_bg_loaders[2] = []()
     {
-        GritAsset bg = graphicsCtrl.loadGrit(fatBasePath + "graphics/dialogue/backgrounds/bgYukari");
+        GraphicAsset bg = graphicsCtrl.loadGrit(fatBasePath + "graphics/dialogue/backgrounds/bgYukari");
         if (bg.tiles)
         {
             dmaCopy(bg.tiles, bgGetGfxPtr(demo_dialogue_bg_slot), bg.tilesLen);
@@ -66,7 +66,7 @@ void demo_yukari_kenji_argument_load()
     };
     demo_yukari_kenji_argument_bg_loaders[3] = []()
     {
-        GritAsset bg = graphicsCtrl.loadGrit(fatBasePath + "graphics/dialogue/backgrounds/bgYukariClose");
+        GraphicAsset bg = graphicsCtrl.loadGrit(fatBasePath + "graphics/dialogue/backgrounds/bgYukariClose");
         if (bg.tiles)
         {
             dmaCopy(bg.tiles, bgGetGfxPtr(demo_dialogue_bg_slot), bg.tilesLen);

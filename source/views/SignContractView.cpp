@@ -42,7 +42,7 @@ void SignContractView::init()
     bgSetPriority(bg[0], 0);
 
     // load contract background from runtime assets
-    GritAsset contractBg =
+    GraphicAsset contractBg =
         graphicsCtrl.loadGrit(fatBasePath + "graphics/SignContractView/backgrounds/contract/contract");
 
     dmaFillHalfWords(0, bgGetMapPtr(bg[0]), 8192);

@@ -13,7 +13,7 @@
 #include "maps/iwatodai_dorm_floor_1.h"
 #include <string>
 
-static const unsigned int* loadEnvironmentBitmap(const std::string& path, GritAsset& asset)
+static const unsigned int* loadEnvironmentBitmap(const std::string& path, GraphicAsset& asset)
 {
     asset = graphicsCtrl.loadGrit(path);
     return reinterpret_cast<const unsigned int*>(asset.tiles);
@@ -105,7 +105,7 @@ void IwatodaiDormView::init()
     character_loadTextures(characterAnimationCtrl, bitmapsCharacter);
 
     // setup environment model
-    GritAsset envTextures[IWATODAI_DORM_FLOOR_1_TEX_COUNT] = {};
+    GraphicAsset envTextures[IWATODAI_DORM_FLOOR_1_TEX_COUNT] = {};
     const unsigned int* bitmapsEnv[IWATODAI_DORM_FLOOR_1_TEX_COUNT] = {nullptr};
 
     bitmapsEnv[IWATODAI_DORM_FLOOR_1_TEX_F007_002WALL01] =

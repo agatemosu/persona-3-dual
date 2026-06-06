@@ -11,6 +11,6 @@ class GraphicsController
     void* loadToRAM(const std::string& filepath, u32* outSize = NULL);
     void unloadFromRAM(void* buffer);
 
-    GritAsset loadGrit(const std::string& basePath);
-    void unloadGrit(GritAsset& asset);
+    GraphicAsset loadGrit(const std::string& basePath);
+    void unloadGrit(GraphicAsset& asset);
 };

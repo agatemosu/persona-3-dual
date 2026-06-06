@@ -69,9 +69,9 @@ void MainMenuView::init()
 
     // load graphics
     std::string bgPath = fatBasePath + "graphics/MainMenuView/backgrounds/";
-    GritAsset silhouetteBg = graphicsCtrl.loadGrit(bgPath + "menuSilhouetteBackground/menuSilhouetteBackground");
-    GritAsset doorBg = graphicsCtrl.loadGrit(bgPath + "doorBackground/doorBackground");
-    GritAsset fogBg = graphicsCtrl.loadGrit(bgPath + "fogBackground/fogBackground");
+    GraphicAsset silhouetteBg = graphicsCtrl.loadGrit(bgPath + "menuSilhouetteBackground/menuSilhouetteBackground");
+    GraphicAsset doorBg = graphicsCtrl.loadGrit(bgPath + "doorBackground/doorBackground");
+    GraphicAsset fogBg = graphicsCtrl.loadGrit(bgPath + "fogBackground/fogBackground");
 
     dmaCopy(silhouetteBg.tiles, bgGetGfxPtr(bg[0]), silhouetteBg.tilesLen);
     dmaCopy(doorBg.tiles, bgGetGfxPtr(bg[1]), doorBg.tilesLen);

@@ -14,7 +14,7 @@
 // model
 #include "models/character.h"
 
-static const unsigned int* loadEnvironmentBitmap(const std::string& path, GritAsset& asset)
+static const unsigned int* loadEnvironmentBitmap(const std::string& path, GraphicAsset& asset)
 {
     asset = graphicsCtrl.loadGrit(path);
     return reinterpret_cast<const unsigned int*>(asset.tiles);
@@ -94,7 +94,7 @@ void IwatodaiStreetsView::init()
     character_loadTextures(characterAnimationCtrl, bitmapsCharacter);
 
     // setup environment model
-    GritAsset envTextures[IWATODAI_STREETS_TEX_COUNT] = {};
+    GraphicAsset envTextures[IWATODAI_STREETS_TEX_COUNT] = {};
     const unsigned int* bitmaps[IWATODAI_STREETS_TEX_COUNT] = {nullptr};
 
     bitmaps[IWATODAI_STREETS_TEX_F007_009_07] = loadEnvironmentBitmap(

@@ -71,16 +71,17 @@ void IntroView::init()
     std::string spritePath = fatBasePath + "graphics/IntroView/sprites/";
     std::string suffix = femc ? "FEMC" : "";
 
-    GritAsset silhouette =
+    GraphicAsset silhouette =
         graphicsCtrl.loadGrit(bgPath + "silhouetteBackground" + suffix + "/silhouetteBackground" + suffix);
-    GritAsset room = graphicsCtrl.loadGrit(bgPath + "roomBackground" + suffix + "/roomBackground" + suffix);
-    GritAsset sky = graphicsCtrl.loadGrit(bgPath + "skyBackground" + suffix + "/skyBackground" + suffix);
-    GritAsset overlay = graphicsCtrl.loadGrit(bgPath + "overlayBackground" + suffix + "/overlayBackground" + suffix);
-    GritAsset attribution =
+    GraphicAsset room = graphicsCtrl.loadGrit(bgPath + "roomBackground" + suffix + "/roomBackground" + suffix);
+    GraphicAsset sky = graphicsCtrl.loadGrit(bgPath + "skyBackground" + suffix + "/skyBackground" + suffix);
+    GraphicAsset overlay = graphicsCtrl.loadGrit(bgPath + "overlayBackground" + suffix + "/overlayBackground" + suffix);
+    GraphicAsset attribution =
         graphicsCtrl.loadGrit(bgPath + "attributionBackground" + suffix + "/attributionBackground" + suffix);
-    GritAsset skySub = graphicsCtrl.loadGrit(bgPath + "skyBackgroundSub" + suffix + "/skyBackgroundSub" + suffix);
-    GritAsset logoLeft = graphicsCtrl.loadGrit(spritePath + "logoSpriteLeft" + suffix + "/logoSpriteLeft" + suffix);
-    GritAsset logoRight = graphicsCtrl.loadGrit(spritePath + "logoSpriteRight" + suffix + "/logoSpriteRight" + suffix);
+    GraphicAsset skySub = graphicsCtrl.loadGrit(bgPath + "skyBackgroundSub" + suffix + "/skyBackgroundSub" + suffix);
+    GraphicAsset logoLeft = graphicsCtrl.loadGrit(spritePath + "logoSpriteLeft" + suffix + "/logoSpriteLeft" + suffix);
+    GraphicAsset logoRight =
+        graphicsCtrl.loadGrit(spritePath + "logoSpriteRight" + suffix + "/logoSpriteRight" + suffix);
 
     // copy graphics to vram
     if (silhouette.tiles)

@@ -51,11 +51,11 @@ MusicController musicCtrl;
 VideoController videoCtrl;
 AnimationController characterAnimationCtrl;
 const unsigned int* bitmapsCharacter[MODEL_CHARACTER_TEX_COUNT];
-static GritAsset characterTextureAssets[MODEL_CHARACTER_TEX_COUNT];
+static GraphicAsset characterTextureAssets[MODEL_CHARACTER_TEX_COUNT];
 SpriteController spriteCtrl;
 GraphicsController graphicsCtrl;
 
-static const unsigned int* loadCharacterTexture(const std::string& name, GritAsset& asset)
+static const unsigned int* loadCharacterTexture(const std::string& name, GraphicAsset& asset)
 {
     asset = graphicsCtrl.loadGrit(fatBasePath + "models/character/" + name);
     return reinterpret_cast<const unsigned int*>(asset.tiles);

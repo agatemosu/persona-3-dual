@@ -15,6 +15,6 @@ class SpriteController
     void unloadAll();
 
   private:
-    std::vector<GritAsset> loadedAssets;
+    std::vector<GraphicAsset> loadedAssets;
     bool switchSpriteImpl(SpriteType type, int spriteId, SpriteRegister* out);
 };

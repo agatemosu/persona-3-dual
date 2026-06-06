@@ -132,7 +132,7 @@ struct Save
     bool femcMode;
 } __attribute__((packed));
 
-struct GritAsset
+struct GraphicAsset
 {
     void* tiles;
     u32 tilesLen;

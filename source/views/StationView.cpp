@@ -14,7 +14,7 @@
 // model
 #include "models/character.h"
 
-static const unsigned int* loadEnvironmentBitmap(const std::string& path, GritAsset& asset)
+static const unsigned int* loadEnvironmentBitmap(const std::string& path, GraphicAsset& asset)
 {
     asset = graphicsCtrl.loadGrit(path);
     return reinterpret_cast<const unsigned int*>(asset.tiles);
@@ -94,7 +94,7 @@ void StationView::init()
     character_loadTextures(characterAnimationCtrl, bitmapsCharacter);
 
     // setup environment model
-    GritAsset envTextures[STATION_TEX_COUNT] = {};
+    GraphicAsset envTextures[STATION_TEX_COUNT] = {};
     const unsigned int* bitmaps[STATION_TEX_COUNT] = {nullptr};
 
     bitmaps[STATION_TEX_F008_005OBJ04] = loadEnvironmentBitmap(fatBasePath + "environments/station/f008_005obj04",

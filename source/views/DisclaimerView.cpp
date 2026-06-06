@@ -40,8 +40,8 @@ void DisclaimerView::init()
 
     // copy graphics to vram
     std::string bgPath = fatBasePath + "graphics/DisclaimerView/backgrounds/";
-    GritAsset bgCaution = graphicsCtrl.loadGrit(bgPath + "cautionBackground/cautionBackground");
-    GritAsset bgCautionSub = graphicsCtrl.loadGrit(bgPath + "cautionBackgroundSub/cautionBackgroundSub");
+    GraphicAsset bgCaution = graphicsCtrl.loadGrit(bgPath + "cautionBackground/cautionBackground");
+    GraphicAsset bgCautionSub = graphicsCtrl.loadGrit(bgPath + "cautionBackgroundSub/cautionBackgroundSub");
 
     dmaCopy(bgCaution.tiles, bgGetGfxPtr(bg[0]), bgCaution.tilesLen);
     dmaCopy(bgCautionSub.tiles, bgGetGfxPtr(bg[1]), bgCautionSub.tilesLen);

@@ -10,7 +10,7 @@ bool SpriteController::switchSpriteImpl(SpriteType type, int spriteId, SpriteReg
         return false;
     }
 
-    GritAsset asset = graphicsCtrl.loadGrit(fatBasePath + "graphics/MenuHUD/sprites/" + filename);
+    GraphicAsset asset = graphicsCtrl.loadGrit(fatBasePath + "graphics/MenuHUD/sprites/" + filename);
     loadedAssets.push_back(asset);
 
     out->id = spriteId;

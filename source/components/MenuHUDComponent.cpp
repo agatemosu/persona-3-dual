@@ -111,7 +111,7 @@ void MenuHUDComponent::loadBg(int* bgId)
         return;
 
     std::string bgPath = fatBasePath + "graphics/MenuHUD/backgrounds/";
-    GritAsset bgHUD =
+    GraphicAsset bgHUD =
         graphicsCtrl.loadGrit(bgPath + (saveData.femcMode ? "menuHUDFEMC/menuHUDFEMC" : "menuHUD/menuHUD"));
 
     dmaCopy(bgHUD.tiles, bgGetGfxPtr(*bgId), bgHUD.tilesLen);
