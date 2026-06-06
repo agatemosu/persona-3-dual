@@ -81,15 +81,15 @@ void demo_yukari_kenji_argument_load()
     demo_yukari_kenji_argument_init();
 }
 
-dialogue demo_yukari_kenji_argument_lines[18];
+Dialogue demo_yukari_kenji_argument_lines[18];
 
 void demo_yukari_kenji_argument_init()
 {
-    dialogueSelection demo_yukari_kenji_argument_sel_6_0 = {
+    DialogueSelection demo_yukari_kenji_argument_sel_6_0 = {
         "Vouch for Yukari", false, &demo_yukari_kenji_argument_lines[7]};
-    dialogueSelection demo_yukari_kenji_argument_sel_6_1 = {
+    DialogueSelection demo_yukari_kenji_argument_sel_6_1 = {
         "Side with Kenji", false, &demo_yukari_kenji_argument_lines[12]};
-    dialogueSelection demo_yukari_kenji_argument_sel_6_2 = {
+    DialogueSelection demo_yukari_kenji_argument_sel_6_2 = {
         "Stay out of it", false, &demo_yukari_kenji_argument_lines[15]};
 
     demo_yukari_kenji_argument_lines[0] = {"Kenji",

@@ -207,7 +207,7 @@ ViewState StationView::update()
         glPopMatrix(1);
 
         glPushMatrix();
-        characterPosition charPos = playerCtrl->isCharacterAt();
+        CharacterPosition charPos = playerCtrl->isCharacterAt();
         glTranslatef(charPos.x, charPos.y, charPos.z);
         glRotatef(charPos.facingAngle, 0.0f, 1.0f, 0.0f);
         characterAnimationCtrl.render();

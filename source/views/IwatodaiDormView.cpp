@@ -336,7 +336,7 @@ ViewState IwatodaiDormView::update()
         // draw character
         glPushMatrix();
         // move character
-        characterPosition charPos = playerCtrl->isCharacterAt();
+        CharacterPosition charPos = playerCtrl->isCharacterAt();
         glTranslatef(charPos.x, charPos.y, charPos.z);
         glRotatef(charPos.facingAngle, 0.0f, 1.0f, 0.0f);
 

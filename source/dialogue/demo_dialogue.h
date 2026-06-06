@@ -10,22 +10,22 @@ extern int demo_dialogue_bg_slot;
 extern const char* demo_yukari_kenji_argument_bg_names[4];
 extern void (*demo_yukari_kenji_argument_bg_loaders[4])();
 void demo_yukari_kenji_argument_load_bg(int bgIndex);
-extern dialogue demo_yukari_kenji_argument_lines[18];
+extern Dialogue demo_yukari_kenji_argument_lines[18];
 void demo_yukari_kenji_argument_init();
 void demo_yukari_kenji_argument_load();
-inline dialogue* demo_yukari_kenji_argument_first()
+inline Dialogue* demo_yukari_kenji_argument_first()
 {
     return &demo_yukari_kenji_argument_lines[0];
 }
-inline dialogue* demo_yukari_kenji_argument_vouch()
+inline Dialogue* demo_yukari_kenji_argument_vouch()
 {
     return &demo_yukari_kenji_argument_lines[7];
 }
-inline dialogue* demo_yukari_kenji_argument_side_kenji()
+inline Dialogue* demo_yukari_kenji_argument_side_kenji()
 {
     return &demo_yukari_kenji_argument_lines[12];
 }
-inline dialogue* demo_yukari_kenji_argument_stay_out()
+inline Dialogue* demo_yukari_kenji_argument_stay_out()
 {
     return &demo_yukari_kenji_argument_lines[15];
 }

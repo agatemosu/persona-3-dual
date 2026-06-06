@@ -84,7 +84,7 @@ struct AnimNode
 };
 
 // From CharacterController.h
-struct cameraPosition
+struct CameraPosition
 {
     float cameraX;
     float cameraY;
@@ -97,7 +97,7 @@ struct cameraPosition
     float upZ;
 };
 
-struct characterPosition
+struct CharacterPosition
 {
     float x;
     float z;
@@ -107,21 +107,21 @@ struct characterPosition
 };
 
 // From DialogueController.h
-struct dialogue;
-struct dialogueSelection
+struct Dialogue;
+struct DialogueSelection
 {
     std::string text;
     bool isSelected;
-    dialogue* next;
+    Dialogue* next;
 };
-struct dialogue
+struct Dialogue
 {
     std::string characterName;
     std::string text;
     int imageId;
-    dialogue* prev;
-    dialogue* next;
-    std::vector<dialogueSelection> selections;
+    Dialogue* prev;
+    Dialogue* next;
+    std::vector<DialogueSelection> selections;
 };
 
 struct Save
