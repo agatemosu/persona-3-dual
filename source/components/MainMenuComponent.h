@@ -2,7 +2,7 @@
 #include "core/globals.h"
 
 #define MAIN_MENU_OPTIONS 3
-#define LEVEL_OPTIONS 7
+#define LEVEL_OPTIONS 6
 #define SETTING_OPTIONS 2
 #define SETTING_INTRO_OPTIONS 4
 
