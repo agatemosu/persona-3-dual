@@ -101,6 +101,8 @@ void MenuHUDComponent::loadHUD()
     dmaCopy(timeSprites[3].pal, &VRAM_I_EXT_SPR_PALETTE[6][0], timeSprites[3].palLen);     // time (3)
     dmaCopy(skillSprites[0].pal, &VRAM_I_EXT_SPR_PALETTE[7][0], skillSprites[0].palLen);   // skill level
     vramSetBankI(VRAM_I_SUB_SPRITE_EXT_PALETTE);
+
+    spriteCtrl.unloadAll();
 };
 
 void MenuHUDComponent::loadBg(int* bgId)

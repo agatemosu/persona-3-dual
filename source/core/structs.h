@@ -8,20 +8,17 @@ class BaseMenu;
 struct SpriteRegister
 {
     int id;
-    const unsigned int* tiles;
-    unsigned int tilesLen;
-    const unsigned short* pal;
-    unsigned int palLen;
+    void* tiles;
+    u32 tilesLen;
+    void* pal;
+    u32 palLen;
 };
 
 struct SpriteDBEntry
 {
     SpriteType type;
     int id;
-    const unsigned int* tiles;
-    unsigned int tilesLen;
-    const unsigned short* pal;
-    unsigned int palLen;
+    const char* filename;
 };
 
 //a simple sprite structure

@@ -36,7 +36,6 @@
 // sfx
 #include "soundbank_bin.h"
 
-#include "data/sprite_db.h"
 #include "models/character.h"
 
 // variables
@@ -155,9 +154,6 @@ int main(int argc, char* argv[])
         loadCharacterTexture("character_texture_3", characterTextureAssets[MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_3]);
     bitmapsCharacter[MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_4] =
         loadCharacterTexture("character_texture_4", characterTextureAssets[MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_4]);
-
-    // initialize sprite database at runtime
-    initializeSpriteDatabase();
 
     // use DS hardware timer for reliable randomness (time() can return 0 on DS)
     TIMER0_CR = TIMER_ENABLE | TIMER_DIV_1;
