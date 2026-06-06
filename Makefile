@@ -30,9 +30,6 @@ TARGET      :=  persona-3-dual
 BUILD       :=  build
 SOURCES     :=  source source/views source/controllers source/core source/data source/dialogue source/models source/environments source/components source/battleActions source/battleActions/enemies source/battleActions/party source/battleActions/skills source/battleActions/actions source/helpers
 INCLUDES    :=  include source
-
-# We remove the graphics directories from the ROM compile pipeline,
-# as they are now strictly FAT assets.
 SFX         :=  assets/sfx
 
 GAME_TITLE     := Persona 3 Dual
@@ -241,11 +238,10 @@ jmaps: $(JMAP_OUT)
 #---------------------------------------------------------------------------------
 # ALL GRAPHICS (Dynamic explicit rules using GNU Make Macros)
 #---------------------------------------------------------------------------------
-# 1. Generate the exact target paths.
-# Example: assets/graphics/ui/btn.png -> data/graphics/ui/btn/btn.img.bin
+# Generate the exact target paths.
 FAT_GRAPHICS_OUT := $(foreach file,$(FAT_PNG_FILES),$(patsubst $(CURDIR)/assets/%.png,$(CURDIR)/data/%/$(notdir $(file:.png=.img.bin)),$(file)))
 
-# 2. Define a macro that acts as a blueprint for our build rule
+# Define a macro that acts as a blueprint for our build rule
 define GRIT_RULE
 $(patsubst $(CURDIR)/assets/%.png,$(CURDIR)/data/%/$(notdir $(1:.png=.img.bin)),$(1)): $(1) $$(wildcard $$(1:.png=.grit))
 	@echo "  GRIT  $$(notdir $$<)"
@@ -253,7 +249,7 @@ $(patsubst $(CURDIR)/assets/%.png,$(CURDIR)/data/%/$(notdir $(1:.png=.img.bin)),
 	@grit "$$<" -ftb -fh! -o "$$(patsubst %.img.bin,%,$$@)"
 endef
 
-# 3. Evaluate the macro for every single PNG found, dynamically scripting the rules into the Make environment
+# Evaluate the macro for every single PNG found, dynamically scripting the rules into the Make environment
 $(foreach file,$(FAT_PNG_FILES),$(eval $(call GRIT_RULE,$(file))))
 
 graphics: $(FAT_GRAPHICS_OUT)
