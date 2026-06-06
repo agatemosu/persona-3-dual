@@ -289,21 +289,27 @@ class CodeGenerator:
             out += [
                 f"// ── interaction: {ia.name}{desc}",
                 f"extern const char* {vp}_bg_names[{nb}];",
-                f"extern void        (*{vp}_bg_loaders[{nb}])();",
-                f"void  {vp}_load_bg(int bgIndex);",
+                f"extern void (*{vp}_bg_loaders[{nb}])();",
+                f"void {vp}_load_bg(int bgIndex);",
                 f"extern dialogue {vp}_lines[{n}];",
-                f"void  {vp}_init();",
-                f"void  {vp}_load();",
-                f"inline dialogue* {vp}_first() {{ return &{vp}_lines[0]; }}",
+                f"void {vp}_init();",
+                f"void {vp}_load();",
+                f"inline dialogue* {vp}_first()",
+                "{",
+                f"    return &{vp}_lines[0];",
+                "}",
             ]
             for dl in ia.lines:
                 if not dl.label.startswith("line_"):
-                    out.append(
-                        f"inline dialogue* {vp}_{dl.label}() {{ return &{vp}_lines[{dl.index}]; }}"
-                    )
+                    out += [
+                        f"inline dialogue* {vp}_{dl.label}()",
+                        "{",
+                        f"    return &{vp}_lines[{dl.index}];",
+                        "}",
+                    ]
             out.append("")
 
-        out += [f"inline void {s}_init_all() {{"]
+        out += [f"inline void {s}_init_all()", "{"]
         for ia in self.interactions:
             out.append(f"    {self._vp(ia)}_init();")
         out += ["}", ""]
@@ -314,9 +320,9 @@ class CodeGenerator:
         out = []
         s = self.scene
         out += [
-            "#include <nds.h>",
             f'#include "{s}_dialogue.h"',
             '#include "core/globals.h"',
+            "#include <nds.h>",
             "",
             f"int {s}_dialogue_bg_slot = 0;",
             "",
@@ -336,20 +342,26 @@ class CodeGenerator:
             out.append("")
 
             out += [
-                f"void {vp}_load_bg(int bgIndex) {{",
+                f"void {vp}_load_bg(int bgIndex)",
+                "{",
                 f"    if (bgIndex >= 0 && bgIndex < {nb} && {vp}_bg_loaders[bgIndex])",
+                "    {",
                 f"        {vp}_bg_loaders[bgIndex]();",
+                "    }",
                 "}",
                 "",
-                f"void {vp}_load() {{",
+                f"void {vp}_load()",
+                "{",
             ]
 
             for i, bg in enumerate(ia.bg_order):
                 nm = ia.bg_order[i] if ia.bg_order else "myBg"
                 out += [
-                    f"    {vp}_bg_loaders[{i}] = [](){{",
+                    f"    {vp}_bg_loaders[{i}] = []()",
+                    "    {",
                     f'        GritAsset bg = graphicsCtrl.loadGrit(fatBasePath + "graphics/dialogue/backgrounds/{nm}");',
-                    "        if (bg.tiles) {",
+                    "        if (bg.tiles)",
+                    "        {",
                     f"            dmaCopy(bg.tiles, bgGetGfxPtr({s}_dialogue_bg_slot), bg.tilesLen);",
                     f"            dmaCopy(bg.map, bgGetMapPtr({s}_dialogue_bg_slot), bg.mapLen);",
                     "            vramSetBankH(VRAM_H_LCD);",
@@ -366,7 +378,8 @@ class CodeGenerator:
                 "",
                 f"dialogue {vp}_lines[{n}];",
                 "",
-                f"void {vp}_init() {{",
+                f"void {vp}_init()",
+                "{",
             ]
 
             sel_var_map: dict[tuple[int, int], str] = {}
