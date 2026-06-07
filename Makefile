@@ -72,7 +72,7 @@ export MMUTIL
 # Collect source files
 #---------------------------------------------------------------------------------
 DLG_FILES       := $(wildcard $(ASSETS_DIALOGUE)/*.dlg)
-MP3_FILES       := $(wildcard $(ASSETS_MUSIC)/*.mp3)
+MP3_FILES       := $(shell find $(ASSETS_MUSIC) -type f -name '*.mp3' 2>/dev/null)
 MP4_FILES       := $(wildcard $(ASSETS_VIDEO)/*.mp4)
 ENV_OBJ_FILES   := $(wildcard $(ASSETS_ENVIRONMENTS)/*/*.obj)
 JMAP_FILES      := $(wildcard $(ASSETS_MAPS)/*.jmap)
@@ -86,7 +86,7 @@ FAT_PNG_FILES   := $(shell find $(CURDIR)/assets/graphics $(CURDIR)/assets/envir
 # Derive output paths & dynamically add environment output dirs to SOURCES
 #---------------------------------------------------------------------------------
 DIALOGUE_OUT := $(DLG_FILES:$(ASSETS_DIALOGUE)/%.dlg=$(CURDIR)/source/dialogue/%_dialogue.cpp)
-MUSIC_OUT    := $(MP3_FILES:$(ASSETS_MUSIC)/%.mp3=$(DATA_MUSIC)/%.pcm)
+MUSIC_OUT    := $(patsubst $(ASSETS_MUSIC)/%.mp3,$(DATA_MUSIC)/%.pcm,$(MP3_FILES))
 VIDEO_OUT    := $(MP4_FILES:$(ASSETS_VIDEO)/%.mp4=$(DATA_VIDEO)/%.vid)
 JMAP_OUT     := $(JMAP_FILES:$(ASSETS_MAPS)/%.jmap=$(CURDIR)/source/maps/%.h)
 

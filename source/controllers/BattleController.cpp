@@ -16,6 +16,18 @@ void BattleController::execute()
 {
     active = true;
 
+    // pick a random battle track based on route
+    const char** routeTracks = saveData.femcMode ? FEMC_TRACKS : MC_TRACKS;
+    int routeCount           = saveData.femcMode ? FEMC_TRACK_COUNT : MC_TRACK_COUNT;
+    int totalCount           = GN_TRACK_COUNT + routeCount;
+
+    int trackIndex = (int)(randf() * totalCount);
+    const char* selectedTrack = (trackIndex < GN_TRACK_COUNT)
+        ? GN_TRACKS[trackIndex]
+        : routeTracks[trackIndex - GN_TRACK_COUNT];
+
+    musicCtrl.init((fatBasePath + selectedTrack).c_str(), 0.0f, -1.0f);
+
     player = new PartyMember(&characterProfiles->player);
     yukari = new PartyMember(&characterProfiles->yukari);
     junpei = new PartyMember(&characterProfiles->junpei);
@@ -182,8 +194,7 @@ void BattleController::update(u32 keys)
 
         if ((int)targetIndex != -1 && (keys & KEY_A))
         {
-            if ((selectedSkill->skillType == SkillType::Attack || selectedSkill->skillType == SkillType::Heal ||
-                 selectedSkill->skillType == SkillType::Buff || selectedSkill->skillType == SkillType::Debuff))
+            if (isSingleTarget(selectedSkill->skillType))
             {
                 targets = {targets[targetIndex]};
             }
@@ -240,7 +251,7 @@ void BattleController::update(u32 keys)
     case BattlePhase::EnemyTurn:
     {
         Enemy* enemy = static_cast<Enemy*>(currentParticipantTurn);
-        AttackSkill* skill = enemy->pickSkill();
+        Skill* skill = enemy->pickSkill();
         BattleParticipant* target = enemy->pickTarget(partyMembers);
         BattleResult battleResult = enemy->resolve(target, skill);
         applyResult(battleResult, target);
@@ -256,6 +267,7 @@ void BattleController::update(u32 keys)
 void BattleController::exit()
 {
     consoleClear();
+    musicCtrl.pause();
     active = false;
     phase = BattlePhase::Done;
 }
@@ -450,4 +462,21 @@ void BattleController::handleDeadParticipants()
     }
 
     pendingAlert += "Previous attacker: " + currentParticipantTurn->name + "\n";
+}
+
+bool BattleController::isSingleTarget(SkillType type)
+{
+    {
+        switch (type)
+        {
+        case SkillType::RegularAttack:
+        case SkillType::Attack:
+        case SkillType::Heal:
+        case SkillType::Buff:
+        case SkillType::Debuff:
+            return true;
+        default:
+            return false;
+        }
+    }
 }

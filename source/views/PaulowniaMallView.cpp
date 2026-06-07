@@ -97,7 +97,7 @@ void PaulowniaMallView::init()
                                          false);
 
     // setup music
-    musicCtrl.init((fatBasePath + "music/color_your_night.pcm").c_str(), 0.0f, 920.973f);
+    musicCtrl.init((fatBasePath + "music/locations/paulowniaMall/overworld/color_your_night.pcm").c_str(), 0.0f, 920.973f);
 
     // setup character model
     std::string modelPath = fatBasePath + "models/";
