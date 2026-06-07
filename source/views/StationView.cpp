@@ -87,7 +87,7 @@ void StationView::init()
                                          false);
 
     // setup music
-    musicCtrl.init((fatBasePath + "music/paulownia_mall.pcm").c_str(), 0.0f, -1.0f);
+    musicCtrl.init((fatBasePath + "music/locations/paulowniaMall/station/paulownia_mall.pcm").c_str(), 0.0f, -1.0f);
 
     // setup character model
     characterAnimationCtrl.loadModel((fatBasePath + "models/character/character.bin").c_str());
