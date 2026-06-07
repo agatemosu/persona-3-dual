@@ -16,7 +16,7 @@
 
 // TODO: dont forget to clear in future
 DebugView::DebugView()
-    : battleParticipants(new std::vector<BattleParticipant*>({&merciless_Maya, &cowardly_Maya})),
+    : battleParticipants(new std::vector<BattleParticipant*>({&mercilessMaya, &cowardlyMaya})),
       battleController(battleParticipants, &characterProfiles, battleStartCondition)
 {
 }
@@ -112,9 +112,6 @@ void DebugView::init()
 
     // setup battle menu
     battleMenuCmpt.init(-1, &isBattleMenuActive);
-
-    // setup character profiles
-    characterProfiles.InitializeProfiles();
 }
 
 ViewState DebugView::update()

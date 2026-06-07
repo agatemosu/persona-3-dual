@@ -8,9 +8,7 @@
 // battle-related
 #include "./battleActions/BattleParticipant.h"
 #include "./battleActions/BattleStartCondition.h"
-#include "./battleActions/enemies/Cowardly_Maya.h"
-#include "./battleActions/enemies/Enemy.h"
-#include "./battleActions/enemies/Merciless_Maya.h"
+#include "./battleActions/enemies/EnemyDb.h"
 #include "./controllers/BattleController.h" // TODO: move somewhere
 
 class DebugView : public BaseView
@@ -35,8 +33,9 @@ class DebugView : public BaseView
     // init Character Profiles
     CharacterProfiles characterProfiles;
     // Battle participants
-    Cowardly_Maya cowardly_Maya;
-    Merciless_Maya merciless_Maya;
+    Enemy mercilessMaya = EnemyDb::mercilessMaya;
+    Enemy cowardlyMaya = EnemyDb::cowardlyMaya;
+
     std::vector<BattleParticipant*>* battleParticipants;
 
     BattleStartCondition battleStartCondition = BattleStartCondition::Even;

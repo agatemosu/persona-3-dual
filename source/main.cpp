@@ -43,6 +43,14 @@
 #include "character_texture_4.h"
 #include "models/character.h"
 
+// db's
+#include "battleActions/armours/ArmourDb.h"
+#include "battleActions/enemies/EnemyDb.h"
+#include "battleActions/party/CharacterProfileDb.h"
+#include "battleActions/personas/PersonaDb.h"
+#include "battleActions/shoes/ShoeDb.h"
+#include "battleActions/skills/SkillDb.h"
+
 // variables
 volatile int frame = 0;
 int fps = 0;
@@ -147,6 +155,14 @@ int main(int argc, char* argv[])
     bitmapsCharacter[MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_2] = character_texture_2Bitmap;
     bitmapsCharacter[MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_3] = character_texture_3Bitmap;
     bitmapsCharacter[MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_4] = character_texture_4Bitmap;
+
+    // setup db's. DO NOT CHANGE order
+    SkillDb::Initialize();
+    ArmourDb::Initialize();
+    ShoeDb::Initialize();
+    PersonaDb::Initialize();
+    EnemyDb::Initialize();
+    CharacterProfiles::Initialize();
 
     // use DS hardware timer for reliable randomness (time() can return 0 on DS)
     TIMER0_CR = TIMER_ENABLE | TIMER_DIV_1;
