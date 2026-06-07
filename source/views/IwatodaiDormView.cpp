@@ -98,7 +98,7 @@ void IwatodaiDormView::init()
                                          true);
 
     // setup music
-    musicCtrl.init((fatBasePath + "music/iwatodai_dorm.pcm").c_str(), 0.0f, 920.973f);
+    musicCtrl.init((fatBasePath + "music/locations/iwatodaiDorm/iwatodai_dorm.pcm").c_str(), 0.0f, 920.973f);
 
     // setup character model
     characterAnimationCtrl.loadModel((fatBasePath + "models/character/character.bin").c_str());
