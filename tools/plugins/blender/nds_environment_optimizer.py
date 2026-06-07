@@ -16,7 +16,7 @@ class NDS_OT_Optimize(bpy.types.Operator):
     """Optimize NDS meshes (Adjustable bypass filters for 2D/small props)"""
 
     bl_idname = "object.nds_optimize"
-    bl_label = "Optimize for NDS"
+    bl_label = "Optimize Environment"
     bl_options = {"REGISTER", "UNDO"}
 
     angle_limit: bpy.props.FloatProperty(
