@@ -16,9 +16,9 @@ void BattleController::execute()
 {
     active = true;
 
-    std::string path = fatBasePath + "music/battle/" +
-                       (saveData.femcMode ? "music/battle/wiping_all_out.pcm" : "music/battle/mass_destruction.pcm");
-    musicCtrl.init(fatBasePath.c_str(), 0.0f, -1.0f);
+    std::string path =
+        fatBasePath + "music/battle/" + (saveData.femcMode ? "wiping_all_out.pcm" : "mass_destruction.pcm");
+    musicCtrl.init(path.c_str(), 0.0f, -1.0f);
 
     player = new PartyMember(&characterProfiles->player);
     yukari = new PartyMember(&characterProfiles->yukari);
