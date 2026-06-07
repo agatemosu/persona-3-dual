@@ -17,33 +17,14 @@ void BattleController::execute()
     active = true;
 
     // pick a random battle track based on route
-    static const char* gnTracks[] = {
-        "music/battle/laser_beam.pcm",
-        "music/battle/mass_destruction.pcm",
-        "music/battle/burn_my_dread_last_battle.pcm",
-        "music/battle/mass_destruction_reincarnation.pcm",
-        "music/battle/light_the_fire_up_kagejikan.pcm",
-    };
-    static const char* femcTracks[] = {
-        "music/battle/danger_zone.pcm",
-        "music/battle/wiping_all_out.pcm",
-    };
-    static const char* mcTracks[] = {
-        "music/battle/light_the_fire_up_mayonaka.pcm",
-    };
-
-    static const int gnCount   = sizeof(gnTracks)   / sizeof(gnTracks[0]);
-    static const int femcCount = sizeof(femcTracks) / sizeof(femcTracks[0]);
-    static const int mcCount   = sizeof(mcTracks)   / sizeof(mcTracks[0]);
-
-    const char** routeTracks = saveData.femcMode ? femcTracks : mcTracks;
-    int routeCount           = saveData.femcMode ? femcCount  : mcCount;
-    int totalCount           = gnCount + routeCount;
+    const char** routeTracks = saveData.femcMode ? FEMC_TRACKS : MC_TRACKS;
+    int routeCount           = saveData.femcMode ? FEMC_TRACK_COUNT : MC_TRACK_COUNT;
+    int totalCount           = GN_TRACK_COUNT + routeCount;
 
     int trackIndex = (int)(randf() * totalCount);
-    const char* selectedTrack = (trackIndex < gnCount)
-        ? gnTracks[trackIndex]
-        : routeTracks[trackIndex - gnCount];
+    const char* selectedTrack = (trackIndex < GN_TRACK_COUNT)
+        ? GN_TRACKS[trackIndex]
+        : routeTracks[trackIndex - GN_TRACK_COUNT];
 
     musicCtrl.init((fatBasePath + selectedTrack).c_str(), 0.0f, -1.0f);
 
