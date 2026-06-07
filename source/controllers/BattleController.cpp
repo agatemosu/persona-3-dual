@@ -16,6 +16,18 @@ void BattleController::execute()
 {
     active = true;
 
+    // pick a random battle track based on route
+    const char** routeTracks = saveData.femcMode ? FEMC_TRACKS : MC_TRACKS;
+    int routeCount           = saveData.femcMode ? FEMC_TRACK_COUNT : MC_TRACK_COUNT;
+    int totalCount           = GN_TRACK_COUNT + routeCount;
+
+    int trackIndex = (int)(randf() * totalCount);
+    const char* selectedTrack = (trackIndex < GN_TRACK_COUNT)
+        ? GN_TRACKS[trackIndex]
+        : routeTracks[trackIndex - GN_TRACK_COUNT];
+
+    musicCtrl.init((fatBasePath + selectedTrack).c_str(), 0.0f, -1.0f);
+
     player = new PartyMember(&characterProfiles->player);
     yukari = new PartyMember(&characterProfiles->yukari);
     junpei = new PartyMember(&characterProfiles->junpei);
@@ -255,6 +267,7 @@ void BattleController::update(u32 keys)
 void BattleController::exit()
 {
     consoleClear();
+    musicCtrl.pause();
     active = false;
     phase = BattlePhase::Done;
 }
