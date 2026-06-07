@@ -17,24 +17,35 @@ void BattleController::execute()
     active = true;
 
     // pick a random battle track based on route
-    std::vector<std::string> battleTracks = {
+    static const char* gnTracks[] = {
         "music/battle/laser_beam.pcm",
         "music/battle/mass_destruction.pcm",
         "music/battle/burn_my_dread_last_battle.pcm",
         "music/battle/mass_destruction_reincarnation.pcm",
         "music/battle/light_the_fire_up_kagejikan.pcm",
     };
-    if (saveData.femcMode)
-    {
-        battleTracks.push_back("music/battle/danger_zone.pcm");
-        battleTracks.push_back("music/battle/wiping_all_out.pcm");
-    }
-    else
-    {
-        battleTracks.push_back("music/battle/light_the_fire_up_mayonaka.pcm");
-    }
-    int trackIndex = (int)(randf() * battleTracks.size());
-    musicCtrl.init((fatBasePath + battleTracks[trackIndex]).c_str(), 0.0f, -1.0f);
+    static const char* femcTracks[] = {
+        "music/battle/danger_zone.pcm",
+        "music/battle/wiping_all_out.pcm",
+    };
+    static const char* mcTracks[] = {
+        "music/battle/light_the_fire_up_mayonaka.pcm",
+    };
+
+    static const int gnCount   = sizeof(gnTracks)   / sizeof(gnTracks[0]);
+    static const int femcCount = sizeof(femcTracks) / sizeof(femcTracks[0]);
+    static const int mcCount   = sizeof(mcTracks)   / sizeof(mcTracks[0]);
+
+    const char** routeTracks = saveData.femcMode ? femcTracks : mcTracks;
+    int routeCount           = saveData.femcMode ? femcCount  : mcCount;
+    int totalCount           = gnCount + routeCount;
+
+    int trackIndex = (int)(randf() * totalCount);
+    const char* selectedTrack = (trackIndex < gnCount)
+        ? gnTracks[trackIndex]
+        : routeTracks[trackIndex - gnCount];
+
+    musicCtrl.init((fatBasePath + selectedTrack).c_str(), 0.0f, -1.0f);
 
     player = new PartyMember(&characterProfiles->player);
     yukari = new PartyMember(&characterProfiles->yukari);
