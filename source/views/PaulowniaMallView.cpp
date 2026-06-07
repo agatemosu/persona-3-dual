@@ -19,7 +19,7 @@ static const unsigned int* loadEnvironmentBitmap(const std::string& path, Graphi
 
 // TODO: dont forget to clear in future
 PaulowniaMallView::PaulowniaMallView()
-    : battleParticipants(new std::vector<BattleParticipant*>({&merciless_Maya, &cowardly_Maya})),
+    : battleParticipants(new std::vector<BattleParticipant*>({&mercilessMaya, &cowardlyMaya})),
       battleController(battleParticipants, &characterProfiles, battleStartCondition)
 {
 }
@@ -200,9 +200,6 @@ void PaulowniaMallView::init()
 
     // setup battle menu
     battleMenuCmpt.init(-1, &isBattleMenuActive);
-
-    // setup character profiles
-    characterProfiles.InitializeProfiles();
 }
 
 ViewState PaulowniaMallView::update()
