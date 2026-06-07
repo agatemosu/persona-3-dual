@@ -8,8 +8,6 @@ bl_info = {
     "blender": (3, 0, 0),
     "location": "View3D > Sidebar > NDS Engine",
     "description": "Safely optimizes 3D environments for NDS hardware while bypassing flat 2D planes.",
-    "warning": "",
-    "doc_url": "",
     "category": "Object",
 }
 
@@ -143,7 +141,7 @@ class NDS_OT_Optimize(bpy.types.Operator):
 
 
 class NDS_PT_Panel(bpy.types.Panel):
-    bl_label = "Persona 3 Dual: Environment Tools"
+    bl_label = "NDS Environment Optimizer"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "NDS Engine"
@@ -152,7 +150,7 @@ class NDS_PT_Panel(bpy.types.Panel):
         layout = self.layout
         col = layout.column(align=True)
         col.operator(
-            "object.nds_optimize", text="Optimize Selected Meshes", icon="MOD_DECIM"
+            "object.nds_optimize", text="Optimize Environment", icon="MOD_DECIM"
         )
 
 
