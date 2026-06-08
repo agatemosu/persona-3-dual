@@ -212,8 +212,7 @@ jobs:
           fi
 
       # Cache compiled object files so unchanged source files are not recompiled.
-      # Keyed to the full tree hash so any source change produces a fresh key,
-      # but restore-keys fall back to the most recent build for incremental reuse.
+      # Keyed to a hash of all compiled source files
       - name: Cache build objects
         uses: actions/cache@v5
         with:
