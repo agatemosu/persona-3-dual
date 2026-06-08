@@ -217,7 +217,7 @@ jobs:
         uses: actions/cache@v5
         with:
           path: build/
-          key: build-objects-${{ runner.os }}-${{ github.sha }}
+          key: build-objects-${{ runner.os }}-${{ hashFiles('source/**', 'include/**', 'assets/**', 'Makefile') }}
           restore-keys: |
             build-objects-${{ runner.os }}-
 
