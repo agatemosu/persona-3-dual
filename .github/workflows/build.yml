@@ -340,7 +340,7 @@ jobs:
             echo "## Changes${SINCE_MSG}"
             echo "${CHANGES}"
             echo ""
-            echo "## Release Assets"
+            echo "## Assets"
             echo "| File | Use for |"
             echo "|------|---------|"
             echo "| \`persona-3-dual.nds\` | ROM - required for both emulator and hardware |"
