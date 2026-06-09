@@ -1,6 +1,7 @@
 #include "WeaponDb.h"
 Weapon WeaponDb::shortSword;
 Weapon WeaponDb::imitationKatana;
+Weapon WeaponDb::practiceBow;
 
 void WeaponDb::Initialize()
 {

@@ -75,4 +75,11 @@ float Enemy::calculateBaseDamage(BattleParticipant& defender, Skill& skill)
                  9 * levelDifference -
              10) *
             affinityMtp);
+    else
+        return 0;
+}
+
+float Enemy::getTeamMultiplier()
+{
+    return 0.6f;
 }

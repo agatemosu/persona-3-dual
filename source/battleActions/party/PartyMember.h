@@ -47,6 +47,7 @@ struct PartyMember : BattleParticipant
     }
 
     float calculateBaseDamage(BattleParticipant& defender, Skill& skill) override;
+    float getTeamMultiplier() override;
 
     ~PartyMember()
     {

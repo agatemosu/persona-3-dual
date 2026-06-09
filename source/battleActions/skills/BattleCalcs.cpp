@@ -34,20 +34,8 @@ u32 BattleCalcs::hitrate(BattleParticipant& attacker, BattleParticipant& defende
 
 u32 BattleCalcs::healing(BattleParticipant& user, Skill& skill)
 {
-    float teamMultiplier;
-    BattleStats* battleStats;
-    if (user.participantType == ParticipantType::Party || user.participantType == ParticipantType::Player)
-    {
-        teamMultiplier = 1.0f;
-        PartyMember& partyMember = static_cast<PartyMember&>(user);
-        battleStats = &partyMember.curPersona->battleStats;
-    }
-    else
-    {
-        teamMultiplier = 0.6f;
-        Enemy& enemy = static_cast<Enemy&>(user);
-        battleStats = &enemy.battleStats;
-    }
+    BattleStats* battleStats = user.getBattleStats();
+    float teamMultiplier = user.getTeamMultiplier();
 
     u32 magicBoost = BattleCalcs::getMagicBoostHeal(battleStats->ma);
     u32 base = (u32)floor((skill.movePower + magicBoost) * teamMultiplier);
@@ -124,19 +112,22 @@ float BattleCalcs::getAffinityMtp(BattleStats& defenderStats, Skill& skill)
 {
     u32 affinity = defenderStats.affinities[(u32)skill.element];
 
-    if (affinity == BattleStats::Affinity::Weak)
+    switch (affinity)
+    {
+    case BattleStats::Affinity::Weak:
         return 1.25f;
-    else if (affinity == BattleStats::Affinity::Neutral)
-        return 1.0f;
-    else if (affinity == BattleStats::Affinity::Resist)
+    case BattleStats::Affinity::Resist:
         return 0.5f;
-    else if (affinity == BattleStats::Affinity::Null)
+    case BattleStats::Affinity::Null:
         return 0.0f;
-    else if (affinity == BattleStats::Affinity::Absorb)
+    case BattleStats::Affinity::Absorb:
         return -1.0f;
-    // TODO: add repel logic
-    else if (affinity == BattleStats::Affinity::Repel)
-        return -2.0f;
+    case BattleStats::Affinity::Repel:
+        return -2.0f; // TODO: add repel logic
+    case BattleStats::Affinity::Neutral:
+    default:
+        return 1.0f;
+    }
 }
 
 u32 BattleCalcs::getMagicBoostHeal(u32& magic)
