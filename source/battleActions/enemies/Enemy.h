@@ -24,5 +24,7 @@ struct Enemy : BattleParticipant
         return &battleStats;
     }
 
+    float calculateBaseDamage(BattleParticipant& defender, Skill& skill) override;
+
     virtual ~Enemy() = default;
 };

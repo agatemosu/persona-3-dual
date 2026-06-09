@@ -2,33 +2,9 @@
 #include "../enemies/Enemy.h"
 #include "../party/PartyMember.h"
 
-u32 BattleCalcs::Atk = 0;
-float BattleCalcs::affinityMtp = 0;
-s32 BattleCalcs::diff = 0;
-float BattleCalcs::levelDifference = 0;
-
 u32 BattleCalcs::attack(BattleParticipant& attacker, BattleParticipant& defender, Skill& skill)
 {
-    BattleStats& attackerStats = *attacker.getBattleStats();
-    BattleStats& defenderStats = *defender.getBattleStats();
-    BattleCalcs::damageSetup(attackerStats, defenderStats, attacker.lv, defender.lv, skill);
-    float base = 0;
-    if (attacker.participantType == ParticipantType::Enemy)
-    {
-        if (skill.skillType == SkillType::RegularAttack)
-            base = (sqrt((float)(skill.movePower * 6 * Atk) / (8 * defenderStats.en + defender.armour->defense)) * 9 *
-                    levelDifference) *
-                   affinityMtp;
-        else if (skill.skillType == SkillType::Attack || skill.skillType == SkillType::MultiAttack)
-            base = ((sqrt((float)(skill.movePower * 6 * Atk) / (8 * defenderStats.en + defender.armour->defense)) * 9 *
-                         levelDifference -
-                     10) *
-                    affinityMtp);
-    }
-    else
-    {
-        base = floor(sqrt((float)(skill.movePower * 15 * Atk) / defenderStats.en) * 2 * levelDifference * affinityMtp);
-    }
+    float base;
     float range = 95 + (u32)(rand() % 11);
     return std::clamp((u32)trunc(base * range / 100.0f), (u32)1, (u32)99999);
 }

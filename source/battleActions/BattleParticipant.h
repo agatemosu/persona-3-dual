@@ -28,4 +28,5 @@ struct BattleParticipant
     bool knockedDown = false;
 
     virtual BattleStats* getBattleStats() = 0;
+    virtual float calculateBaseDamage(BattleParticipant& defender, Skill& skill) = 0;
 };

@@ -41,6 +41,8 @@ struct PartyMember : BattleParticipant
         return &curPersona->battleStats;
     }
 
+    float calculateBaseDamage(BattleParticipant& defender, Skill& skill) override;
+
     ~PartyMember()
     {
     }
