@@ -4,7 +4,7 @@
 
 u32 BattleCalcs::attack(BattleParticipant& attacker, BattleParticipant& defender, Skill& skill)
 {
-    float base;
+    float base = attacker.calculateBaseDamage(defender, skill);
     float range = 95 + (u32)(rand() % 11);
     return std::clamp((u32)trunc(base * range / 100.0f), (u32)1, (u32)99999);
 }
