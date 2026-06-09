@@ -23,12 +23,9 @@ struct BattleCalcs
   private:
     //Attack
     static const float levelMultipliers[24];
-    static u32 Atk;
-    static float affinityMtp;
-    static s32 diff;
-    static float levelDifference;
-    static void damageSetup(
-        BattleStats& attackerStats, BattleStats& defenderStats, u32& attackerLevel, u32& defenderLevel, Skill& skill);
+    static u32 getAtk(BattleStats& attackerStats, Skill& skill);
+    static float getLevelDifference(u32 attackerLevel, u32 defenderLevel);
+    static float getAffinityMtp(BattleStats& battleStats, Skill& skill);
 
     //Heal
     static const float magicBoostTableHeal[20];

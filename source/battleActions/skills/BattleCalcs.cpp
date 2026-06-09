@@ -26,8 +26,9 @@ u32 BattleCalcs::attack(BattleParticipant& attacker, BattleParticipant& defender
                     affinityMtp);
     }
     else
+    {
         base = floor(sqrt((float)(skill.movePower * 15 * Atk) / defenderStats.en) * 2 * levelDifference * affinityMtp);
-
+    }
     float range = 95 + (u32)(rand() % 11);
     return std::clamp((u32)trunc(base * range / 100.0f), (u32)1, (u32)99999);
 }
@@ -96,40 +97,6 @@ u32 CalcHpDif::calculateDamageAllOutAttack(BattleStats* attackerStats,
 
 */
 
-void BattleCalcs::damageSetup(
-    BattleStats& attackerStats, BattleStats& defenderStats, u32& attackerLevel, u32& defenderLevel, Skill& skill)
-{
-    if (skill.skillRace == SkillRace::phys)
-        Atk = attackerStats.st;
-    else
-        Atk = attackerStats.ma;
-
-    // TODO: std clamp
-    diff = attackerLevel - defenderLevel;
-    if (diff < -13)
-        diff = -13;
-    else if (diff > 10)
-        diff = 10;
-
-    levelDifference = levelMultipliers[diff + 13]; // offset so -13 is 0
-
-    u32 affinity = defenderStats.affinities[(u32)skill.element];
-
-    if (affinity == BattleStats::Affinity::Weak)
-        affinityMtp = 1.25f;
-    else if (affinity == BattleStats::Affinity::Neutral)
-        affinityMtp = 1.0f;
-    else if (affinity == BattleStats::Affinity::Resist)
-        affinityMtp = 0.5f;
-    else if (affinity == BattleStats::Affinity::Null)
-        affinityMtp = 0.0f;
-    else if (affinity == BattleStats::Affinity::Absorb)
-        affinityMtp = -1.0f;
-    // TODO: add repel logic
-    else if (affinity == BattleStats::Affinity::Repel)
-        affinityMtp = -2.0f;
-}
-
 const float BattleCalcs::levelMultipliers[24] = {0.5f,  0.51f, 0.53f, 0.59f, 0.66f, 0.75f, 0.84f, 0.91f,
                                                  0.97f, 0.99f, 1.0f,  1.0f,  1.0f,  1.0f,  1.01f, 1.03f,
                                                  1.09f, 1.16f, 1.25f, 1.34f, 1.41f, 1.47f, 1.49f, 1.5f};
@@ -156,6 +123,45 @@ const float BattleCalcs::magicBoostTableHeal[20] = {
     125, // 91-95
     130  // 96-99
 };
+
+u32 BattleCalcs::getAtk(BattleStats& attackerStats, Skill& skill)
+{
+    if (skill.skillRace == SkillRace::phys)
+    {
+        return attackerStats.st;
+    }
+    else
+    {
+        return attackerStats.ma;
+    }
+}
+
+float BattleCalcs::getLevelDifference(u32 attackerLevel, u32 defenderLevel)
+{
+    s32 diff = attackerLevel - defenderLevel;
+    diff = std::clamp(diff, (s32)-13, (s32)10);
+
+    return levelMultipliers[diff + 13]; // offset so -13 is 0
+}
+
+float BattleCalcs::getAffinityMtp(BattleStats& defenderStats, Skill& skill)
+{
+    u32 affinity = defenderStats.affinities[(u32)skill.element];
+
+    if (affinity == BattleStats::Affinity::Weak)
+        return 1.25f;
+    else if (affinity == BattleStats::Affinity::Neutral)
+        return 1.0f;
+    else if (affinity == BattleStats::Affinity::Resist)
+        return 0.5f;
+    else if (affinity == BattleStats::Affinity::Null)
+        return 0.0f;
+    else if (affinity == BattleStats::Affinity::Absorb)
+        return -1.0f;
+    // TODO: add repel logic
+    else if (affinity == BattleStats::Affinity::Repel)
+        return -2.0f;
+}
 
 u32 BattleCalcs::getMagicBoostHeal(u32& magic)
 {
