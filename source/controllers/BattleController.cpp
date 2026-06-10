@@ -371,10 +371,7 @@ void BattleController::calculateTurnOrder()
 
     for (BattleParticipant* battleParticipant : *battleParticipants)
     {
-        battleParticipant->currentTurnOrderAgility =
-            battleParticipant->participantType == ParticipantType::Enemy
-                ? static_cast<Enemy*>(battleParticipant)->battleStats.ag
-                : static_cast<PartyMember*>(battleParticipant)->curPersona->battleStats.ag * boost;
+        battleParticipant->setCurrentTurnOrderAgility(boost);
     }
 
     if (battleStartCondition == BattleStartCondition::PartyAdvantage)

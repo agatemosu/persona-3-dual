@@ -15,3 +15,8 @@ float PartyMember::getTeamMultiplier()
 {
     return 1.0f;
 }
+
+void PartyMember::setCurrentTurnOrderAgility(float boost)
+{
+    currentTurnOrderAgility = curPersona->battleStats.ag + boost;
+}

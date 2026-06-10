@@ -83,3 +83,8 @@ float Enemy::getTeamMultiplier()
 {
     return 0.6f;
 }
+
+void Enemy::setCurrentTurnOrderAgility(float boost)
+{
+    currentTurnOrderAgility = battleStats.ag;
+}
