@@ -72,6 +72,8 @@ Use the following format when creating issues:
 ## Dev Team Setup
 https://github.com/p3d-project/persona-3-dual
 
+As an overall rule, the team avoids using external libraries as much as possible. We want to build everything ourselves.
+
 The team uses **Docker** as the official development environment. It wraps the entire toolchain into a single image so everyone gets an identical build environment regardless of OS.
 
 ### Step 1 — Install Docker
