@@ -1,4 +1,4 @@
-# P3D Project — Onboarding Guide
+# Onboarding Guide
 
 Welcome to the Persona 3 Dual team! This guide will get you set up and oriented regardless of your role.
 
@@ -14,15 +14,20 @@ We use GitHub to track tasks and coordinate across all teams. **Everyone on the 
    - Your team (Dev, Art, Website, Video)
    - Your GitHub username
    - Your current task (if any)
-3. You'll receive an email invitation to join the org — accept it.
+3. You'll receive an email invitation to join the org - accept it.
+
 > **Example message:**
-> `Hey! I just joined the Art team, and need access to the GitHub Organizaion. My GitHub username is [username]. I'm currently working on [task].`
+> `Hey! I just joined the Art team, and need access to the GitHub Organization. My GitHub username is [username]. I'm currently working on [task].`
+
+Once accepted, you'll have access to the [GitHub Organization](https://github.com/p3d-project) and [Project Board](https://github.com/orgs/p3d-project/projects/1).
 
 ---
 
 ## 2. Using the Project Board
 
 The project board is how we track progress across all teams.
+
+![Project board overview](/docs/imgs/onboarding/project-board-overview.png)
 
 **Columns:**
 | Column | Meaning |
@@ -40,6 +45,9 @@ The project board is how we track progress across all teams.
 - **Assign yourself** to any issue you're working on.
 - **Comment regularly** on your issue to keep the team updated on progress.
 - You can filter by label (e.g. `graphics`, `bug`, `development`, `polish`) or milestone.
+
+![Filtering by label](/docs/imgs/onboarding/project-board-filter.png)
+
 ### Creating a New Issue
 
 Use the following format when creating issues:
@@ -56,6 +64,8 @@ Use the following format when creating issues:
 ## Examples / References
 [Screenshots, mockups, links, or other reference material.]
 ```
+
+![Example issue](/docs/imgs/onboarding/issue-example.png)
 
 ---
 
@@ -82,9 +92,11 @@ git clone https://github.com/p3d-project/persona-3-dual.git
 cd persona-3-dual
 ```
 
-### Step 3 — Set Up Code Formatting Hooks
+### Step 3 — Set Up Code Formatting
 
-Install [pre-commit](https://pre-commit.com):
+This project uses [pre-commit](https://pre-commit.com) to auto-format all source files before every commit. It handles C/C++ (clang-format), Python (black + ruff), and web files (prettier).
+
+Install pre-commit:
 
 ```bash
 # macOS
@@ -94,14 +106,24 @@ brew install pre-commit
 pip install pre-commit
 ```
 
-Then register the hooks:
+Register the hooks:
 ```bash
 pre-commit install
 ```
 
-Hooks run automatically on every `git commit` and keep C/C++, Python, and web files consistently formatted. See [CONTRIBUTING.md](CONTRIBUTING.md) for details.
+That's it. Hooks run automatically every time you run `git commit`.
 
-> **Windows note:** prettier (used for web files) requires Node.js. pre-commit will download a local copy automatically on first run.
+**What happens during a commit:**
+
+The hooks reformat your staged files in-place. If any file is changed, the commit is **aborted** so you can review the diff. Just re-stage and commit again.
+
+**Run hooks manually (e.g. before opening a PR):**
+
+```bash
+pre-commit run --all-files
+```
+
+> **Windows note:** prettier requires Node.js. pre-commit downloads a local copy automatically the first time you run `pre-commit install` or `pre-commit run`.
 
 ### Step 4 — Build the Docker Image
 
@@ -191,9 +213,10 @@ npm run build
 
 ### Workflow
 
-- **Upload all completed assets and their editable source files to [Google Drive](#).**
+- **Upload all completed assets and their editable source files to [Google Drive](https://drive.google.com/drive/folders/1MS2eOnHn5RiMcLRfc8K1s2ZR8FcY3tgq?usp=sharing).**
 - Track your work on the project board. Move issues through the columns as you progress.
 - When uploading assets and closing an issue, leave a comment on the related issue with a link to the Drive folder, and upload viewable images to the issue.
+
 ---
 
 ## 6. Video Team Setup
@@ -202,10 +225,12 @@ The video team produces **promo videos** and **devlog videos**, paired with each
 
 ### Tools
 - TBD
+
 ### Workflow
 - Each milestone gets a promo video and an accompanying devlog.
 - Coordinate with other teams to gather footage, screenshots, and updates before each milestone.
-- **Upload all completed assets and their editable source files to [Google Drive](#)** and link them in the relevant issue.
+- **Upload all completed assets and their editable source files to [Google Drive](https://drive.google.com/drive/folders/1MS2eOnHn5RiMcLRfc8K1s2ZR8FcY3tgq?usp=sharing)** and link them in the relevant issue.
+
 ---
 
 *Questions? Reach out on Discord.*
