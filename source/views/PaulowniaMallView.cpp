@@ -102,7 +102,7 @@ void PaulowniaMallView::init()
                                          height,
                                          characterTranslate,
                                          characterFacingAngle,
-                                         false);
+                                         true);
 
     // setup music
     setMusic();
