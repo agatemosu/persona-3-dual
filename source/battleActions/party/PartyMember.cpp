@@ -1,6 +1,28 @@
 #include "PartyMember.h"
 #include "../skills/BattleCalcs.h"
 
+PartyMember::PartyMember(CharacterProfile* iCharacterProfile) : characterProfile(iCharacterProfile)
+
+{
+    name = characterProfile->name;
+    maxHp = characterProfile->maxHp;
+    hp = characterProfile->hp;
+    maxSp = characterProfile->maxSp;
+    sp = characterProfile->sp;
+    lv = characterProfile->lv;
+
+    baseAttackAction = characterProfile->baseAttackAction;
+    participantType = characterProfile->participantType;
+
+    armourType = &characterProfile->armourType;
+    armour = &characterProfile->armour;
+    shoe = &characterProfile->shoe;
+    weaponType = characterProfile->weaponType;
+    weapon = characterProfile->weapon;
+    personas = characterProfile->personas;
+    curPersona = characterProfile->curPersona;
+}
+
 float PartyMember::calculateBaseDamage(BattleParticipant& defender, Skill& skill)
 {
     u32 atk = BattleCalcs::getAtk(curPersona->battleStats, skill);
@@ -18,5 +40,10 @@ float PartyMember::getTeamMultiplier()
 
 void PartyMember::setCurrentTurnOrderAgility(float boost)
 {
-    currentTurnOrderAgility = curPersona->battleStats.ag + boost;
+    currentTurnOrderAgility = curPersona->battleStats.ag * boost;
+}
+
+bool PartyMember::actorCanUse(ActionBase* action)
+{
+    return action->possibleUsers == ParticipantType::Party;
 }

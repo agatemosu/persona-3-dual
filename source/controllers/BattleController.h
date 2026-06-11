@@ -17,6 +17,7 @@
 #include "./battleActions/enemies/Enemy.h"
 #include "./battleActions/party/CharacterProfileDb.h"
 #include "./battleActions/party/PartyMember.h"
+#include "./battleActions/party/Player.h"
 
 enum class BattlePhase
 {
@@ -71,7 +72,6 @@ class BattleController
     PartyMember* yukari = nullptr;
     PartyMember* junpei = nullptr;
 
-    bool actorCanUse(PartyMember* actor, u32 idx);
     void applyResult(const BattleResult& r, BattleParticipant* target = nullptr);
     void advanceTurn();
     void setNextPhase(BattlePhase nextPhase);

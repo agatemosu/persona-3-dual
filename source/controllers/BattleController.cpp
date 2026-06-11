@@ -20,7 +20,7 @@ void BattleController::execute()
         fatBasePath + "music/battle/" + (saveData.femcMode ? "wiping_all_out.pcm" : "mass_destruction.pcm");
     musicCtrl.init(path.c_str(), 0.0f, -1.0f);
 
-    player = new PartyMember(&characterProfiles->player);
+    player = new Player(&characterProfiles->player);
     yukari = new PartyMember(&characterProfiles->yukari);
     junpei = new PartyMember(&characterProfiles->junpei);
 
@@ -64,7 +64,7 @@ void BattleController::update(u32 keys)
         actionIndex = -1;
         actionIndex = (int)battleMenuCmpt.update(keys);
 
-        if (((int)actionIndex != -1) && (keys & KEY_A) && actorCanUse(actor, actionIndex))
+        if (((int)actionIndex != -1) && (keys & KEY_A) && actor->actorCanUse(actions[actionIndex]))
         {
             consoleClear();
             if (actionIndex == ACTION_ATTACK)
@@ -262,13 +262,6 @@ void BattleController::exit()
     musicCtrl.pause();
     active = false;
     phase = BattlePhase::Done;
-}
-
-bool BattleController::actorCanUse(PartyMember* actor, u32 actionIndex)
-{
-    if (actor->participantType == ParticipantType::Player)
-        return true;
-    return actions[actionIndex]->possibleUsers == ParticipantType::Party;
 }
 
 void BattleController::applyResult(const BattleResult& battleResult, BattleParticipant* target)
