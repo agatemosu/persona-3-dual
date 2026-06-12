@@ -84,6 +84,11 @@ float Enemy::getTeamMultiplier()
     return 0.6f;
 }
 
+BattlePhase Enemy::getInitalTurnPhase()
+{
+    return BattlePhase::EnemyTurn;
+}
+
 void Enemy::setCurrentTurnOrderAgility(float boost)
 {
     currentTurnOrderAgility = battleStats.ag;

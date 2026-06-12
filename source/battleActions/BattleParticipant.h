@@ -1,9 +1,11 @@
 #pragma once
+#include "BattlePhase.h"
 #include "BattleStats.h"
 #include "ParticipantType.h"
 #include "armours/Armour.h"
 #include "shoes/Shoe.h"
 #include "skills/Skill.h"
+
 #include <nds.h>
 #include <vector>
 
@@ -31,4 +33,5 @@ struct BattleParticipant
     virtual float calculateBaseDamage(BattleParticipant& defender, Skill& skill) = 0;
     virtual float getTeamMultiplier() = 0;
     virtual void setCurrentTurnOrderAgility(float boost) = 0;
+    virtual BattlePhase getInitalTurnPhase() = 0;
 };

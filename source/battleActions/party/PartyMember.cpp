@@ -43,6 +43,11 @@ void PartyMember::setCurrentTurnOrderAgility(float boost)
     currentTurnOrderAgility = curPersona->battleStats.ag * boost;
 }
 
+BattlePhase PartyMember::getInitalTurnPhase()
+{
+    return BattlePhase::ChooseAction;
+}
+
 bool PartyMember::actorCanUse(ActionBase* action)
 {
     return action->possibleUsers == ParticipantType::Party;

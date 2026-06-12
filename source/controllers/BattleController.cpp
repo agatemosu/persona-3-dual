@@ -310,9 +310,7 @@ void BattleController::advanceTurn()
     if (currentParticipantTurn->oneMore)
     {
         currentParticipantTurn->oneMore = false;
-        BattlePhase nextPhase = (currentParticipantTurn->participantType == ParticipantType::Enemy)
-                                    ? BattlePhase::EnemyTurn
-                                    : BattlePhase::ChooseAction;
+        BattlePhase nextPhase = currentParticipantTurn->getInitalTurnPhase();
 
         setNextPhase(nextPhase);
         return;
@@ -327,17 +325,9 @@ void BattleController::advanceTurn()
     currentParticipantIndex = next;
     turnsTaken++;
     currentParticipantTurn = battleParticipants->at(next);
-    BattlePhase nextPhase;
-    if (currentParticipantTurn->participantType == ParticipantType::Enemy)
-    {
-        actionIndex = -1;
-        nextPhase = BattlePhase::EnemyTurn;
-    }
-    else
-    {
-        actionIndex = -1;
-        nextPhase = BattlePhase::ChooseAction;
-    }
+
+    actionIndex = -1;
+    BattlePhase nextPhase = currentParticipantTurn->getInitalTurnPhase();
 
     setNextPhase(nextPhase);
 }

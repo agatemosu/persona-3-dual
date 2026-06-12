@@ -26,6 +26,7 @@ struct Enemy : BattleParticipant
 
     float calculateBaseDamage(BattleParticipant& defender, Skill& skill) override;
     float getTeamMultiplier() override;
+    BattlePhase getInitalTurnPhase() override;
     void setCurrentTurnOrderAgility(float boost);
 
     virtual ~Enemy() = default;

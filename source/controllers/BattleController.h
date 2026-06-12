@@ -12,23 +12,13 @@
 #include "./battleActions/actions/SwitchPersona.h"
 
 #include "./battleActions/BattleParticipant.h"
+#include "./battleActions/BattlePhase.h"
 #include "./battleActions/BattleResult.h"
 #include "./battleActions/BattleStartCondition.h"
 #include "./battleActions/enemies/Enemy.h"
 #include "./battleActions/party/CharacterProfileDb.h"
 #include "./battleActions/party/PartyMember.h"
 #include "./battleActions/party/Player.h"
-
-enum class BattlePhase
-{
-    ChooseAction,
-    ChooseSkill,
-    ChoosePersona,
-    ChooseTarget,
-    ShowAlert,
-    EnemyTurn,
-    Done
-};
 
 class BattleController
 {
