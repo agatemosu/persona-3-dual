@@ -79,6 +79,11 @@ class BattleController
     void handleDeadParticipants();
     bool isSingleTarget(SkillType type);
 
+    static bool getParticipantByHigherAgility(BattleParticipant* a, BattleParticipant* b)
+    {
+        return a->currentTurnOrderAgility > b->currentTurnOrderAgility;
+    };
+
   public:
     bool isActive() const
     {

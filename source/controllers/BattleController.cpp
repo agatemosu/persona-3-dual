@@ -367,46 +367,41 @@ void BattleController::calculateTurnOrder()
         battleParticipant->setCurrentTurnOrderAgility(boost);
     }
 
+    std::sort(partyMembers.begin(), partyMembers.end(), getParticipantByHigherAgility);
+    std::sort(enemies.begin(), enemies.end(), getParticipantByHigherAgility);
+
+    battleParticipants->clear();
+
     if (battleStartCondition == BattleStartCondition::PartyAdvantage)
     {
-        std::sort(battleParticipants->begin(),
-                  battleParticipants->end(),
-                  [](BattleParticipant* a, BattleParticipant* b)
-                  {
-                      bool aIsParty =
-                          a->participantType == ParticipantType::Party || a->participantType == ParticipantType::Player;
-                      bool bIsParty =
-                          b->participantType == ParticipantType::Party || b->participantType == ParticipantType::Player;
-
-                      //prioritize by type
-                      if (aIsParty != bIsParty)
-                          return aIsParty > bIsParty;
-                      //decided by agility when same group
-                      return a->currentTurnOrderAgility > b->currentTurnOrderAgility;
-                  });
+        for (auto p : partyMembers)
+        {
+            battleParticipants->push_back(p);
+        }
+        for (auto e : enemies)
+        {
+            battleParticipants->push_back(e);
+        }
     }
     else if (battleStartCondition == BattleStartCondition::EnemyAdvantage)
     {
-        std::sort(battleParticipants->begin(),
-                  battleParticipants->end(),
-                  [](BattleParticipant* a, BattleParticipant* b)
-                  {
-                      bool aIsEnemy = a->participantType == ParticipantType::Enemy;
-                      bool bIsEnemy = b->participantType == ParticipantType::Enemy;
-
-                      //prioritize by type
-                      if (aIsEnemy != bIsEnemy)
-                          return aIsEnemy > bIsEnemy;
-                      //decided by agility when same group
-                      return a->currentTurnOrderAgility > b->currentTurnOrderAgility;
-                  });
+        for (auto e : enemies)
+        {
+            battleParticipants->push_back(e);
+        }
+        for (auto p : partyMembers)
+        {
+            battleParticipants->push_back(p);
+        }
     }
     else
     {
-        std::sort(battleParticipants->begin(),
-                  battleParticipants->end(),
-                  [](BattleParticipant* a, BattleParticipant* b)
-                  { return a->currentTurnOrderAgility > b->currentTurnOrderAgility; });
+        std::merge(partyMembers.begin(),
+                   partyMembers.end(),
+                   enemies.begin(),
+                   enemies.end(),
+                   std::back_inserter(*battleParticipants),
+                   getParticipantByHigherAgility);
     }
 }
 
@@ -448,17 +443,15 @@ void BattleController::handleDeadParticipants()
 
 bool BattleController::isSingleTarget(SkillType type)
 {
+    switch (type)
     {
-        switch (type)
-        {
-        case SkillType::RegularAttack:
-        case SkillType::Attack:
-        case SkillType::Heal:
-        case SkillType::Buff:
-        case SkillType::Debuff:
-            return true;
-        default:
-            return false;
-        }
+    case SkillType::RegularAttack:
+    case SkillType::Attack:
+    case SkillType::Heal:
+    case SkillType::Buff:
+    case SkillType::Debuff:
+        return true;
+    default:
+        return false;
     }
 }
