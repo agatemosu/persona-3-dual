@@ -204,7 +204,7 @@ void DialogueComponent::drawHUD(int* bgId)
            i,       // oam entry to set (id)
            sprites[i].x,
            sprites[i].y,            // position
-           0,                       // priority
+           1,                       // priority
            sprites[i].paletteAlpha, // palette for 16 color sprite or alpha for bmp sprite
            sprites[i].size,
            sprites[i].format,

@@ -1,4 +1,5 @@
 #pragma once
+#include "components/DialogueComponent.h"
 #include "core/structs.h"
 #include <nds.h>
 #include <string>
@@ -21,6 +22,11 @@ class DialogueController
         bgLoader = loader;
     }
 
+    void setUISlot(int bgId)
+    {
+        bgDialogueUIId = bgId;
+    }
+
   private:
     void advanceTo(Dialogue* next);
     void renderAnimFrame();
@@ -37,6 +43,7 @@ class DialogueController
     int loadedImageId = -1;
 
     void (*bgLoader)(int bgIndex) = nullptr;
+    int bgDialogueUIId;
 
     int animIndex = 0;
     u32 prevKeys = 0;

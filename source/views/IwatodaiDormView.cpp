@@ -14,11 +14,6 @@
 // maps
 #include "maps/iwatodai_dorm_floor_1.h"
 
-// debug
-#include "components/DialogueComponent.h"
-
-DialogueComponent dialogueCmpt;
-
 const unsigned int* loadEnvironmentBitmap(const std::string& path, GraphicAsset& asset)
 {
     asset = graphicsCtrl.loadGrit(path);
@@ -70,10 +65,10 @@ void IwatodaiDormView::init()
     glColor3b(255, 255, 255); // keep white so texture colors aren't tinted
 
     // setup sub screen
-    bgSharedSlot = bgInitSub(0, BgType_Text8bpp, BgSize_T_256x256, 0, 1);
-    bgMenuHUD = bgInitSub(2, BgType_Text8bpp, BgSize_T_256x256, 10, 3);
-    dmaFillHalfWords(0, bgGetMapPtr(bgSharedSlot), 2048);
-    dmaFillHalfWords(0, bgGetMapPtr(bgMenuHUD), 2048);
+    bgSharedMain = bgInitSub(0, BgType_Text8bpp, BgSize_T_256x256, 0, 1);
+    bgSharedSub = bgInitSub(2, BgType_Text8bpp, BgSize_T_256x256, 10, 3);
+    dmaFillHalfWords(0, bgGetMapPtr(bgSharedMain), 2048);
+    dmaFillHalfWords(0, bgGetMapPtr(bgSharedSub), 2048);
 
     // setup console
     consoleInit(&console, 1, BgType_Text4bpp, BgSize_T_256x256, 4, 5, false, true);
@@ -81,13 +76,13 @@ void IwatodaiDormView::init()
 
     // adjust sub screen image and console to sit correctly on each other
     bgSetPriority(console.bgId, 0);
-    bgSetPriority(bgSharedSlot, 1);
-    bgSetPriority(bgMenuHUD, 2);
+    bgSetPriority(bgSharedMain, 1);
+    bgSetPriority(bgSharedSub, 2);
     bgUpdate();
 
     // setup menuHUD
     // uses VRAM bank I for sprite extended palettes, VRAM H for bg palettes
-    dialogueCmpt.loadHUD();
+    menuHUDCmpt.loadHUD();
 
     // setup player controller
     // TODO: add mapping
@@ -244,11 +239,10 @@ void IwatodaiDormView::init()
     totalPolyCount = iwatodaiDormFloor1Env.getPolyCount();
 
     // setup dialogue
-    demo_dialogue_bg_slot = bgSharedSlot;
+    demo_dialogue_bg_slot = bgSharedMain;
 
     // setup pause menu
-    // use the same shared background slot as the demo dialogue
-    pauseMenuCmpt.init(bgSharedSlot, &isPauseMenuActive);
+    pauseMenuCmpt.init(bgSharedMain, &isPauseMenuActive);
 
     // setup battle menu
     battleMenuCmpt.init(-1, &isBattleMenuActive);
@@ -282,7 +276,7 @@ ViewState IwatodaiDormView::update()
     if (pressed & KEY_TOUCH)
     {
         touchRead(&touch);
-        if (dialogueCmpt.isMenuTouchArea(&touch))
+        if (menuHUDCmpt.isMenuTouchArea(&touch))
         {
             isPauseMenuActive = true;
         }
@@ -291,13 +285,13 @@ ViewState IwatodaiDormView::update()
     // draw menuHUD
     if (!dialogueCtrl.isActive() && !battleController.isActive() && !isPauseMenuActive)
     {
-        dialogueCmpt.drawHUD(&bgMenuHUD);
-        bgShow(bgMenuHUD);
+        menuHUDCmpt.drawHUD(&bgSharedSub);
+        bgShow(bgSharedSub);
     }
     // hide menuHUD if dialogue, battle, or pauseMenu is active
     else
     {
-        // bgHide(bgMenuHUD);
+        // bgHide(bgSharedSub);
         // oamClear(&oamSub, 0, 0);
     }
 
@@ -327,8 +321,17 @@ ViewState IwatodaiDormView::update()
                 prevBattleState = true;
             }
 
-            bgHide(bgSharedSlot);
+            bgHide(bgSharedMain);
             consoleClear();
+
+            if (pressed & KEY_A)
+            {
+                // set dialogue
+                demo_yukari_kenji_argument_load();
+                dialogueCtrl.setLoader(demo_yukari_kenji_argument_load_bg);
+                dialogueCtrl.setUISlot(bgSharedSub);
+                dialogueCtrl.start(demo_yukari_kenji_argument_first());
+            }
 
             // trigger dialogue from interaction
             if (playerCtrl->isTileAt() == TileType::SCENE_1)
@@ -408,7 +411,7 @@ void IwatodaiDormView::cleanup()
     // reset textures
     glDeleteTextures(1, &characterTextureId);
     // reset shared bg slot
-    dmaFillHalfWords(0, bgGetMapPtr(bgSharedSlot), 2048);
+    dmaFillHalfWords(0, bgGetMapPtr(bgSharedMain), 2048);
 
     // cleanup controllers
     delete playerCtrl;

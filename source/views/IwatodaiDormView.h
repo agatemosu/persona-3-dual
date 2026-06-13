@@ -23,7 +23,7 @@ class IwatodaiDormView : public BaseView
     touchPosition touch;
 
     // sub screen
-    int bgMenuHUD;
+    int bgSharedSub;
     PrintConsole console;
 
     // 3D
@@ -63,7 +63,8 @@ class IwatodaiDormView : public BaseView
     const float angle = -1.6;
     const float characterFacingAngle = 180.0f;
     DialogueController dialogueCtrl;
-    int bgSharedSlot;
+
+    int bgSharedMain;
     int totalPolyCount = 0;
     bool isBattleMenuActive = false;
 
