@@ -159,8 +159,8 @@ jobs:
       - name: Validate Output
         run: |
           if [ ! -f persona-3-dual.nds ]; then exit 1; fi
-          LOGO_CRC=$(od -An -tx2 -j 0x15C -N 2 "persona-3-dual.nds" | tr -d ' \n')
-          if [ "${LOGO_CRC,,}" != "cf56" ]; then exit 1; fi
+          LOGO_CRC=$(od -An -tx2 -j 0x15C -N 2 "persona-3-dual.nds" | tr -d ' \n' | tr '[:upper:]' '[:lower:]')
+          if [ "$LOGO_CRC" != "cf56" ]; then exit 1; fi
 
       - name: Draft Release Notes
         if: github.event_name != 'pull_request'
