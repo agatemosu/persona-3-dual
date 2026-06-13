@@ -33,7 +33,7 @@ jobs:
     needs: lint
     runs-on: ubuntu-latest
 
-    # Run all steps directly inside custom compiler environment
+    # Run all steps directly inside custom compiler environment.
     container:
       image: ghcr.io/${{ github.repository }}/p3d-builder:latest
 
@@ -59,13 +59,6 @@ jobs:
         with:
           fetch-depth: 0
           lfs: false # Restored via cache below
-
-      # Silence "permission denied" warnings from Docker actions that try to
-      # read Docker credentials. The file just needs to exist and be valid JSON.
-      - name: Create Docker config
-        run: |
-          mkdir -p /root/.docker
-          echo '{}' > /root/.docker/config.json
 
       # --- 1. LFS cache ---
       # Generate a stable hash of all LFS pointers so the cache key changes
@@ -211,8 +204,7 @@ jobs:
           } > release-notes.md
 
       # Single release step: creates the tag, publishes with formatted notes,
-      # and attaches all build artifacts in one action. Replaces the previous
-      # release-drafter + softprops split that produced two separate releases.
+      # and attaches all build artifacts in one action.
       - name: Create release
         if: github.event_name != 'pull_request'
         uses: softprops/action-gh-release@v2
