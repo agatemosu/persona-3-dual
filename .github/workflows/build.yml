@@ -92,6 +92,7 @@ jobs:
         with:
           key: ${{ runner.os }}-ccache-nds
           max-size: '500M'
+          install: false  # Already installed in the Docker image
 
       # --- 3. Build & compile ---
       - name: Generate version tag
