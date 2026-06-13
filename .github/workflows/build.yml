@@ -18,7 +18,7 @@ permissions:
   pull-requests: read
 
 jobs:
-  # 1. FAST-FAIL LINTING (Runs on host runner for maximum speed)
+  # 1. Linting
   lint:
     runs-on: ubuntu-latest
     steps:
@@ -28,16 +28,16 @@ jobs:
           python-version: '3.x'
       - uses: pre-commit/action@v3.0.1
 
-  # 2. CONTAINERIZED BUILD
+  # 2. Containerized build
   build:
     needs: lint
     runs-on: ubuntu-latest
 
-    # Run all steps directly inside your custom compiler environment!
+    # Run all steps directly inside custom compiler environment
     container:
       image: ghcr.io/${{ github.repository }}/p3d-builder:latest
 
-    # Crucial: Force ccache to write inside the mounted workspace directory
+    # Force ccache to write inside the mounted workspace directory
     env:
       CCACHE_DIR: ${{ github.workspace }}/.ccache
 
@@ -48,7 +48,7 @@ jobs:
           fetch-depth: 0
           lfs: false # Restored via cache below
 
-      # --- 1. LFS CACHE (Stored on host, accessible inside container) ---
+      # --- 1. Lfs cache ---
       - name: Generate LFS cache key
         id: lfs-key
         run: |
@@ -71,7 +71,7 @@ jobs:
         if: steps.cache-lfs.outputs.cache-hit == 'true'
         run: git lfs checkout
 
-      # --- 2. CCACHE INTEGRATION (Mapped to the shared workspace) ---
+      # --- 2. ccache integration ---
       - name: Setup ccache
         uses: hendrikmuhs/ccache-action@v1.2.14
         with:
@@ -79,7 +79,7 @@ jobs:
           max-size: '500M'
           # This action automatically respects the CCACHE_DIR environment variable set above
 
-      # --- 3. BUILD & COMPILE (No toolchain setup steps required!) ---
+      # --- 3. Build & compile ---
       - name: Generate version tag
         id: version
         if: github.event_name != 'pull_request'
@@ -120,7 +120,7 @@ jobs:
           gzip -1 sdcard.img
           zip -r data.zip data/
 
-      # --- 4. VALIDATE AND PUBLISH ---
+      # --- 4. Validate and publish ---
       - name: Validate Output
         run: |
           if [ ! -f persona-3-dual.nds ]; then exit 1; fi
