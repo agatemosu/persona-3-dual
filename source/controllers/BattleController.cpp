@@ -39,19 +39,15 @@ void BattleController::execute()
     calculateTurnOrder();
 
     currentParticipantTurn = battleParticipants->at(0);
-    if (currentParticipantTurn->participantType == ParticipantType::Enemy)
-        phase = BattlePhase::EnemyTurn;
-    else
-    {
-        actionIndex = -1;
-        phase = BattlePhase::ChooseAction;
-    }
+
+    actionIndex = -1;
+    phase = currentParticipantTurn->getInitalTurnPhase();
 }
 
-void BattleController::update(u32 keys)
+BattleResult BattleController::update(u32 keys)
 {
     if (!active)
-        return;
+        return battleResult;
 
     switch (phase)
     {
@@ -75,8 +71,8 @@ void BattleController::update(u32 keys)
             }
             else if (actionIndex == ACTION_GUARD)
             {
-                BattleResult battleResult = guard.resolve(actor, nullptr);
-                applyResult(battleResult);
+                TurnResult turnResult = guard.resolve(actor, nullptr);
+                applyResult(turnResult);
                 advanceTurn();
             }
             else if (actionIndex == ACTION_PERSONA)
@@ -205,15 +201,14 @@ void BattleController::update(u32 keys)
                     }
                 }
                 if (!canHealAnyTarget)
-                    return;
+                    return battleResult;
             }
 
             for (BattleParticipant* target : targets)
             {
-                BattleResult battleResult = (actionIndex == ACTION_ATTACK)
-                                                ? attack.resolve(actor, target)
-                                                : persona.resolve(actor, target, selectedSkill);
-                applyResult(battleResult, target);
+                TurnResult turnResult = (actionIndex == ACTION_ATTACK) ? attack.resolve(actor, target)
+                                                                       : persona.resolve(actor, target, selectedSkill);
+                applyResult(turnResult, target);
             }
 
             advanceTurn();
@@ -245,8 +240,8 @@ void BattleController::update(u32 keys)
         Enemy* enemy = static_cast<Enemy*>(currentParticipantTurn);
         Skill* skill = enemy->pickSkill();
         BattleParticipant* target = enemy->pickTarget(partyMembers);
-        BattleResult battleResult = enemy->resolve(target, skill);
-        applyResult(battleResult, target);
+        TurnResult turnResult = enemy->resolve(target, skill);
+        applyResult(turnResult, target);
         advanceTurn();
         break;
     }
@@ -254,6 +249,8 @@ void BattleController::update(u32 keys)
     case BattlePhase::Done:
         break;
     }
+
+    return battleResult;
 }
 
 void BattleController::exit()
@@ -264,16 +261,16 @@ void BattleController::exit()
     phase = BattlePhase::Done;
 }
 
-void BattleController::applyResult(const BattleResult& battleResult, BattleParticipant* target)
+void BattleController::applyResult(const TurnResult& turnResult, BattleParticipant* target)
 {
-    if (!battleResult.log.empty())
-        pendingAlert += battleResult.log + "\n";
+    if (!turnResult.log.empty())
+        pendingAlert += turnResult.log + "\n";
 
-    if (battleResult.hit && target && battleResult.hpDelta != 0)
+    if (turnResult.hit && target && turnResult.hpDelta != 0)
     {
         s32 hpBefore = target->hp;
-        s32 actuallyHealedHp = battleResult.hpDelta;
-        target->hp += battleResult.hpDelta;
+        s32 actuallyHealedHp = turnResult.hpDelta;
+        target->hp += turnResult.hpDelta;
 
         if (target->hp > target->maxHp)
         {
@@ -282,8 +279,8 @@ void BattleController::applyResult(const BattleResult& battleResult, BattleParti
         }
 
         char buf[48];
-        if (battleResult.hpDelta < 0)
-            std::sprintf(buf, "Damage: %ld\n", (long)-battleResult.hpDelta);
+        if (turnResult.hpDelta < 0)
+            std::sprintf(buf, "Damage: %ld\n", (long)-turnResult.hpDelta);
         else
             std::sprintf(buf, "HP healed: %ld\n", (long)actuallyHealedHp);
         pendingAlert += buf;
@@ -292,7 +289,7 @@ void BattleController::applyResult(const BattleResult& battleResult, BattleParti
         pendingAlert += buf;
     }
 
-    if (battleResult.oneMore)
+    if (turnResult.oneMore)
     {
         pendingAlert += "One More!\n";
         currentParticipantTurn->oneMore = true;
@@ -304,6 +301,8 @@ void BattleController::advanceTurn()
     handleDeadParticipants();
     if (!active)
         return;
+
+    pendingAlert += "Previous attacker: " + currentParticipantTurn->name + "\n";
 
     selectedSkill = nullptr;
 
@@ -406,29 +405,30 @@ void BattleController::handleDeadParticipants()
 
         BattleParticipant* dead = battleParticipants->at(i);
 
-        if (dead->participantType == ParticipantType::Player)
+        dead->onDead(battleResult);
+
+        if (battleResult.playerDied)
         {
             exit();
             return;
         }
+    }
 
-        bool enemiesAlive = false;
-        for (BattleParticipant* enemy : enemies)
+    bool enemiesAlive = false;
+    for (BattleParticipant* enemy : enemies)
+    {
+        if (enemy->hp > 0)
         {
-            if (enemy->hp > 0)
-            {
-                enemiesAlive = true;
-                break;
-            }
-        }
-
-        if (!enemiesAlive)
-        {
-            exit();
+            enemiesAlive = true;
+            break;
         }
     }
 
-    pendingAlert += "Previous attacker: " + currentParticipantTurn->name + "\n";
+    if (!enemiesAlive)
+    {
+        exit();
+        return;
+    }
 }
 
 bool BattleController::isSingleTarget(SkillType type)

@@ -15,6 +15,7 @@
 #include "./battleActions/BattlePhase.h"
 #include "./battleActions/BattleResult.h"
 #include "./battleActions/BattleStartCondition.h"
+#include "./battleActions/TurnResult.h"
 #include "./battleActions/enemies/Enemy.h"
 #include "./battleActions/party/CharacterProfileDb.h"
 #include "./battleActions/party/PartyMember.h"
@@ -32,6 +33,7 @@ class BattleController
     u32 turnsTaken = 0;
 
     BattlePhase phase;
+    BattleResult battleResult;
     BattleParticipant* currentParticipantTurn = nullptr;
     u32 currentParticipantIndex = 0;
 
@@ -62,7 +64,7 @@ class BattleController
     PartyMember* yukari = nullptr;
     PartyMember* junpei = nullptr;
 
-    void applyResult(const BattleResult& r, BattleParticipant* target = nullptr);
+    void applyResult(const TurnResult& r, BattleParticipant* target = nullptr);
     void advanceTurn();
     void setNextPhase(BattlePhase nextPhase);
     void calculateTurnOrder();
@@ -85,7 +87,7 @@ class BattleController
     }
 
     void execute();
-    void update(u32 keys);
+    BattleResult update(u32 keys);
     void exit();
 
     BattleController(std::vector<BattleParticipant*>* iBattleParticipants,

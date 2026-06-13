@@ -48,6 +48,11 @@ BattlePhase PartyMember::getInitalTurnPhase()
     return BattlePhase::ChooseAction;
 }
 
+void PartyMember::onDead(BattleResult& battleResult)
+{
+    //TODO: clear ailments, buffs etc in the future as they get wiped when revived
+}
+
 bool PartyMember::actorCanUse(ActionBase* action)
 {
     return action->possibleUsers == ParticipantType::Party;

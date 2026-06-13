@@ -20,7 +20,7 @@ BattleParticipant* Enemy::pickTarget(std::vector<BattleParticipant*>& partyMembe
     return target;
 }
 
-BattleResult Enemy::resolve(BattleParticipant* target, Skill* skill)
+TurnResult Enemy::resolve(BattleParticipant* target, Skill* skill)
 {
     PartyMember* party = static_cast<PartyMember*>(target);
 
@@ -87,6 +87,10 @@ float Enemy::getTeamMultiplier()
 BattlePhase Enemy::getInitalTurnPhase()
 {
     return BattlePhase::EnemyTurn;
+}
+
+void Enemy::onDead(BattleResult& battleResult)
+{
 }
 
 void Enemy::setCurrentTurnOrderAgility(float boost)
