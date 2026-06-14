@@ -373,14 +373,6 @@ void IntroView::cleanup()
 {
     BaseView::cleanup();
 
-    // reset backgrounds
-    dmaFillHalfWords(0, bgGetMapPtr(bg[0]), 8192); // silhouette
-    dmaFillHalfWords(0, bgGetMapPtr(bg[3]), 8192); // overlay
-    // 256x256 backgrounds use 2048 bytes of map memory
-    // calculated using (256 / 8) * (256 / 8) * 2
-    dmaFillHalfWords(0, bgGetMapPtr(bg[1]), 2048); // room
-    dmaFillHalfWords(0, bgGetMapPtr(bg[2]), 2048); // sky
-
     // clear all sprites from oam
     oamClear(&oamMain, 0, 0);
 
@@ -392,24 +384,4 @@ void IntroView::cleanup()
             oamFreeGfx(&oamMain, logoSprite[i].gfx);
         }
     }
-
-    // disable blending
-    REG_BLDCNT = 0;
-    REG_BLDCNT_SUB = 0;
-    REG_BLDALPHA = 0;
-    REG_BLDALPHA_SUB = 0;
-
-    vramSetBankA(VRAM_A_LCD);
-    vramSetBankB(VRAM_B_LCD);
-    vramSetBankC(VRAM_C_LCD);
-    vramSetBankD(VRAM_D_LCD);
-    vramSetBankE(VRAM_E_LCD);
-    vramSetBankH(VRAM_H_LCD);
-
-    dmaFillHalfWords(0, (u16*)0x06800000, 131072); // VRAM A
-    dmaFillHalfWords(0, (u16*)0x06820000, 131072); // VRAM B
-    dmaFillHalfWords(0, (u16*)0x06840000, 131072); // VRAM C
-    dmaFillHalfWords(0, (u16*)0x06860000, 131072); // VRAM D
-    dmaFillHalfWords(0, (u16*)0x06880000, 65536);  // VRAM E
-    dmaFillHalfWords(0, (u16*)0x06898000, 32768);  // VRAM H
 }

@@ -322,20 +322,7 @@ void IwatodaiStreetsView::cleanup()
 
     iwatodaiStreetsEnv.cleanup();
     uiCtrl.cleanup();
-    dmaFillHalfWords(0, bgGetMapPtr(bgSharedSub1), 2048);
-    dmaFillHalfWords(0, bgGetMapPtr(bgSharedSub2), 2048);
-    dmaFillHalfWords(0, bgGetMapPtr(bgSharedSub3), 2048);
 
     delete playerCtrl;
     playerCtrl = nullptr;
-
-    vramSetBankC(VRAM_C_LCD);
-    vramSetBankD(VRAM_D_LCD);
-    vramSetBankH(VRAM_H_LCD);
-    vramSetBankI(VRAM_I_LCD);
-
-    dmaFillHalfWords(0, (u16*)0x06840000, 131072); // VRAM C
-    dmaFillHalfWords(0, (u16*)0x06860000, 131072); // VRAM D
-    dmaFillHalfWords(0, (u16*)0x06898000, 32768);  // VRAM H
-    dmaFillHalfWords(0, (u16*)0x068A0000, 16384);  // VRAM I
 }
