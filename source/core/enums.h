@@ -292,3 +292,11 @@ enum class CharacterAnimOption
     ANIM_23 = 23,
     ANIM_24 = 24
 };
+
+enum class ViewPhase
+{
+    Battle,
+    Pause,
+    Dialogue,
+    Environment
+};

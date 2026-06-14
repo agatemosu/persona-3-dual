@@ -11,6 +11,7 @@ class UIController
     // }
 
     // TODO: add persistence support
+    // TODO: add a way to pass in -1, indicating reduced # of bg slots
     /*
     * NOTE ON BACKGROUND IDs:
     * The arrays passed into setGraphics() must contain the actual libnds

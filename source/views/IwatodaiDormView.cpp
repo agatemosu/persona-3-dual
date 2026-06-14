@@ -14,15 +14,6 @@
 // maps
 #include "maps/iwatodai_dorm_floor_1.h"
 
-// debug
-#include "components/ui/DialogueScreen.h"
-#include "components/ui/MenuHUDScreen.h"
-#include "controllers/UIController.h"
-
-MenuHUDScreen menuHUDScreen;
-DialogueScreen dialogueScreen;
-UIController uiController;
-
 const unsigned int* loadEnvironmentBitmap(const std::string& path, GraphicAsset& asset)
 {
     asset = graphicsCtrl.loadGrit(path);
@@ -74,6 +65,7 @@ void IwatodaiDormView::init()
     glColor3b(255, 255, 255); // keep white so texture colors aren't tinted
 
     // setup sub screen
+    // https://mtheall.com/vram.html#SUB=1&T0=1&NT0=512&MB0=2&TB0=1&S0=0&T1=3&NT1=128&MB1=5&TB1=0&T2=1&NT2=512&MB2=3&TB2=3&S2=0&T3=1&NT3=512&MB3=4&TB3=5&S3=0
     bgSharedSub1 = bgInitSub(0, BgType_Text8bpp, BgSize_T_256x256, 2, 1);
     bgSharedSub2 = bgInitSub(2, BgType_Text8bpp, BgSize_T_256x256, 3, 3);
     bgSharedSub3 = bgInitSub(3, BgType_Text8bpp, BgSize_T_256x256, 4, 5);
@@ -265,10 +257,10 @@ void IwatodaiDormView::init()
     // initialize sub sprite engine with 1D mapping, 128 byte boundry, external palette support
     oamInit(&oamSub, SpriteMapping_1D_128, true);
 
-    uiController.setGraphics(bgSub, bgMain, &oamSub, nullptr);
-    uiController.registerScreen(&menuHUDScreen, false);
-    uiController.registerScreen(&dialogueScreen, false);
-    uiController.show(&menuHUDScreen, false);
+    uiCtrl.setGraphics(bgSub, bgMain, &oamSub, nullptr);
+    uiCtrl.registerScreen(&menuHUDScreen, false);
+    uiCtrl.registerScreen(&dialogueScreen, false);
+    uiCtrl.show(&menuHUDScreen, false);
 
     // setup view phases
     prevBattleState = false;
@@ -334,8 +326,7 @@ ViewState IwatodaiDormView::update()
         // set
         if (!isActive && !prevDialogueState)
         {
-            // TODO: fix dialogue view. It uses the same background id as the UI render (when it should use an alt id)
-            uiController.show(&dialogueScreen, false);
+            uiCtrl.show(&dialogueScreen, false);
             demo_yukari_kenji_argument_load();
             dialogueCtrl.setLoader(demo_yukari_kenji_argument_load_bg);
             dialogueCtrl.start(demo_yukari_kenji_argument_first());
@@ -356,7 +347,7 @@ ViewState IwatodaiDormView::update()
         if (!prevEnvironmentState)
         {
             // render HUD
-            uiController.show(&menuHUDScreen, false);
+            uiCtrl.show(&menuHUDScreen, false);
             prevEnvironmentState = true;
         }
 
@@ -454,6 +445,12 @@ ViewState IwatodaiDormView::update()
         }
         break;
     }
+
+    default:
+    {
+        phase = ViewPhase::Environment;
+        break;
+    }
     }
 
     battleController.update(pressed);
@@ -471,7 +468,7 @@ void IwatodaiDormView::cleanup()
     // cleanup environment
     iwatodaiDormFloor1Env.cleanup();
     // reset ui
-    uiController.cleanup();
+    uiCtrl.cleanup();
     // reset textures
     glDeleteTextures(1, &characterTextureId);
     // reset shared bg slot

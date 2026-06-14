@@ -11,14 +11,6 @@
 #include "./battleActions/enemies/EnemyDb.h"
 #include "./controllers/BattleController.h" // TODO: move somewhere
 
-enum class ViewPhase
-{
-    Battle,
-    Pause,
-    Dialogue,
-    Environment
-};
-
 class IwatodaiDormView : public BaseView
 {
   public:
