@@ -14,6 +14,13 @@
 // maps
 #include "maps/iwatodai_dorm_floor_1.h"
 
+// debug
+#include "components/ui/MenuHUDScreen.h"
+#include "controllers/UIController.h"
+
+UIController uiController;
+MenuHUDScreen menuHUDScreen;
+
 const unsigned int* loadEnvironmentBitmap(const std::string& path, GraphicAsset& asset)
 {
     asset = graphicsCtrl.loadGrit(path);
@@ -82,7 +89,7 @@ void IwatodaiDormView::init()
 
     // setup menuHUD
     // uses VRAM bank I for sprite extended palettes, VRAM H for bg palettes
-    menuHUDCmpt.loadHUD();
+    // menuHUDCmpt.loadHUD();
 
     // setup player controller
     // TODO: add mapping
@@ -251,6 +258,17 @@ void IwatodaiDormView::init()
     prevDialogueState = false;
     prevEnvironmentState = false;
     phase = ViewPhase::Environment;
+
+    // DEBUG
+    // NOTE: bg 0 is the 3D view
+    int bgMain[3] = {1, 2, 3};
+    // TODO: Setting the first index to anything other than bgSharedSub results in black bg (but sprites still load)
+    // This might be okay/intended, as long as we create 4 seperate bg to pass in
+    int bgSub[4] = {bgSharedSub, 1, 2, 3};
+
+    uiController.setBackgrounds(bgSub, bgMain);
+    uiController.registerScreen(&menuHUDScreen, false);
+    uiController.show(&menuHUDScreen, false);
 }
 
 void IwatodaiDormView::clearGraphics()
@@ -344,9 +362,9 @@ ViewState IwatodaiDormView::update()
         if (!prevEnvironmentState)
         {
             // render HUD
-            menuHUDCmpt.loadHUD();
-            menuHUDCmpt.drawHUD(&bgSharedSub);
-            bgShow(bgSharedSub);
+            // menuHUDCmpt.loadHUD();
+            // menuHUDCmpt.drawHUD(&bgSharedSub);
+            // bgShow(bgSharedSub);
             prevEnvironmentState = true;
         }
 
@@ -464,6 +482,8 @@ void IwatodaiDormView::cleanup()
 
     // cleanup environment
     iwatodaiDormFloor1Env.cleanup();
+    // reset ui
+    uiController.cleanup();
     // reset textures
     glDeleteTextures(1, &characterTextureId);
     // reset shared bg slot
