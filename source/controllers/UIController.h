@@ -1,5 +1,5 @@
 #pragma once
-#include "core/UIScreen.h"
+#include "components/ui/UIScreen.h"
 
 class UIController
 {

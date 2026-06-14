@@ -1,6 +1,6 @@
 #pragma once
-#include "components/BattleMenuComponent.h"
-#include "components/PauseMenuComponent.h"
+#include "components/menu/BattleMenuComponent.h"
+#include "components/menu/PauseMenuComponent.h"
 #include "components/ui/DialogueScreen.h"
 #include "components/ui/MenuHUDScreen.h"
 #include "controllers/AnimationController.h"

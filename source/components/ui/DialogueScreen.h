@@ -1,5 +1,5 @@
 #pragma once
-#include "core/UIScreen.h"
+#include "components/ui/UIScreen.h"
 #include "core/enums.h"
 #include "core/globals.h"
 #include "core/structs.h"
