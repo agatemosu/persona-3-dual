@@ -1,4 +1,4 @@
-#include "core/BaseView.h"
+#include "views/BaseView3D.h"
 #include <nds/arm9/console.h>
 // controllers
 #include "controllers/CharacterController.h"
@@ -11,12 +11,13 @@
 #include "./battleActions/enemies/EnemyDb.h"
 #include "./controllers/BattleController.h" // TODO: move somewhere
 
-class PaulowniaMallView : public BaseView
+class PaulowniaMallView : public BaseView3D
 {
   public:
     void init() override;
     ViewState update() override;
     void cleanup() override;
+    void setupEnvironment() override;
     PaulowniaMallView();
 
   private:
@@ -30,7 +31,6 @@ class PaulowniaMallView : public BaseView
     PrintConsole console;
 
     // 3D
-    int characterTextureId;
     paulownia_mall_Environment paulowniaMallEnv;
 
     bool prevBattleState;
@@ -68,7 +68,6 @@ class PaulowniaMallView : public BaseView
     const float angle = 1.5708f * 2; // 180 degrees (rad)
     const float characterFacingAngle = 180;
     DialogueController dialogueCtrl;
-    int totalPolyCount = 0;
     bool isBattleMenuActive = false;
 
     void setMusic();

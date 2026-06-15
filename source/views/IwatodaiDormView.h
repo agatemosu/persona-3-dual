@@ -1,4 +1,4 @@
-#include "core/BaseView.h"
+#include "views/BaseView3D.h"
 #include <nds/arm9/console.h>
 // controllers
 #include "controllers/CharacterController.h"
@@ -11,12 +11,13 @@
 #include "./battleActions/enemies/EnemyDb.h"
 #include "./controllers/BattleController.h" // TODO: move somewhere
 
-class IwatodaiDormView : public BaseView
+class IwatodaiDormView : public BaseView3D
 {
   public:
     void init() override;
     ViewState update() override;
     void cleanup() override;
+    void setupEnvironment() override;
     IwatodaiDormView();
 
   private:
@@ -30,7 +31,6 @@ class IwatodaiDormView : public BaseView
     PrintConsole console;
 
     // 3D
-    int characterTextureId;
     iwatodai_dorm_floor_1_Environment iwatodaiDormFloor1Env;
 
     bool prevBattleState;

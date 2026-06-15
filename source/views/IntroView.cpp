@@ -210,7 +210,7 @@ ViewState IntroView::update()
         // transition both screens to white
         for (int i = 0; i <= 16; i++)
         {
-            setBrightness(3, i);
+            setBrightness(3, -i);
 
             // wait a few frames
             for (int duration = 0; duration <= 2; duration++)
@@ -373,14 +373,6 @@ void IntroView::cleanup()
 {
     BaseView::cleanup();
 
-    // reset backgrounds
-    dmaFillHalfWords(0, bgGetMapPtr(bg[0]), 8192); // silhouette
-    dmaFillHalfWords(0, bgGetMapPtr(bg[3]), 8192); // overlay
-    // 256x256 backgrounds use 2048 bytes of map memory
-    // calculated using (256 / 8) * (256 / 8) * 2
-    dmaFillHalfWords(0, bgGetMapPtr(bg[1]), 2048); // room
-    dmaFillHalfWords(0, bgGetMapPtr(bg[2]), 2048); // sky
-
     // clear all sprites from oam
     oamClear(&oamMain, 0, 0);
 
@@ -392,10 +384,4 @@ void IntroView::cleanup()
             oamFreeGfx(&oamMain, logoSprite[i].gfx);
         }
     }
-
-    // disable blending
-    REG_BLDCNT = 0;
-    REG_BLDCNT_SUB = 0;
-    REG_BLDALPHA = 0;
-    REG_BLDALPHA_SUB = 0;
 }

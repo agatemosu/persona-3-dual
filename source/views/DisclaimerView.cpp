@@ -111,8 +111,4 @@ ViewState DisclaimerView::update()
 void DisclaimerView::cleanup()
 {
     BaseView::cleanup();
-
-    // reset backgrounds
-    dmaFillHalfWords(0, bgGetMapPtr(bg[1]), 2048);
-    dmaFillHalfWords(0, bgGetMapPtr(bg[0]), 2048);
 }

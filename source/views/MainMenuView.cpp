@@ -13,8 +13,8 @@ void MainMenuView::init()
     isMainMenuCmptActive = true;
     mainMenuCmpt.init(-1, &isMainMenuCmptActive);
 
-    // transition both screens from white
-    for (int i = 16; i > 0; i--)
+    // transition both screens from black
+    for (int i = -16; i < 0; i++)
     {
         setBrightness(3, i);
 
@@ -191,13 +191,4 @@ ViewState MainMenuView::update()
 void MainMenuView::cleanup()
 {
     BaseView::cleanup();
-
-    // reset backgrounds
-    dmaFillHalfWords(0, bgGetMapPtr(bg[0]), 8192);
-    dmaFillHalfWords(1, bgGetMapPtr(bg[1]), 2048);
-    dmaFillHalfWords(2, bgGetMapPtr(bg[2]), 2048);
-
-    // disable blending
-    REG_BLDCNT = 0;
-    REG_BLDALPHA = 0;
 }
