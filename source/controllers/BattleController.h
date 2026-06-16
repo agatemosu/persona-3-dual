@@ -43,11 +43,11 @@ class BattleController
     std::string pendingAlert;
     BattlePhase alertReturnPhase = BattlePhase::Done;
 
-    std::vector<BattleParticipant*>* battleParticipants;
-    std::vector<BattleParticipant*> enemies;
-    std::vector<BattleParticipant*> partyMembers;
+    std::vector<BattleParticipant*>* battleParticipants = nullptr;
+    std::vector<BattleParticipant*>* enemies = nullptr;
+    std::vector<BattleParticipant*>* partyMembers = nullptr;
+    Player* player = nullptr;
 
-    CharacterProfiles* characterProfiles;
     BattleStartCondition battleStartCondition = BattleStartCondition::Even;
 
     AttackAction attack;
@@ -56,10 +56,6 @@ class BattleController
     SwitchPersona switchPersona;
 
     std::array<ActionBase*, 4> actions = {&attack, &guard, &persona, &switchPersona};
-
-    PartyMember* player = nullptr;
-    PartyMember* yukari = nullptr;
-    PartyMember* junpei = nullptr;
 
     void applyResult(const TurnResult& r, BattleParticipant* target = nullptr);
     void advanceTurn();
@@ -83,13 +79,15 @@ class BattleController
         return phase;
     }
 
-    void execute();
+    void execute(Player* player,
+                 std::vector<BattleParticipant*>* partyMembers,
+                 std::vector<BattleParticipant*>* enemies,
+                 std::vector<BattleParticipant*>* battleParticipants,
+                 BattleStartCondition battleStartCondition);
     BattleResult update(u32 keys);
     void exit();
 
-    BattleController(std::vector<BattleParticipant*>* iBattleParticipants,
-                     CharacterProfiles* iCharacterProfiles,
-                     BattleStartCondition iBattleStartCondition);
+    BattleController();
     ~BattleController()
     {
     }

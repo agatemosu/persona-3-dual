@@ -25,8 +25,8 @@ void EnemyDb::Initialize()
     mercilessMaya.battleStats.ag = 2;
     mercilessMaya.battleStats.lu = 2;
     mercilessMaya.baseAttackAction = &SkillDb::strikeAttack;
-    mercilessMaya.armour = &ArmourDb::enemyArmour;
-    mercilessMaya.shoe = &ShoeDb::enemyShoe;
+    mercilessMaya.armour = ArmourDb::enemyArmour;
+    mercilessMaya.shoe = ShoeDb::enemyShoe;
 
     mercilessMayaSkills[0] = &SkillDb::agi;
     mercilessMaya.skill = mercilessMayaSkills;
@@ -55,8 +55,8 @@ void EnemyDb::Initialize()
     cowardlyMaya.battleStats.ag = 2;
     cowardlyMaya.battleStats.lu = 2;
     cowardlyMaya.baseAttackAction = &SkillDb::strikeAttack;
-    cowardlyMaya.armour = &ArmourDb::enemyArmour;
-    cowardlyMaya.shoe = &ShoeDb::enemyShoe;
+    cowardlyMaya.armour = ArmourDb::enemyArmour;
+    cowardlyMaya.shoe = ShoeDb::enemyShoe;
 
     cowardlyMayaSkills[0] = &SkillDb::bufu;
     cowardlyMaya.skill = cowardlyMayaSkills;

@@ -11,7 +11,7 @@
 
 struct PartyMember : BattleParticipant
 {
-    ArmourType* armourType;
+    ArmourType armourType;
     std::vector<PersonaBase*> personas;
     PersonaBase* curPersona;
     WeaponType weaponType;
@@ -19,9 +19,9 @@ struct PartyMember : BattleParticipant
 
     bool guarding = false;
 
-    CharacterProfile* characterProfile;
+    CharacterProfile characterProfile;
 
-    PartyMember(CharacterProfile* iCharacterProfile);
+    PartyMember(const CharacterProfile& iCharacterProfile);
 
     BattleStats* getBattleStats() override
     {

@@ -27,8 +27,6 @@ void IwatodaiDormView::setMusic()
 
 // TODO: dont forget to clear in future
 IwatodaiDormView::IwatodaiDormView()
-    : battleParticipants(new std::vector<BattleParticipant*>({&mercilessMaya, &cowardlyMaya})),
-      battleController(battleParticipants, &characterProfiles, battleStartCondition)
 {
 }
 
@@ -266,14 +264,36 @@ ViewState IwatodaiDormView::update()
         // set
         if (!isActive && !prevBattleState)
         {
-            battleController.execute();
+            battleController.execute(player, &partyMembers, &enemies, &battleParticipants, battleStartCondition);
             prevBattleState = true;
         }
         //exit
         else if (!isActive && prevBattleState)
         {
+            //battle cleanup
+            for (BattleParticipant* participant : battleParticipants)
+            {
+                delete participant;
+            }
+
+            battleParticipants.clear();
+            enemies.clear();
+            partyMembers.clear();
+
+            //Reset battle
+            mercilessMaya = new Enemy(EnemyDb::mercilessMaya);
+            cowardlyMaya = new Enemy(EnemyDb::cowardlyMaya);
+            player = new Player(CharacterProfileDb::player);
+            yukari = new PartyMember(CharacterProfileDb::yukari);
+            junpei = new PartyMember(CharacterProfileDb::junpei);
+
+            battleParticipants = {mercilessMaya, cowardlyMaya, player, yukari, junpei};
+            enemies = {mercilessMaya, cowardlyMaya};
+            partyMembers = {player, yukari, junpei};
+
             IwatodaiDormView::setMusic();
             prevBattleState = false;
+
             phase = ViewPhase::Environment;
         }
         break;

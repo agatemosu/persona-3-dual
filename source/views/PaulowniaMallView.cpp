@@ -26,10 +26,7 @@ void PaulowniaMallView::setMusic()
         (fatBasePath + "music/locations/paulowniaMall/overworld/color_your_night.pcm").c_str(), 0.0f, 920.973f);
 }
 
-// TODO: dont forget to clear in future
 PaulowniaMallView::PaulowniaMallView()
-    : battleParticipants(new std::vector<BattleParticipant*>({&mercilessMaya, &cowardlyMaya})),
-      battleController(battleParticipants, &characterProfiles, battleStartCondition)
 {
 }
 
@@ -213,7 +210,6 @@ void PaulowniaMallView::init()
     uiCtrl.show(&menuHUDScreen, false);
 
     // setup view phases
-    prevBattleState = false;
     prevDialogueState = false;
     prevEnvironmentState = false;
     phase = ViewPhase::Environment;
@@ -232,25 +228,6 @@ ViewState PaulowniaMallView::update()
 
     switch (phase)
     {
-    case ViewPhase::Battle:
-    {
-        bool isActive = battleController.isActive();
-        // set
-        if (!isActive && !prevBattleState)
-        {
-            battleController.execute();
-            prevBattleState = true;
-        }
-        //exit
-        else if (!isActive && prevBattleState)
-        {
-            PaulowniaMallView::setMusic();
-            prevBattleState = false;
-            phase = ViewPhase::Environment;
-        }
-        break;
-    }
-
     case ViewPhase::Pause:
     {
         // run
@@ -419,7 +396,6 @@ ViewState PaulowniaMallView::update()
     }
 
     // update controllers
-    battleController.update(pressed);
     dialogueCtrl.update(keys);
     characterAnimationCtrl.update();
     musicCtrl.update();
