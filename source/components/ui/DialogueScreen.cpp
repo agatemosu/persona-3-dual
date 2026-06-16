@@ -204,15 +204,29 @@ void DialogueScreen::load()
 
     // get sprites
     // calendar
-    spriteCtrl.switchSprite(SpriteType::DIALOGUE, DialogueSprite::CALENDAR, &calendarSprite[0]);
-    spriteCtrl.switchSprite(SpriteType::DIALOGUE, DialogueSprite::CALENDAR, &calendarSprite[1]);
+    spriteCtrl.switchSprite(SpriteType::DIALOGUE,
+                            saveData.femcMode ? DialogueSprite::CALENDAR_FEMC : DialogueSprite::CALENDAR,
+                            &calendarSprite[0]);
+    spriteCtrl.switchSprite(SpriteType::DIALOGUE,
+                            saveData.femcMode ? DialogueSprite::CALENDAR_FEMC : DialogueSprite::CALENDAR,
+                            &calendarSprite[1]);
     // text box
-    spriteCtrl.switchSprite(SpriteType::DIALOGUE, DialogueSprite::TEXT_CORNER, &textBox[0]);
-    spriteCtrl.switchSprite(SpriteType::DIALOGUE, DialogueSprite::TEXT_MIDDLE, &textBox[1]);
-    spriteCtrl.switchSprite(SpriteType::DIALOGUE, DialogueSprite::TEXT_MIDDLE, &textBox[2]);
-    spriteCtrl.switchSprite(SpriteType::DIALOGUE, DialogueSprite::TEXT_CORNER, &textBox[3]);
+    spriteCtrl.switchSprite(SpriteType::DIALOGUE,
+                            saveData.femcMode ? DialogueSprite::TEXT_CORNER_FEMC : DialogueSprite::TEXT_CORNER,
+                            &textBox[0]);
+    spriteCtrl.switchSprite(SpriteType::DIALOGUE,
+                            saveData.femcMode ? DialogueSprite::TEXT_MIDDLE_FEMC : DialogueSprite::TEXT_MIDDLE,
+                            &textBox[1]);
+    spriteCtrl.switchSprite(SpriteType::DIALOGUE,
+                            saveData.femcMode ? DialogueSprite::TEXT_MIDDLE_FEMC : DialogueSprite::TEXT_MIDDLE,
+                            &textBox[2]);
+    spriteCtrl.switchSprite(SpriteType::DIALOGUE,
+                            saveData.femcMode ? DialogueSprite::TEXT_CORNER_FEMC : DialogueSprite::TEXT_CORNER,
+                            &textBox[3]);
     // name tag
-    spriteCtrl.switchSprite(SpriteType::DIALOGUE, DialogueSprite::NAME_TAG, &nameTag[0]);
+    spriteCtrl.switchSprite(SpriteType::DIALOGUE,
+                            saveData.femcMode ? DialogueSprite::NAME_TAG_FEMC : DialogueSprite::NAME_TAG,
+                            &nameTag[0]);
 
     // copy sprites into memory
     // calendar

@@ -79,7 +79,7 @@ static const SpriteDBEntry SPRITE_DB_ENTRY[] = {
     {SpriteType::DIALOGUE, static_cast<int>(DialogueSprite::NAME_TAG), "nameTag"},
     {SpriteType::DIALOGUE, static_cast<int>(DialogueSprite::NAME_TAG_FEMC), "nameTagFEMC"},
     {SpriteType::DIALOGUE, static_cast<int>(DialogueSprite::CALENDAR), "calendar"},
-    {SpriteType::DIALOGUE, static_cast<int>(DialogueSprite::CALENDAR), "calendarFEMC"},
+    {SpriteType::DIALOGUE, static_cast<int>(DialogueSprite::CALENDAR_FEMC), "calendarFEMC"},
     {SpriteType::DIALOGUE, static_cast<int>(DialogueSprite::TEXT_CORNER), "textCorner"},
     {SpriteType::DIALOGUE, static_cast<int>(DialogueSprite::TEXT_CORNER_FEMC), "textCornerFEMC"},
     {SpriteType::DIALOGUE, static_cast<int>(DialogueSprite::TEXT_MIDDLE), "textMiddle"},
