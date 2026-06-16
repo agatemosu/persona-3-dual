@@ -210,6 +210,7 @@ void PaulowniaMallView::init()
     uiCtrl.show(&menuHUDScreen, false);
 
     // setup view phases
+    prevPauseState = false;
     prevDialogueState = false;
     prevEnvironmentState = false;
     phase = ViewPhase::Environment;
@@ -230,6 +231,14 @@ ViewState PaulowniaMallView::update()
     {
     case ViewPhase::Pause:
     {
+        // set
+        if (!prevPauseState)
+        {
+            // TODO: display pause menu UI
+            uiCtrl.hideAll();
+            prevPauseState = true;
+        }
+
         // run
         ViewState menuResult = pauseMenuCmpt.update(pressed);
         if (menuResult != ViewState::KEEP_CURRENT)
@@ -242,6 +251,7 @@ ViewState PaulowniaMallView::update()
         if (pressed & KEY_START)
         {
             consoleClear();
+            prevPauseState = false;
             phase = ViewPhase::Environment;
         }
         break;

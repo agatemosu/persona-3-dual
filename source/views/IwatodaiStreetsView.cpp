@@ -62,22 +62,14 @@ void IwatodaiStreetsView::setupEnvironment()
         fatBasePath + "environments/iwatodai_streets/f007_009_17", envTextures[IWATODAI_STREETS_TEX_F007_009_17]);
     bitmaps[IWATODAI_STREETS_TEX_F007_009_18] = loadEnvironmentBitmap(
         fatBasePath + "environments/iwatodai_streets/f007_009_18", envTextures[IWATODAI_STREETS_TEX_F007_009_18]);
-    bitmaps[IWATODAI_STREETS_TEX_F007_009_32] = loadEnvironmentBitmap(
-        fatBasePath + "environments/iwatodai_streets/f007_009_32", envTextures[IWATODAI_STREETS_TEX_F007_009_32]);
-    bitmaps[IWATODAI_STREETS_TEX_F007_009_33] = loadEnvironmentBitmap(
-        fatBasePath + "environments/iwatodai_streets/f007_009_33", envTextures[IWATODAI_STREETS_TEX_F007_009_33]);
-    bitmaps[IWATODAI_STREETS_TEX_F007_009_29] = loadEnvironmentBitmap(
-        fatBasePath + "environments/iwatodai_streets/f007_009_29", envTextures[IWATODAI_STREETS_TEX_F007_009_29]);
     bitmaps[IWATODAI_STREETS_TEX_F007_009_27] = loadEnvironmentBitmap(
         fatBasePath + "environments/iwatodai_streets/f007_009_27", envTextures[IWATODAI_STREETS_TEX_F007_009_27]);
-    bitmaps[IWATODAI_STREETS_TEX_F007_009_22] = loadEnvironmentBitmap(
-        fatBasePath + "environments/iwatodai_streets/f007_009_22", envTextures[IWATODAI_STREETS_TEX_F007_009_22]);
     bitmaps[IWATODAI_STREETS_TEX_F007_009_03] = loadEnvironmentBitmap(
         fatBasePath + "environments/iwatodai_streets/f007_009_03", envTextures[IWATODAI_STREETS_TEX_F007_009_03]);
-    bitmaps[IWATODAI_STREETS_TEX_F007_009_WOOD01] =
-        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_streets/f007_009_wood01",
-                              envTextures[IWATODAI_STREETS_TEX_F007_009_WOOD01]);
-
+    bitmaps[IWATODAI_STREETS_TEX_F007_009_01] = loadEnvironmentBitmap(
+        fatBasePath + "environments/iwatodai_streets/f007_009_01", envTextures[IWATODAI_STREETS_TEX_F007_009_01]);
+    bitmaps[IWATODAI_STREETS_TEX_F007_009_23] = loadEnvironmentBitmap(
+        fatBasePath + "environments/iwatodai_streets/f007_009_23", envTextures[IWATODAI_STREETS_TEX_F007_009_23]);
     iwatodaiStreetsEnv.load((fatBasePath + "environments/iwatodai_streets/iwatodai_streets.bin").c_str(), bitmaps);
     for (int i = 0; i < IWATODAI_STREETS_TEX_COUNT; ++i)
     {
@@ -169,6 +161,7 @@ void IwatodaiStreetsView::init()
     uiCtrl.show(&menuHUDScreen, false);
 
     // setup view phases
+    prevPauseState = false;
     prevEnvironmentState = false;
     phase = ViewPhase::Environment;
 }
@@ -188,6 +181,14 @@ ViewState IwatodaiStreetsView::update()
     {
     case ViewPhase::Pause:
     {
+        // set
+        if (!prevPauseState)
+        {
+            // TODO: display pause menu UI
+            uiCtrl.hideAll();
+            prevPauseState = true;
+        }
+
         // run
         ViewState menuResult = pauseMenuCmpt.update(pressed);
         if (menuResult != ViewState::KEEP_CURRENT)
@@ -200,6 +201,7 @@ ViewState IwatodaiStreetsView::update()
         if (pressed & KEY_START)
         {
             consoleClear();
+            prevPauseState = true;
             phase = ViewPhase::Environment;
         }
         break;
@@ -234,10 +236,19 @@ ViewState IwatodaiStreetsView::update()
             }
         }
 
-        if (playerCtrl->isTileAt() == TileType::SCENE_0)
+        switch (playerCtrl->isTileAt())
         {
+        case TileType::SCENE_0:
             musicCtrl.pause();
             return ViewState::IWATODAI_DORM;
+        case TileType::SCENE_1:
+            musicCtrl.pause();
+            return ViewState::PAULOWNIA_MALL;
+        case TileType::SCENE_2:
+            musicCtrl.pause();
+            return ViewState::STATION;
+        default:
+            break;
         }
 
         gluLookAt(camPos.cameraX,

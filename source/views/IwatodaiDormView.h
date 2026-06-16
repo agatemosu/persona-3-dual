@@ -23,7 +23,6 @@ class IwatodaiDormView : public BaseView3D
     IwatodaiDormView();
 
   private:
-    ViewPhase phase;
     touchPosition touch;
 
     // sub screen
@@ -35,7 +34,9 @@ class IwatodaiDormView : public BaseView3D
     // 3D
     iwatodai_dorm_floor_1_Environment iwatodaiDormFloor1Env;
 
+    ViewPhase phase;
     bool prevBattleState;
+    bool prevPauseState;
     bool prevDialogueState;
     bool prevEnvironmentState;
 
@@ -70,7 +71,7 @@ class IwatodaiDormView : public BaseView3D
     const float lookAhead = 0.2f;
     // set character initial translation position
     const Point2D<float> characterTranslate = Point2D<float>(0.4f, 2.8f);
-    const float height = 0.7;
+    const float height = 0.0;
     const float angle = -1.6;
     const float characterFacingAngle = 180.0f;
     DialogueController dialogueCtrl;
