@@ -1,18 +1,20 @@
 #include "BattleController.h"
+#include "./battleActions/skills/BattleCalcs.h"
+
 #include "./helpers/random.h"
 #include "core/globals.h"
 #include <cstdlib>
 #include <ctime>
 
-BattleController::BattleController(std::vector<BattleParticipant*>* iBattleParticipants,
-                                   CharacterProfiles* iCharacterProfiles,
-                                   BattleStartCondition iBattleStartCondition)
-    : battleParticipants(iBattleParticipants), characterProfiles(iCharacterProfiles),
-      battleStartCondition(iBattleStartCondition)
+BattleController::BattleController()
 {
 }
 
-void BattleController::execute()
+void BattleController::execute(Player* player,
+                               std::vector<PartyMember*>* partyMembers,
+                               std::vector<Enemy*>* enemies,
+                               std::vector<BattleParticipant*>* battleParticipants,
+                               BattleStartCondition battleStartCondition)
 {
     active = true;
 
@@ -20,21 +22,18 @@ void BattleController::execute()
         fatBasePath + "music/battle/" + (saveData.femcMode ? "wiping_all_out.pcm" : "mass_destruction.pcm");
     musicCtrl.init(path.c_str(), 0.0f, -1.0f);
 
-    player = new Player(&characterProfiles->player);
-    yukari = new PartyMember(&characterProfiles->yukari);
-    junpei = new PartyMember(&characterProfiles->junpei);
+    this->player = player;
+    this->partyMembers = partyMembers;
+    this->enemies = enemies;
+    this->battleParticipants = battleParticipants;
+    this->battleStartCondition = battleStartCondition;
 
-    battleParticipants->push_back(player);
-    battleParticipants->push_back(yukari);
-    battleParticipants->push_back(junpei);
-
-    for (BattleParticipant* p : *battleParticipants)
-    {
-        if (p->participantType == ParticipantType::Enemy)
-            enemies.push_back(p);
-        else
-            partyMembers.push_back(p);
-    }
+    turnsTaken = 0;
+    currentParticipantIndex = 0;
+    selectedSkill = nullptr;
+    pendingAlert.clear();
+    battleResult = BattleResult();
+    allOutAttackWasPossibleThisKnockDown = false;
 
     calculateTurnOrder();
 
@@ -168,9 +167,19 @@ BattleResult BattleController::update(u32 keys)
 
         std::vector<BattleParticipant*> targets;
         if (healTarget)
-            targets = partyMembers;
+        {
+            for (PartyMember* partyMember : *partyMembers)
+            {
+                targets.push_back(partyMember);
+            }
+        }
         else
-            targets = enemies;
+        {
+            for (Enemy* enemy : *enemies)
+            {
+                targets.push_back(enemy);
+            }
+        }
 
         targets.erase(std::remove_if(targets.begin(), targets.end(), [](BattleParticipant* t) { return t->hp <= 0; }),
                       targets.end());
@@ -183,7 +192,10 @@ BattleResult BattleController::update(u32 keys)
         {
             if (isSingleTarget(selectedSkill->skillType))
             {
-                targets = {targets[menuIndex]};
+                BattleParticipant* selectedTarget = targets[menuIndex];
+
+                targets.clear();
+                targets.push_back(selectedTarget);
             }
 
             // Check so you cant heal target that has max hp
@@ -203,10 +215,12 @@ BattleResult BattleController::update(u32 keys)
                     return battleResult;
             }
 
+            bool usingBaseAttack = selectedSkill == actor->baseAttackAction;
+
             for (BattleParticipant* target : targets)
             {
-                TurnResult turnResult = (menuIndex == ACTION_ATTACK) ? attack.resolve(actor, target)
-                                                                     : persona.resolve(actor, target, selectedSkill);
+                TurnResult turnResult =
+                    (usingBaseAttack) ? attack.resolve(actor, target) : persona.resolve(actor, target, selectedSkill);
                 applyResult(turnResult, target);
             }
 
@@ -217,6 +231,51 @@ BattleResult BattleController::update(u32 keys)
         {
             phase = (selectedSkill == actor->baseAttackAction) ? BattlePhase::ChooseAction : BattlePhase::ChooseSkill;
             menuIndex = -1;
+        }
+        break;
+    }
+
+    case BattlePhase::ConfirmAllOutAttack:
+    {
+        battleMenuCmpt.loadAllOutAttackConfirmation();
+        menuIndex = -1;
+        menuIndex = (int)battleMenuCmpt.update(keys);
+
+        if (menuIndex != -1 && (keys & KEY_A))
+        {
+            allOutAttackWasPossibleThisKnockDown = true;
+
+            //if yes
+            if (menuIndex == 0)
+            {
+                std::vector<BattleParticipant*> aliveEnemies = getAliveEnemies();
+
+                uint8_t participantCount = 0;
+                for (PartyMember* partyMember : *partyMembers)
+                {
+                    if (partyMember->canParticipateInAllOutAttack())
+                    {
+                        participantCount++;
+                    }
+                }
+
+                for (BattleParticipant* enemy : aliveEnemies)
+                {
+                    //TODO: get participant count over virtual canParticipate method
+                    u32 damage = BattleCalcs::allOutAttack(*player, *enemy, participantCount);
+                    enemy->knockedDown = false;
+                    TurnResult turnResult = {true, -(s32)damage, false, enemy->name + ": "};
+                    applyResult(turnResult, enemy);
+                }
+
+                advanceTurn();
+            } //no
+            else
+            {
+                currentParticipantTurn->oneMore = false;
+                battleMenuCmpt.reset();
+                phase = BattlePhase::ChooseAction;
+            }
         }
         break;
     }
@@ -238,10 +297,19 @@ BattleResult BattleController::update(u32 keys)
     {
         Enemy* enemy = static_cast<Enemy*>(currentParticipantTurn);
         Skill* skill = enemy->pickSkill();
-        BattleParticipant* target = enemy->pickTarget(partyMembers);
+        std::vector<BattleParticipant*> targets;
+        //TODO: branch in future if using healing / buff
+        for (PartyMember* partyMember : *partyMembers)
+        {
+            targets.push_back(partyMember);
+        }
+
+        BattleParticipant* target = enemy->pickTarget(targets);
         TurnResult turnResult = enemy->resolve(target, skill);
         applyResult(turnResult, target);
         advanceTurn();
+        //cant be set in advanceTurn, needs to be specifically cleared when an enemy has recoverd
+        allOutAttackWasPossibleThisKnockDown = false;
         break;
     }
 
@@ -258,6 +326,12 @@ void BattleController::exit()
     musicCtrl.pause();
     active = false;
     phase = BattlePhase::Done;
+
+    currentParticipantTurn = nullptr;
+    player = nullptr;
+    battleParticipants = nullptr;
+    enemies = nullptr;
+    partyMembers = nullptr;
 }
 
 void BattleController::applyResult(const TurnResult& turnResult, BattleParticipant* target)
@@ -300,6 +374,15 @@ void BattleController::advanceTurn()
     handleDeadParticipants();
     if (!active)
         return;
+
+    //all out attack availability check
+    if (allEnemiesKnockedDown() && !allOutAttackWasPossibleThisKnockDown)
+    {
+        alertReturnPhase = BattlePhase::ChooseAction;
+        battleMenuCmpt.reset();
+        setNextPhase(BattlePhase::ConfirmAllOutAttack);
+        return;
+    }
 
     pendingAlert += "Previous attacker: " + currentParticipantTurn->name + "\n";
 
@@ -355,39 +438,39 @@ void BattleController::calculateTurnOrder()
         battleParticipant->setCurrentTurnOrderAgility(boost);
     }
 
-    std::sort(partyMembers.begin(), partyMembers.end(), getParticipantByHigherAgility);
-    std::sort(enemies.begin(), enemies.end(), getParticipantByHigherAgility);
+    std::sort(partyMembers->begin(), partyMembers->end(), getParticipantByHigherAgility);
+    std::sort(enemies->begin(), enemies->end(), getParticipantByHigherAgility);
 
     battleParticipants->clear();
 
     if (battleStartCondition == BattleStartCondition::PartyAdvantage)
     {
-        for (auto p : partyMembers)
+        for (auto p : *partyMembers)
         {
             battleParticipants->push_back(p);
         }
-        for (auto e : enemies)
+        for (auto e : *enemies)
         {
             battleParticipants->push_back(e);
         }
     }
     else if (battleStartCondition == BattleStartCondition::EnemyAdvantage)
     {
-        for (auto e : enemies)
+        for (auto e : *enemies)
         {
             battleParticipants->push_back(e);
         }
-        for (auto p : partyMembers)
+        for (auto p : *partyMembers)
         {
             battleParticipants->push_back(p);
         }
     }
     else
     {
-        std::merge(partyMembers.begin(),
-                   partyMembers.end(),
-                   enemies.begin(),
-                   enemies.end(),
+        std::merge(partyMembers->begin(),
+                   partyMembers->end(),
+                   enemies->begin(),
+                   enemies->end(),
                    std::back_inserter(*battleParticipants),
                    getParticipantByHigherAgility);
     }
@@ -414,7 +497,7 @@ void BattleController::handleDeadParticipants()
     }
 
     bool enemiesAlive = false;
-    for (BattleParticipant* enemy : enemies)
+    for (BattleParticipant* enemy : *enemies)
     {
         if (enemy->hp > 0)
         {
@@ -428,6 +511,37 @@ void BattleController::handleDeadParticipants()
         exit();
         return;
     }
+}
+
+std::vector<BattleParticipant*> BattleController::getAliveEnemies()
+{
+    std::vector<BattleParticipant*> alive;
+    for (BattleParticipant* enemy : *enemies)
+    {
+        if (enemy->hp > 0)
+            alive.push_back(enemy);
+    }
+    return alive;
+}
+
+bool BattleController::allEnemiesKnockedDown()
+{
+    uint8_t aliveCount = 0;
+    uint8_t knockedDownCount = 0;
+    for (BattleParticipant* enemy : *enemies)
+    {
+        if (enemy->hp > 0)
+        {
+            aliveCount++;
+            if (enemy->knockedDown)
+                knockedDownCount++;
+        }
+    }
+
+    if (knockedDownCount >= aliveCount)
+        return true;
+
+    return false;
 }
 
 bool BattleController::isSingleTarget(SkillType type)

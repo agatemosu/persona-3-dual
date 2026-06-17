@@ -9,7 +9,9 @@
 #include "./battleActions/BattleParticipant.h"
 #include "./battleActions/BattleStartCondition.h"
 #include "./battleActions/enemies/EnemyDb.h"
+#include "./battleActions/party/CharacterProfileDb.h"
 #include "./controllers/BattleController.h" // TODO: move somewhere
+#include <memory>
 
 class IwatodaiDormView : public BaseView3D
 {
@@ -38,13 +40,16 @@ class IwatodaiDormView : public BaseView3D
     bool prevDialogueState;
     bool prevEnvironmentState;
 
-    // init Character Profiles
-    CharacterProfiles characterProfiles;
     // Battle participants
-    Enemy mercilessMaya = EnemyDb::mercilessMaya;
-    Enemy cowardlyMaya = EnemyDb::cowardlyMaya;
+    Enemy* mercilessMaya = new Enemy(EnemyDb::mercilessMaya);
+    Enemy* cowardlyMaya = new Enemy(EnemyDb::cowardlyMaya);
+    Player* player = new Player(CharacterProfileDb::player);
+    PartyMember* yukari = new PartyMember(CharacterProfileDb::yukari);
+    PartyMember* junpei = new PartyMember(CharacterProfileDb::junpei);
 
-    std::vector<BattleParticipant*>* battleParticipants;
+    std::vector<BattleParticipant*> battleParticipants = {mercilessMaya, cowardlyMaya, player, yukari, junpei};
+    std::vector<Enemy*> enemies = {mercilessMaya, cowardlyMaya};
+    std::vector<PartyMember*> partyMembers = {player, yukari, junpei};
 
     // hardcoded for now, we will have to build a battle creater for tartarus anyways
     BattleStartCondition battleStartCondition = BattleStartCondition::Even;

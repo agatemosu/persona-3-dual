@@ -9,7 +9,6 @@
 #include "./battleActions/BattleParticipant.h"
 #include "./battleActions/BattleStartCondition.h"
 #include "./battleActions/enemies/EnemyDb.h"
-#include "./controllers/BattleController.h" // TODO: move somewhere
 
 class PaulowniaMallView : public BaseView3D
 {
@@ -33,23 +32,10 @@ class PaulowniaMallView : public BaseView3D
     paulownia_mall_Environment paulowniaMallEnv;
 
     ViewPhase phase;
-    bool prevBattleState;
     bool prevPauseState;
     bool prevDialogueState;
     bool prevEnvironmentState;
 
-    // init Character Profiles
-    CharacterProfiles characterProfiles;
-    // Battle participants
-    Enemy mercilessMaya = EnemyDb::mercilessMaya;
-    Enemy cowardlyMaya = EnemyDb::cowardlyMaya;
-    std::vector<BattleParticipant*>* battleParticipants;
-
-    // hardcoded for now, we will have to build a battle creater for tartarus anyways
-    BattleStartCondition battleStartCondition = BattleStartCondition::Even;
-
-    // controllers
-    BattleController battleController;
     CharacterController* playerCtrl;
 
     // camera pos
