@@ -43,9 +43,11 @@ class BattleController
     std::string pendingAlert;
     BattlePhase alertReturnPhase = BattlePhase::Done;
 
+    bool allOutAttackWasPossibleThisKnockDown = false;
+
     std::vector<BattleParticipant*>* battleParticipants = nullptr;
-    std::vector<BattleParticipant*>* enemies = nullptr;
-    std::vector<BattleParticipant*>* partyMembers = nullptr;
+    std::vector<Enemy*>* enemies = nullptr;
+    std::vector<PartyMember*>* partyMembers = nullptr;
     Player* player = nullptr;
 
     BattleStartCondition battleStartCondition = BattleStartCondition::Even;
@@ -62,6 +64,8 @@ class BattleController
     void setNextPhase(BattlePhase nextPhase);
     void calculateTurnOrder();
     void handleDeadParticipants();
+    std::vector<BattleParticipant*> getAliveEnemies();
+    bool allEnemiesKnockedDown();
     bool isSingleTarget(SkillType type);
 
     static bool getParticipantByHigherAgility(BattleParticipant* a, BattleParticipant* b)
@@ -80,8 +84,8 @@ class BattleController
     }
 
     void execute(Player* player,
-                 std::vector<BattleParticipant*>* partyMembers,
-                 std::vector<BattleParticipant*>* enemies,
+                 std::vector<PartyMember*>* partyMembers,
+                 std::vector<Enemy*>* enemies,
                  std::vector<BattleParticipant*>* battleParticipants,
                  BattleStartCondition battleStartCondition);
     BattleResult update(u32 keys);

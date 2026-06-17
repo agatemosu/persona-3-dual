@@ -48,8 +48,8 @@ class IwatodaiDormView : public BaseView3D
     PartyMember* junpei = new PartyMember(CharacterProfileDb::junpei);
 
     std::vector<BattleParticipant*> battleParticipants = {mercilessMaya, cowardlyMaya, player, yukari, junpei};
-    std::vector<BattleParticipant*> enemies = {mercilessMaya, cowardlyMaya};
-    std::vector<BattleParticipant*> partyMembers = {player, yukari, junpei};
+    std::vector<Enemy*> enemies = {mercilessMaya, cowardlyMaya};
+    std::vector<PartyMember*> partyMembers = {player, yukari, junpei};
 
     // hardcoded for now, we will have to build a battle creater for tartarus anyways
     BattleStartCondition battleStartCondition = BattleStartCondition::Even;

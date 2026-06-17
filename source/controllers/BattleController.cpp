@@ -1,4 +1,6 @@
 #include "BattleController.h"
+#include "./battleActions/skills/BattleCalcs.h"
+
 #include "./helpers/random.h"
 #include "core/globals.h"
 #include <cstdlib>
@@ -9,8 +11,8 @@ BattleController::BattleController()
 }
 
 void BattleController::execute(Player* player,
-                               std::vector<BattleParticipant*>* partyMembers,
-                               std::vector<BattleParticipant*>* enemies,
+                               std::vector<PartyMember*>* partyMembers,
+                               std::vector<Enemy*>* enemies,
                                std::vector<BattleParticipant*>* battleParticipants,
                                BattleStartCondition battleStartCondition)
 {
@@ -31,6 +33,7 @@ void BattleController::execute(Player* player,
     selectedSkill = nullptr;
     pendingAlert.clear();
     battleResult = BattleResult();
+    allOutAttackWasPossibleThisKnockDown = false;
 
     calculateTurnOrder();
 
@@ -164,9 +167,19 @@ BattleResult BattleController::update(u32 keys)
 
         std::vector<BattleParticipant*> targets;
         if (healTarget)
-            targets = *partyMembers;
+        {
+            for (PartyMember* partyMember : *partyMembers)
+            {
+                targets.push_back(partyMember);
+            }
+        }
         else
-            targets = *enemies;
+        {
+            for (Enemy* enemy : *enemies)
+            {
+                targets.push_back(enemy);
+            }
+        }
 
         targets.erase(std::remove_if(targets.begin(), targets.end(), [](BattleParticipant* t) { return t->hp <= 0; }),
                       targets.end());
@@ -211,13 +224,59 @@ BattleResult BattleController::update(u32 keys)
                 applyResult(turnResult, target);
             }
 
-            advanceTurn();
+            //all out attack availability check
+            if (allEnemiesKnockedDown() && !allOutAttackWasPossibleThisKnockDown)
+            {
+                alertReturnPhase = BattlePhase::ChooseAction;
+                battleMenuCmpt.reset();
+                phase = BattlePhase::ConfirmAllOutAttack;
+            }
+            else
+            {
+                advanceTurn();
+            }
         }
 
         if (keys & KEY_B)
         {
             phase = (selectedSkill == actor->baseAttackAction) ? BattlePhase::ChooseAction : BattlePhase::ChooseSkill;
             menuIndex = -1;
+        }
+        break;
+    }
+
+    case BattlePhase::ConfirmAllOutAttack:
+    {
+        battleMenuCmpt.loadAllOutAttackConfirmation();
+        menuIndex = -1;
+        menuIndex = (int)battleMenuCmpt.update(keys);
+
+        if (menuIndex != -1 && (keys & KEY_A))
+        {
+            //if yes
+            if (menuIndex == 0)
+            {
+                std::vector<BattleParticipant*> aliveEnemies = getAliveEnemies();
+
+                uint8_t participantCount = 0;
+                for (PartyMember* partyMember : *partyMembers)
+                {
+                    participantCount += partyMember->canParticipateInAllOutAttack();
+                }
+
+                for (BattleParticipant* enemy : aliveEnemies)
+                {
+                    //TODO: get participant count over virtual canParticipate method
+                    u32 damage = BattleCalcs::allOutAttack(*player, *enemy, participantCount);
+                    enemy->knockedDown = false;
+                    TurnResult turnResult = {true, -(s32)damage, false, enemy->name + ": "};
+                    applyResult(turnResult, enemy);
+                }
+            }
+
+            allOutAttackWasPossibleThisKnockDown = true;
+
+            advanceTurn();
         }
         break;
     }
@@ -239,10 +298,19 @@ BattleResult BattleController::update(u32 keys)
     {
         Enemy* enemy = static_cast<Enemy*>(currentParticipantTurn);
         Skill* skill = enemy->pickSkill();
-        BattleParticipant* target = enemy->pickTarget(*partyMembers);
+        std::vector<BattleParticipant*> targets;
+        //TODO: branch in future if using healing / buff
+        for (PartyMember* partyMember : *partyMembers)
+        {
+            targets.push_back(partyMember);
+        }
+
+        BattleParticipant* target = enemy->pickTarget(targets);
         TurnResult turnResult = enemy->resolve(target, skill);
         applyResult(turnResult, target);
         advanceTurn();
+        //cant be set in advanceTurn, needs to be specifically cleared when an enemy has recoverd
+        allOutAttackWasPossibleThisKnockDown = false;
         break;
     }
 
@@ -435,6 +503,36 @@ void BattleController::handleDeadParticipants()
         exit();
         return;
     }
+}
+
+std::vector<BattleParticipant*> BattleController::getAliveEnemies()
+{
+    std::vector<BattleParticipant*> alive;
+    for (BattleParticipant* enemy : *enemies)
+    {
+        if (enemy->hp > 0)
+            alive.push_back(enemy);
+    }
+    return alive;
+}
+
+bool BattleController::allEnemiesKnockedDown()
+{
+    uint8_t aliveCount = 0;
+    uint8_t knockedDownCount = 0;
+    for (BattleParticipant* enemy : *enemies)
+    {
+        if (enemy->hp > 0)
+        {
+            aliveCount++;
+            knockedDownCount += (enemy->knockedDown);
+        }
+    }
+
+    if (knockedDownCount >= aliveCount)
+        return true;
+
+    return false;
 }
 
 bool BattleController::isSingleTarget(SkillType type)

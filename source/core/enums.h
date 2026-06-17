@@ -187,6 +187,7 @@ enum class BattleMenuOptions
     PERSONA,
     TARGET_ENEMY,
     TARGET_HEAL,
+    ALL_OUT_ATTACK,
     ALERT
 };
 
