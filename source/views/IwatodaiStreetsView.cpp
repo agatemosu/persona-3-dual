@@ -304,6 +304,7 @@ ViewState IwatodaiStreetsView::update()
             return ViewState::STATION;
         case TileType::SHD_W:
             // start battle
+            iprintf("\x1b[0;0HStart Battle");
             if (pressed & KEY_A)
             {
                 prevEnvironmentState = false;
@@ -311,6 +312,7 @@ ViewState IwatodaiStreetsView::update()
             }
             break;
         default:
+            consoleClear();
             break;
         }
 

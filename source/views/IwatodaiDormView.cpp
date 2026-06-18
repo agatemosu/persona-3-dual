@@ -334,6 +334,7 @@ ViewState IwatodaiDormView::update()
             return ViewState::IWATODAI_STREETS;
         case TileType::C_AK:
             // start dialogue
+            iprintf("\x1b[0;0HTalk");
             if (pressed & KEY_A)
             {
                 prevEnvironmentState = false;
@@ -341,6 +342,7 @@ ViewState IwatodaiDormView::update()
             }
             break;
         default:
+            consoleClear();
             break;
         }
 
