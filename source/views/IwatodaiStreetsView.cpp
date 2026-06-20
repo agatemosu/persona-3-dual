@@ -23,16 +23,22 @@ static const unsigned int* loadEnvironmentBitmap(const std::string& path, Graphi
 void IwatodaiStreetsView::setMusic()
 {
     std::string streetsMusicPath;
+    float start;
+    float end;
     if (saveData.femcMode)
     {
+        start = 34.001f;
+        end = 93.032f;
         streetsMusicPath = "music/locations/iwatodaiStreets/sun.pcm";
     }
     else
     {
+        start = 31.0f;
+        end = 177.587f;
         streetsMusicPath = "music/locations/iwatodaiStreets/changing_seasons.pcm";
     }
 
-    musicCtrl.init((fatBasePath + streetsMusicPath).c_str(), 0.0f, -1.0f);
+    musicCtrl.init((fatBasePath + streetsMusicPath).c_str(), start, end);
 }
 
 void IwatodaiStreetsView::setupEnvironment()
