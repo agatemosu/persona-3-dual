@@ -22,7 +22,7 @@ const unsigned int* loadEnvironmentBitmap(const std::string& path, GraphicAsset&
 
 void IwatodaiDormView::setMusic()
 {
-    musicCtrl.init((fatBasePath + "music/locations/iwatodaiDorm/iwatodai_dorm.pcm").c_str(), 0.0f, 920.973f);
+    musicCtrl.init((fatBasePath + "music/locations/iwatodaiDorm/iwatodai_dorm.pcm").c_str(), 1.831f, 65.907f);
 }
 
 // TODO: dont forget to clear in future
