@@ -62,7 +62,7 @@ Requires [TWiLight Menu++](https://wiki.ds-homebrew.com/twilightmenu/) with DLDI
 5. Launch the game through TWiLight Menu++ as normal.
 ---
 
-## Developer & Artist Setup
+## Team Onboarding & Setup
 See [ONBOARDING.md](ONBOARDING.md)
 
 ---
