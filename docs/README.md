@@ -68,18 +68,8 @@ See [ONBOARDING.md](ONBOARDING.md)
 ---
 
 ## Roadmap
-
-See the [Project Board](https://github.com/orgs/p3d-project/projects/1) for current progress and open issues.
-
-### Milestone 1: The Initial Demo
-
-**Goal:** Lay the foundation of the game. Focused on implementing core engine features, basic systems, and getting our workflow documented. The grand finale of this phase is a polished promotional video showcasing our progress to try and recruit volunteers to the team.
-
-**Key Deliverables:**
-
-* **Environments & Models:** Getting characters moving around Iwatodai Dorm, Paulownia Mall, and other environment models, with optimized models. Initial implementation of the initial move-in intro sequence.
-* **User Interface:** Building out the foundational UI, including the top-corner calendar display, dialogue boxes with custom backgrounds, and a clean console-style battle menu. We are also laying the groundwork for FEMC palette swaps.
-* **Under the Hood:** Setting up dummy zones for battle and dialogue testing, adding basic save data functionality, implementing asset streaming, and finalizing the PersonaUniversalToolchain.
+- See the [Project Board](https://github.com/orgs/p3d-project/projects/1) for current progress and open issues.
+- See the [P3D Roadmap](https://docs.google.com/document/d/1VUxY2xVGtKzGWCES0VeZ_-vMpKSifB5vTW2ZkXJMPJM/edit?usp=sharing) document for progress on Milestones
 
 ---
 
