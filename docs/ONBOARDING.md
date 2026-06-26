@@ -4,15 +4,9 @@ Welcome to the Persona 3 Dual team! This guide will get you set up and oriented 
 
 ---
 
-## View the Team Rules
-Read the document [HERE](https://docs.google.com/document/d/14vTlQgszSVKGZUHF3B31w882El7HFMNzBfr_OGV5ixs/edit?usp=sharing)
-
----
-
-## Join the GitHub Organization & Google Drive
+## Join the GitHub Organization
 
 We use GitHub to track tasks and coordinate across all teams. **Everyone on the project needs to join the org.**
-We use Google Drive to save large files and other assorted documents. **Everyone on the project needs to join the Google Drive.**
 
 **Steps:**
 1. Create a [GitHub account](https://github.com) if you don't have one.
@@ -23,9 +17,9 @@ We use Google Drive to save large files and other assorted documents. **Everyone
 3. You'll receive an email invitation to join the org - accept it.
 
 > **Example message:**
-> `Hey! I just joined the Art team, and need access to the GitHub Organization & Google Drive. My GitHub username is [username]. My email is [insert-email-here]. I'm currently working on [task].`
+> `Hey! I just joined the Art team, and need access to the GitHub Organization. My GitHub username is [username]. I'm currently working on [task].`
 
-Once accepted, you'll have access to the [GitHub Organization](https://github.com/p3d-project), [Project Board](https://github.com/orgs/p3d-project/projects/1), and editing access to the [Google Drive](https://drive.google.com/drive/folders/1MS2eOnHn5RiMcLRfc8K1s2ZR8FcY3tgq?usp=drive_link)
+Once accepted, you'll have access to the [GitHub Organization](https://github.com/p3d-project) and [Project Board](https://github.com/orgs/p3d-project/projects/1).
 
 ---
 
@@ -240,7 +234,7 @@ The video team produces **promo videos** and **devlog videos**, paired with each
 ### Workflow
 - Each milestone gets a promo video and an accompanying devlog.
 - Coordinate with other teams to gather footage, screenshots, and updates before each milestone.
-- **Upload all completed assets and their editable source files to [Google Drive](https://drive.google.com/drive/folders/1AFeO9BUEUAk4rjtS9qVomzTrRqkwQMvz?usp=drive_link)** and link them in the relevant issue.
+- **Upload all completed assets and their editable source files to [Google Drive](https://drive.google.com/drive/folders/1MS2eOnHn5RiMcLRfc8K1s2ZR8FcY3tgq?usp=sharing)** and link them in the relevant issue.
 
 ---
 
