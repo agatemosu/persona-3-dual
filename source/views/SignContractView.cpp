@@ -1,4 +1,5 @@
 #include "SignContractView.h"
+#include "controllers/SaveController.h"
 #include "core/enums.h"
 #include "core/globals.h"
 #include <nds.h>
@@ -258,7 +259,7 @@ ViewState SignContractView::update()
 void SignContractView::cleanup()
 {
     // update save data (names)
-    if (!saveCtrl.write())
+    if (!SaveController::getInstance()->write())
     {
         consoleDemoInit();
         iprintf("Failed to write save data!\n");

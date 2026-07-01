@@ -1,4 +1,5 @@
 #include "MainMenuComponent.h"
+#include "controllers/SaveController.h"
 #include "core/globals.h"
 #include <string>
 
@@ -157,7 +158,7 @@ ViewState MainMenuComponent::settingIntroOptionSelected()
 
 void MainMenuComponent::updateSave()
 {
-    if (!saveCtrl.write())
+    if (!SaveController::getInstance()->write())
     {
         consoleDemoInit();
         iprintf("Failed to write save data!\n");

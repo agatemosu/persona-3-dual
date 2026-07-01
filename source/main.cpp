@@ -58,7 +58,6 @@ std::string fatBasePath = "";
 Save saveData;
 
 // controllers
-SaveController saveCtrl;
 AnimationController characterAnimationCtrl;
 SpriteController spriteCtrl;
 GraphicsController graphicsCtrl;
@@ -180,7 +179,7 @@ int main(int argc, char* argv[])
     mmInitDefaultMem((mm_addr)soundbank_bin);
 
     // load save data
-    if (!saveCtrl.read())
+    if (!SaveController::getInstance()->read())
     {
         consoleDemoInit();
         iprintf("Failed to read save data!\n");

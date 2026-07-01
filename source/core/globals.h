@@ -5,7 +5,6 @@
 #include "components/ui/MenuHUDScreen.h"
 #include "controllers/AnimationController.h"
 #include "controllers/GraphicsController.h"
-#include "controllers/SaveController.h"
 #include "controllers/SpriteController.h"
 #include "controllers/UIController.h"
 
@@ -22,7 +21,6 @@ extern Save saveData;
 extern unsigned int** bitmapsCharacter;
 
 // controllers
-extern SaveController saveCtrl;
 extern AnimationController characterAnimationCtrl;
 extern SpriteController spriteCtrl;
 extern GraphicsController graphicsCtrl;
