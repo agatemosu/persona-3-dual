@@ -22,7 +22,8 @@ const unsigned int* loadEnvironmentBitmap(const std::string& path, GraphicAsset&
 
 void IwatodaiDormView::setMusic()
 {
-    musicCtrl.init((fatBasePath + "music/locations/iwatodaiDorm/iwatodai_dorm.pcm").c_str(), 1.831f, 65.907f);
+    //musicCtrl->cleanup();
+    musicCtrl->init((fatBasePath + "music/locations/iwatodaiDorm/iwatodai_dorm.pcm").c_str(), 1.831f, 65.907f);
 }
 
 // TODO: dont forget to clear in future
@@ -257,7 +258,7 @@ ViewState IwatodaiDormView::update()
         ViewState menuResult = pauseMenuCmpt.update(pressed);
         if (menuResult != ViewState::KEEP_CURRENT)
         {
-            musicCtrl.pause();
+            musicCtrl->pause();
             return menuResult;
         }
 
@@ -327,10 +328,10 @@ ViewState IwatodaiDormView::update()
         switch (playerCtrl->isTileAt())
         {
         case TileType::SCENE_1:
-            musicCtrl.pause();
+            musicCtrl->pause();
             return ViewState::PAULOWNIA_MALL;
         case TileType::SCENE_0:
-            musicCtrl.pause();
+            musicCtrl->pause();
             return ViewState::IWATODAI_STREETS;
         case TileType::C_AK:
             // start dialogue
@@ -404,7 +405,7 @@ ViewState IwatodaiDormView::update()
 
     dialogueCtrl.update(keys);
     characterAnimationCtrl.update();
-    musicCtrl.update();
+    musicCtrl->update();
 
     return ViewState::KEEP_CURRENT;
 }

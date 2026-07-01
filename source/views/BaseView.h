@@ -1,4 +1,6 @@
 #pragma once
+#include "controllers/MusicController.h"
+#include "controllers/VideoController.h"
 #include "core/enums.h"
 
 class BaseView
@@ -13,4 +15,8 @@ class BaseView
     virtual void init() = 0;        // view setup
     virtual ViewState update() = 0; // view update
     virtual void cleanup();         // view cleanup
+  protected:
+    // global controllers
+    MusicController* musicCtrl = MusicController::getInstance();
+    VideoController* videoCtrl = VideoController::getInstance();
 };

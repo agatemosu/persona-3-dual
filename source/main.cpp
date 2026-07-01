@@ -59,8 +59,6 @@ Save saveData;
 
 // controllers
 SaveController saveCtrl;
-MusicController musicCtrl;
-VideoController videoCtrl;
 AnimationController characterAnimationCtrl;
 SpriteController spriteCtrl;
 GraphicsController graphicsCtrl;

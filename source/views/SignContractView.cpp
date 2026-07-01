@@ -9,9 +9,9 @@
 
 void SignContractView::cancelSFX()
 {
-    musicCtrl.stopSFX(sfxMenuHandle);
-    musicCtrl.stopSFX(sfxSelectHandle);
-    musicCtrl.stopSFX(sfxCancelHandle);
+    musicCtrl->stopSFX(sfxMenuHandle);
+    musicCtrl->stopSFX(sfxSelectHandle);
+    musicCtrl->stopSFX(sfxCancelHandle);
 }
 
 void SignContractView::init()
@@ -20,10 +20,10 @@ void SignContractView::init()
     setBrightness(3, -16);
 
     // setup music
-    musicCtrl.loadSFX(SFX_MENU);
-    musicCtrl.loadSFX(SFX_SELECT);
-    musicCtrl.loadSFX(SFX_CANCEL);
-    musicCtrl.init((fatBasePath + "music/menus/contract/mistic.pcm").c_str(), 1.998f, 49.959f);
+    musicCtrl->loadSFX(SFX_MENU);
+    musicCtrl->loadSFX(SFX_SELECT);
+    musicCtrl->loadSFX(SFX_CANCEL);
+    musicCtrl->init((fatBasePath + "music/menus/contract/mistic.pcm").c_str(), 1.998f, 49.959f);
 
     videoSetMode(MODE_5_2D);
     videoSetModeSub(MODE_0_2D);
@@ -87,7 +87,7 @@ void SignContractView::init()
         for (int duration = 0; duration <= 2; duration++)
         {
             swiWaitForVBlank();
-            musicCtrl.update();
+            musicCtrl->update();
         }
     }
 }
@@ -103,7 +103,7 @@ ViewState SignContractView::update()
     {
         key = 8;
         cancelSFX();
-        sfxCancelHandle = musicCtrl.playSFX(SFX_CANCEL, 255, 128);
+        sfxCancelHandle = musicCtrl->playSFX(SFX_CANCEL, 255, 128);
 
         if (isLastName)
         {
@@ -155,7 +155,7 @@ ViewState SignContractView::update()
     {
         key = 10;
         cancelSFX();
-        sfxSelectHandle = musicCtrl.playSFX(SFX_SELECT, 255, 128);
+        sfxSelectHandle = musicCtrl->playSFX(SFX_SELECT, 255, 128);
 
         if (isLastName)
         {
@@ -197,10 +197,10 @@ ViewState SignContractView::update()
                 for (int duration = 0; duration <= 2; duration++)
                 {
                     swiWaitForVBlank();
-                    musicCtrl.update();
+                    musicCtrl->update();
                 }
             }
-            musicCtrl.pause();
+            musicCtrl->pause();
 
             return ViewState::CUTSCENE_2;
         }
@@ -209,7 +209,7 @@ ViewState SignContractView::update()
     else if (key > 0)
     {
         cancelSFX();
-        sfxMenuHandle = musicCtrl.playSFX(SFX_MENU, 255, 128);
+        sfxMenuHandle = musicCtrl->playSFX(SFX_MENU, 255, 128);
 
         if (isLastName && (lastNameIndex < 31))
         {
@@ -251,7 +251,7 @@ ViewState SignContractView::update()
         REG_BLDALPHA_SUB = textAlpha | ((16 - textAlpha) << 8);
     }
 
-    musicCtrl.update();
+    musicCtrl->update();
     return ViewState::KEEP_CURRENT;
 }
 

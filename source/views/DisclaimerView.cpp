@@ -76,7 +76,7 @@ void DisclaimerView::init()
         for (int frame = 0; frame <= 6; frame++)
         {
             swiWaitForVBlank();
-            musicCtrl.update();
+            musicCtrl->update();
         }
     }
 
@@ -84,7 +84,7 @@ void DisclaimerView::init()
     for (int frame = 0; frame <= 90; frame++)
     {
         swiWaitForVBlank();
-        musicCtrl.update();
+        musicCtrl->update();
     }
 
     // fade caution screens out
@@ -96,14 +96,14 @@ void DisclaimerView::init()
         for (int frame = 0; frame <= 6; frame++)
         {
             swiWaitForVBlank();
-            musicCtrl.update();
+            musicCtrl->update();
         }
     }
 }
 
 ViewState DisclaimerView::update()
 {
-    musicCtrl.update();
+    musicCtrl->update();
     return ViewState::INTRO_VIDEO;
 }
 

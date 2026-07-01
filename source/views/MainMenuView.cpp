@@ -7,7 +7,7 @@
 void MainMenuView::init()
 {
     // setup music
-    musicCtrl.init((fatBasePath + "music/menus/velvetRoom/aria_of_the_soul.pcm").c_str(), 0.0f, 164.940f);
+    musicCtrl->init((fatBasePath + "music/menus/velvetRoom/aria_of_the_soul.pcm").c_str(), 0.0f, 164.940f);
 
     // setup menu
     isMainMenuCmptActive = true;
@@ -22,7 +22,7 @@ void MainMenuView::init()
         for (int duration = 0; duration <= 2; duration++)
         {
             swiWaitForVBlank();
-            musicCtrl.update();
+            musicCtrl->update();
         }
     }
 
@@ -110,7 +110,7 @@ void MainMenuView::init()
         for (int frame = 0; frame <= 6; frame++)
         {
             swiWaitForVBlank();
-            musicCtrl.update();
+            musicCtrl->update();
         }
     }
 }
@@ -123,10 +123,10 @@ ViewState MainMenuView::update()
     ViewState result = mainMenuCmpt.update(pressed);
     if (result != ViewState::KEEP_CURRENT)
     {
-        musicCtrl.pause();
+        musicCtrl->pause();
         return result;
     }
-    musicCtrl.update();
+    musicCtrl->update();
 
     // scroll silhouette background
     // animate X (moving right towards 0)

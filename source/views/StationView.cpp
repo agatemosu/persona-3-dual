@@ -96,7 +96,8 @@ void StationView::init()
                                          true);
 
     // setup music
-    musicCtrl.init((fatBasePath + "music/locations/paulowniaMall/station/paulownia_mall.pcm").c_str(), 2.002f, 73.939f);
+    musicCtrl->init(
+        (fatBasePath + "music/locations/paulowniaMall/station/paulownia_mall.pcm").c_str(), 2.002f, 73.939f);
 
     // setup character model
     std::string modelPath = fatBasePath + "models/";
@@ -162,7 +163,7 @@ ViewState StationView::update()
         ViewState menuResult = pauseMenuCmpt.update(pressed);
         if (menuResult != ViewState::KEEP_CURRENT)
         {
-            musicCtrl.pause();
+            musicCtrl->pause();
             return menuResult;
         }
 
@@ -207,7 +208,7 @@ ViewState StationView::update()
 
         if (playerCtrl->isTileAt() == TileType::SCENE_0)
         {
-            musicCtrl.pause();
+            musicCtrl->pause();
             return ViewState::PAULOWNIA_MALL;
         }
 
@@ -256,7 +257,7 @@ ViewState StationView::update()
     }
     }
 
-    musicCtrl.update();
+    musicCtrl->update();
     characterAnimationCtrl.update();
 
     return ViewState::KEEP_CURRENT;

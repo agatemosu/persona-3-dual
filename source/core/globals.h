@@ -5,11 +5,9 @@
 #include "components/ui/MenuHUDScreen.h"
 #include "controllers/AnimationController.h"
 #include "controllers/GraphicsController.h"
-#include "controllers/MusicController.h"
 #include "controllers/SaveController.h"
 #include "controllers/SpriteController.h"
 #include "controllers/UIController.h"
-#include "controllers/VideoController.h"
 
 class PauseMenuComponent;
 class DialogueScreen;
@@ -25,8 +23,6 @@ extern unsigned int** bitmapsCharacter;
 
 // controllers
 extern SaveController saveCtrl;
-extern MusicController musicCtrl;
-extern VideoController videoCtrl;
 extern AnimationController characterAnimationCtrl;
 extern SpriteController spriteCtrl;
 extern GraphicsController graphicsCtrl;

@@ -38,7 +38,7 @@ void IwatodaiStreetsView::setMusic()
         streetsMusicPath = "music/locations/iwatodaiStreets/changing_seasons.pcm";
     }
 
-    musicCtrl.init((fatBasePath + streetsMusicPath).c_str(), start, end);
+    musicCtrl->init((fatBasePath + streetsMusicPath).c_str(), start, end);
 }
 
 void IwatodaiStreetsView::setupEnvironment()
@@ -251,7 +251,7 @@ ViewState IwatodaiStreetsView::update()
         ViewState menuResult = pauseMenuCmpt.update(pressed);
         if (menuResult != ViewState::KEEP_CURRENT)
         {
-            musicCtrl.pause();
+            musicCtrl->pause();
             return menuResult;
         }
 
@@ -297,13 +297,13 @@ ViewState IwatodaiStreetsView::update()
         switch (playerCtrl->isTileAt())
         {
         case TileType::SCENE_0:
-            musicCtrl.pause();
+            musicCtrl->pause();
             return ViewState::IWATODAI_DORM;
         case TileType::SCENE_1:
-            musicCtrl.pause();
+            musicCtrl->pause();
             return ViewState::PAULOWNIA_MALL;
         case TileType::SCENE_2:
-            musicCtrl.pause();
+            musicCtrl->pause();
             return ViewState::STATION;
         case TileType::SHD_W:
             // start battle
@@ -368,7 +368,7 @@ ViewState IwatodaiStreetsView::update()
     }
     }
 
-    musicCtrl.update();
+    musicCtrl->update();
     battleController.update(pressed);
     characterAnimationCtrl.update();
 

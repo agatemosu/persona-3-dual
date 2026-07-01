@@ -20,7 +20,7 @@ static const unsigned int* loadEnvironmentBitmap(const std::string& path, Graphi
 
 void PaulowniaMallView::setMusic()
 {
-    musicCtrl.init(
+    musicCtrl->init(
         (fatBasePath + "music/locations/paulowniaMall/overworld/color_your_night.pcm").c_str(), 2.050f, 204.191f);
 }
 
@@ -219,7 +219,7 @@ ViewState PaulowniaMallView::update()
         ViewState menuResult = pauseMenuCmpt.update(pressed);
         if (menuResult != ViewState::KEEP_CURRENT)
         {
-            musicCtrl.pause();
+            musicCtrl->pause();
             return menuResult;
         }
 
@@ -267,11 +267,11 @@ ViewState PaulowniaMallView::update()
         {
         // left
         case TileType::SCENE_0:
-            musicCtrl.pause();
+            musicCtrl->pause();
             return ViewState::IWATODAI_STREETS;
         // right
         case TileType::SCENE_1:
-            musicCtrl.pause();
+            musicCtrl->pause();
             return ViewState::IWATODAI_DORM;
         // middle
         case TileType::SCENE_2:
@@ -282,7 +282,7 @@ ViewState PaulowniaMallView::update()
         case TileType::SCENE_7:
         case TileType::SCENE_8:
         case TileType::SCENE_9:
-            musicCtrl.pause();
+            musicCtrl->pause();
             return ViewState::STATION;
         default:
             break;
@@ -345,7 +345,7 @@ ViewState PaulowniaMallView::update()
 
     // update controllers
     characterAnimationCtrl.update();
-    musicCtrl.update();
+    musicCtrl->update();
 
     return ViewState::KEEP_CURRENT;
 }

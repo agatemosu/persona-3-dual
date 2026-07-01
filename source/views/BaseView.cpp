@@ -8,8 +8,8 @@ void BaseView::cleanup()
     consoleClear();
 
     // global controllers
-    videoCtrl.cleanup();
-    musicCtrl.cleanup();
+    videoCtrl->cleanup();
+    musicCtrl->cleanup();
     characterAnimationCtrl.stop();
 
     // global components

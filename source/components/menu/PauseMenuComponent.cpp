@@ -159,7 +159,7 @@ ViewState PauseMenuComponent::debugOptionSelected()
     switch (static_cast<DebugOption>(selectedOption))
     {
     case DebugOption::DISCLAIMER_VIEW:
-        musicCtrl.pause();
+        musicCtrl->pause();
         selectedView = ViewState::DISCLAIMER;
         break;
     case DebugOption::INTRO_VIEW:

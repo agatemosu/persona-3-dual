@@ -155,8 +155,8 @@ void IntroView::init()
     graphicsCtrl.unloadGrit(logoRight);
 
     // point to music
-    musicCtrl.loadSFX(SFX_SELECT);
-    musicCtrl.init((fatBasePath + "music/menus/title/tightrope.pcm").c_str(), 17.962f, 66.082f);
+    musicCtrl->loadSFX(SFX_SELECT);
+    musicCtrl->init((fatBasePath + "music/menus/title/tightrope.pcm").c_str(), 17.962f, 66.082f);
 
     // hide sub screen text and attribution text layer
     REG_BLDCNT_SUB = BLEND_ALPHA | BLEND_SRC_BG2 | BLEND_SRC_BG0 | BLEND_DST_BG0 | BLEND_DST_BG1 | BLEND_DST_BACKDROP;
@@ -174,7 +174,7 @@ void IntroView::init()
         // wait for duration amount of frames
         for (int frame = 0; frame <= 3; frame++)
         {
-            musicCtrl.update();
+            musicCtrl->update();
             swiWaitForVBlank();
         }
     }
@@ -190,7 +190,7 @@ void IntroView::init()
         // wait for duration amount of frames
         for (int frame = 0; frame <= 6; frame++)
         {
-            musicCtrl.update();
+            musicCtrl->update();
             swiWaitForVBlank();
         }
     }
@@ -198,15 +198,15 @@ void IntroView::init()
 
 ViewState IntroView::update()
 {
-    musicCtrl.update();
+    musicCtrl->update();
     scanKeys();
     int pressed = keysDown();
 
     // transition to menu state on any input
     if ((pressed & KEY_A) || (pressed & KEY_START) || (pressed & KEY_TOUCH))
     {
-        musicCtrl.playSFX(SFX_SELECT, 255, 128);
-        musicCtrl.pause();
+        musicCtrl->playSFX(SFX_SELECT, 255, 128);
+        musicCtrl->pause();
         // transition both screens to black
         for (int i = 0; i <= 16; i++)
         {
@@ -215,7 +215,7 @@ ViewState IntroView::update()
             // wait a few frames
             for (int duration = 0; duration <= 2; duration++)
             {
-                musicCtrl.update();
+                musicCtrl->update();
                 swiWaitForVBlank();
             }
         }
@@ -223,8 +223,8 @@ ViewState IntroView::update()
     }
     else if (pressed & KEY_B)
     {
-        musicCtrl.playSFX(SFX_CANCEL, 255, 128);
-        musicCtrl.pause();
+        musicCtrl->playSFX(SFX_CANCEL, 255, 128);
+        musicCtrl->pause();
         // transition both screens to black
         for (int i = 0; i <= 16; i++)
         {
@@ -233,7 +233,7 @@ ViewState IntroView::update()
             // wait a few frames
             for (int duration = 0; duration <= 2; duration++)
             {
-                musicCtrl.update();
+                musicCtrl->update();
                 swiWaitForVBlank();
             }
         }
