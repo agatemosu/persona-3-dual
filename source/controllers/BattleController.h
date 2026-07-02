@@ -1,5 +1,6 @@
 #pragma once
 
+#include "components/menu/BattleMenuComponent.h"
 #include "controllers/MusicController.h"
 #include <algorithm>
 #include <array>
@@ -79,6 +80,7 @@ class BattleController
     };
 
     MusicController* musicCtrl = MusicController::getInstance();
+    BattleMenuComponent* battleMenuCmpt = BattleMenuComponent::getInstance();
 
   public:
     bool isActive() const

@@ -1,6 +1,7 @@
 #include "views/BaseView3D.h"
 #include <nds/arm9/console.h>
-// controllers
+// controllers / components
+#include "components/ui/MenuHUDScreen.h"
 #include "controllers/CharacterController.h"
 #include "controllers/UIController.h"
 // environments
@@ -55,4 +56,6 @@ class PaulowniaMallView : public BaseView3D
 
     UIController* uiCtrl = UIController::getInstance();
     GraphicsController* graphicsCtrl = GraphicsController::getInstance();
+
+    MenuHUDScreen* menuHUDScreen = MenuHUDScreen::getInstance();
 };

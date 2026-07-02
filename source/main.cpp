@@ -25,9 +25,6 @@
 #include "controllers/SaveController.h"
 
 // components
-#include "components/menu/BattleMenuComponent.h"
-#include "components/menu/PauseMenuComponent.h"
-#include "components/ui/DialogueScreen.h"
 #include "components/ui/MenuHUDScreen.h"
 
 // sfx
@@ -70,14 +67,10 @@ static unsigned int* loadCharacterTexture(const std::string& name, bool isFemc)
 }
 
 // components
-PauseMenuComponent pauseMenuCmpt;
 bool enableBillboards = true;
 bool enableCharacterAnim = true;
 bool enableDebugPrint = false;
 bool isPauseMenuActive = false;
-BattleMenuComponent battleMenuCmpt;
-MenuHUDScreen menuHUDScreen;
-DialogueScreen dialogueScreen;
 
 BaseView* currentView = nullptr;
 bool prevFemcMode;

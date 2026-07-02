@@ -1,6 +1,8 @@
 #include "views/BaseView3D.h"
 #include <nds/arm9/console.h>
 // controllers
+#include "components/ui/DialogueScreen.h"
+#include "components/ui/MenuHUDScreen.h"
 #include "controllers/CharacterController.h"
 #include "controllers/DialogueController.h"
 #include "controllers/UIController.h"
@@ -58,4 +60,7 @@ class IwatodaiDormView : public BaseView3D
 
     UIController* uiCtrl = UIController::getInstance();
     GraphicsController* graphicsCtrl = GraphicsController::getInstance();
+
+    DialogueScreen* dialogueScreen = DialogueScreen::getInstance();
+    MenuHUDScreen* menuHUDScreen = MenuHUDScreen::getInstance();
 };

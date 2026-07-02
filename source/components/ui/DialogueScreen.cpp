@@ -1,4 +1,33 @@
 #include "DialogueScreen.h"
+
+DialogueScreen* DialogueScreen::instance = nullptr;
+
+void DialogueScreen::create()
+{
+    if (instance == nullptr)
+    {
+        instance = new DialogueScreen();
+    }
+}
+
+void DialogueScreen::destroy()
+{
+    if (instance != nullptr)
+    {
+        delete instance;
+    }
+    instance = nullptr;
+}
+
+DialogueScreen* DialogueScreen::getInstance()
+{
+    if (instance == nullptr)
+    {
+        create();
+    }
+    return instance;
+}
+
 // TODO: clean up and properly implement class
 
 // helper

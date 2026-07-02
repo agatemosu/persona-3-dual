@@ -1,4 +1,33 @@
 #include "MenuHUDScreen.h"
+
+MenuHUDScreen* MenuHUDScreen::instance = nullptr;
+
+void MenuHUDScreen::create()
+{
+    if (instance == nullptr)
+    {
+        instance = new MenuHUDScreen();
+    }
+}
+
+void MenuHUDScreen::destroy()
+{
+    if (instance != nullptr)
+    {
+        delete instance;
+        instance = nullptr;
+    }
+}
+
+MenuHUDScreen* MenuHUDScreen::getInstance()
+{
+    if (instance == nullptr)
+    {
+        instance = new MenuHUDScreen();
+    }
+    return instance;
+}
+
 // TODO: clean up and properly implement class
 
 // helper

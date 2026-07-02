@@ -1,12 +1,6 @@
 #pragma once
-#include "components/menu/BattleMenuComponent.h"
-#include "components/menu/PauseMenuComponent.h"
-#include "components/ui/DialogueScreen.h"
-#include "components/ui/MenuHUDScreen.h"
-
-class PauseMenuComponent;
-class DialogueScreen;
-class MenuHUDScreen;
+#include "core/structs.h"
+#include <string>
 
 // variables
 extern volatile int frame;
@@ -17,11 +11,7 @@ extern Save saveData;
 extern unsigned int** bitmapsCharacter;
 
 // components
-extern PauseMenuComponent pauseMenuCmpt;
 extern bool enableBillboards;
 extern bool enableDebugPrint;
 extern bool enableCharacterAnim;
 extern bool isPauseMenuActive;
-extern BattleMenuComponent battleMenuCmpt;
-extern MenuHUDScreen menuHUDScreen;
-extern DialogueScreen dialogueScreen;

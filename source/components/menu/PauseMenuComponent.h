@@ -22,6 +22,10 @@ class PauseMenuComponent : public BaseMenu
     void loadBg(int bgIndex) override;
 
   private:
+    PauseMenuComponent() {};
+    virtual ~PauseMenuComponent() = default; //w/o virtual we get a possible undefined behavior warning
+    static PauseMenuComponent* instance;
+
     MenuOption menuOptions[MENU_OPTIONS] = {
         {"Debug", -1, MENU_BIND(PauseMenuComponent, openDebugMenu)},
         {"Skill", -1, MENU_BIND(PauseMenuComponent, openSkillMenu)},
@@ -173,6 +177,10 @@ class PauseMenuComponent : public BaseMenu
     AnimationController* characterAnimationCtrl = AnimationController::getInstance();
 
   public:
+    static void create();
+    static void destroy();
+    static PauseMenuComponent* getInstance();
+
     void init(int iBgSlot, bool* isActive, const std::string& iPauseMessage = "Pause") override;
     ViewState update(int keys) override;
 };

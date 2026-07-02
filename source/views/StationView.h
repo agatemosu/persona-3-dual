@@ -1,4 +1,5 @@
 #pragma once
+#include "components/ui/MenuHUDScreen.h"
 #include "controllers/CharacterController.h"
 #include "controllers/UIController.h"
 #include "environments/station.h"
@@ -47,4 +48,5 @@ class StationView : public BaseView3D
 
     UIController* uiCtrl = UIController::getInstance();
     GraphicsController* graphicsCtrl = GraphicsController::getInstance();
+    MenuHUDScreen* menuHUDScreen = MenuHUDScreen::getInstance();
 };

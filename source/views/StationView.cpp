@@ -117,7 +117,7 @@ void StationView::init()
     StationView::setupEnvironment();
 
     // pause menu
-    pauseMenuCmpt.init(bgSharedSub1, &isPauseMenuActive);
+    pauseMenuCmpt->init(bgSharedSub1, &isPauseMenuActive);
 
     // setup UI
     int bgMain[3] = {1, 2, 3};
@@ -127,8 +127,8 @@ void StationView::init()
     oamInit(&oamSub, SpriteMapping_1D_128, true);
 
     uiCtrl->setGraphics(bgSub, bgMain, &oamSub, nullptr);
-    uiCtrl->registerScreen(&menuHUDScreen, false);
-    uiCtrl->show(&menuHUDScreen, false);
+    uiCtrl->registerScreen(menuHUDScreen, false);
+    uiCtrl->show(menuHUDScreen, false);
 
     // setup view phases
     prevPauseState = false;
@@ -160,7 +160,7 @@ ViewState StationView::update()
         }
 
         // run
-        ViewState menuResult = pauseMenuCmpt.update(pressed);
+        ViewState menuResult = pauseMenuCmpt->update(pressed);
         if (menuResult != ViewState::KEEP_CURRENT)
         {
             musicCtrl->pause();
@@ -182,7 +182,7 @@ ViewState StationView::update()
         if (!prevEnvironmentState)
         {
             // render HUD
-            uiCtrl->show(&menuHUDScreen, false);
+            uiCtrl->show(menuHUDScreen, false);
             prevEnvironmentState = true;
         }
 
@@ -199,7 +199,7 @@ ViewState StationView::update()
         if (pressed & KEY_TOUCH)
         {
             touchRead(&touch);
-            if (menuHUDScreen.onTouch(&touch) == 1)
+            if (menuHUDScreen->onTouch(&touch) == 1)
             {
                 prevEnvironmentState = false;
                 phase = ViewPhase::Pause;

@@ -207,7 +207,7 @@ void IwatodaiDormView::init()
     demo_dialogue_bg_slot = bgSharedSub1;
 
     // setup pause menu
-    pauseMenuCmpt.init(bgSharedSub1, &isPauseMenuActive);
+    pauseMenuCmpt->init(bgSharedSub1, &isPauseMenuActive);
 
     // setup UI
     // NOTE: bg 0 is the 3D view
@@ -220,9 +220,9 @@ void IwatodaiDormView::init()
     oamInit(&oamSub, SpriteMapping_1D_128, true);
 
     uiCtrl->setGraphics(bgSub, bgMain, &oamSub, nullptr);
-    uiCtrl->registerScreen(&menuHUDScreen, false);
-    uiCtrl->registerScreen(&dialogueScreen, false);
-    uiCtrl->show(&menuHUDScreen, false);
+    uiCtrl->registerScreen(menuHUDScreen, false);
+    uiCtrl->registerScreen(dialogueScreen, false);
+    uiCtrl->show(menuHUDScreen, false);
 
     // setup view phases
     prevPauseState = false;
@@ -255,7 +255,7 @@ ViewState IwatodaiDormView::update()
         }
 
         // run
-        ViewState menuResult = pauseMenuCmpt.update(pressed);
+        ViewState menuResult = pauseMenuCmpt->update(pressed);
         if (menuResult != ViewState::KEEP_CURRENT)
         {
             musicCtrl->pause();
@@ -278,7 +278,7 @@ ViewState IwatodaiDormView::update()
         // set
         if (!isActive && !prevDialogueState)
         {
-            uiCtrl->show(&dialogueScreen, false);
+            uiCtrl->show(dialogueScreen, false);
             demo_yukari_kenji_argument_load();
             dialogueCtrl.setLoader(demo_yukari_kenji_argument_load_bg);
             dialogueCtrl.start(demo_yukari_kenji_argument_first());
@@ -299,7 +299,7 @@ ViewState IwatodaiDormView::update()
         if (!prevEnvironmentState)
         {
             // render HUD
-            uiCtrl->show(&menuHUDScreen, false);
+            uiCtrl->show(menuHUDScreen, false);
             prevEnvironmentState = true;
         }
 
@@ -317,7 +317,7 @@ ViewState IwatodaiDormView::update()
         if (pressed & KEY_TOUCH)
         {
             touchRead(&touch);
-            if (menuHUDScreen.onTouch(&touch) == 1)
+            if (menuHUDScreen->onTouch(&touch) == 1)
             {
                 prevEnvironmentState = false;
                 phase = ViewPhase::Pause;

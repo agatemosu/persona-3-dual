@@ -58,9 +58,9 @@ BattleResult BattleController::update(u32 keys)
         PartyMember* actor = static_cast<PartyMember*>(currentParticipantTurn);
 
         // render battleMenu
-        battleMenuCmpt.loadActionOptions(&actions, actor->name);
+        battleMenuCmpt->loadActionOptions(&actions, actor->name);
         menuIndex = -1;
-        menuIndex = (int)battleMenuCmpt.update(keys);
+        menuIndex = (int)battleMenuCmpt->update(keys);
 
         if ((menuIndex != -1) && (keys & KEY_A) && actor->actorCanUse(actions[menuIndex]))
         {
@@ -97,11 +97,11 @@ BattleResult BattleController::update(u32 keys)
         PartyMember* actor = static_cast<PartyMember*>(currentParticipantTurn);
 
         // render battleMenu
-        battleMenuCmpt.loadSkillOptions(actor->curPersona);
+        battleMenuCmpt->loadSkillOptions(actor->curPersona);
         //TODO: why not just return nullptr if nothing happens instead of setting -1 manually everywhere?
 
         menuIndex = -1;
-        menuIndex = (int)battleMenuCmpt.update(keys);
+        menuIndex = (int)battleMenuCmpt->update(keys);
 
         if ((menuIndex != -1) && (keys & KEY_A))
         {
@@ -125,7 +125,7 @@ BattleResult BattleController::update(u32 keys)
             {
                 pendingAlert = (s->skillRace == SkillRace::mag) ? "Not enough SP\n" : "Not enough HP\n";
                 alertReturnPhase = BattlePhase::ChooseSkill;
-                battleMenuCmpt.reset();
+                battleMenuCmpt->reset();
                 phase = BattlePhase::ShowAlert;
             }
         }
@@ -146,9 +146,9 @@ BattleResult BattleController::update(u32 keys)
             personaBeforeSwitch = actor->curPersona;
         }
 
-        battleMenuCmpt.loadPersonaOptions(&actor->personas);
+        battleMenuCmpt->loadPersonaOptions(&actor->personas);
         menuIndex = -1;
-        menuIndex = (int)battleMenuCmpt.update(keys);
+        menuIndex = (int)battleMenuCmpt->update(keys);
 
         if ((menuIndex != -1) && (keys & KEY_A))
         {
@@ -165,7 +165,7 @@ BattleResult BattleController::update(u32 keys)
                 alertReturnPhase = BattlePhase::ChooseAction;
             }
 
-            battleMenuCmpt.reset();
+            battleMenuCmpt->reset();
             phase = BattlePhase::ShowAlert;
         }
 
@@ -200,9 +200,9 @@ BattleResult BattleController::update(u32 keys)
         targets.erase(std::remove_if(targets.begin(), targets.end(), [](BattleParticipant* t) { return t->hp <= 0; }),
                       targets.end());
 
-        battleMenuCmpt.loadTargetOptions(&targets, healTarget);
+        battleMenuCmpt->loadTargetOptions(&targets, healTarget);
         menuIndex = -1;
-        menuIndex = (int)battleMenuCmpt.update(keys);
+        menuIndex = (int)battleMenuCmpt->update(keys);
 
         if (menuIndex != -1 && (keys & KEY_A))
         {
@@ -253,9 +253,9 @@ BattleResult BattleController::update(u32 keys)
 
     case BattlePhase::ConfirmAllOutAttack:
     {
-        battleMenuCmpt.loadAllOutAttackConfirmation();
+        battleMenuCmpt->loadAllOutAttackConfirmation();
         menuIndex = -1;
-        menuIndex = (int)battleMenuCmpt.update(keys);
+        menuIndex = (int)battleMenuCmpt->update(keys);
 
         if (menuIndex != -1 && (keys & KEY_A))
         {
@@ -289,7 +289,7 @@ BattleResult BattleController::update(u32 keys)
             else
             {
                 currentParticipantTurn->oneMore = false;
-                battleMenuCmpt.reset();
+                battleMenuCmpt->reset();
                 phase = BattlePhase::ChooseAction;
             }
         }
@@ -298,12 +298,12 @@ BattleResult BattleController::update(u32 keys)
 
     case BattlePhase::ShowAlert:
     {
-        battleMenuCmpt.loadAlertOptions(pendingAlert);
-        battleMenuCmpt.update(keys);
-        if (battleMenuCmpt.isAlertExpired(120))
+        battleMenuCmpt->loadAlertOptions(pendingAlert);
+        battleMenuCmpt->update(keys);
+        if (battleMenuCmpt->isAlertExpired(120))
         {
             pendingAlert.clear();
-            battleMenuCmpt.reset();
+            battleMenuCmpt->reset();
             phase = alertReturnPhase;
         }
         break;
@@ -395,7 +395,7 @@ void BattleController::advanceTurn()
     if (allEnemiesKnockedDown() && !allOutAttackWasPossibleThisKnockDown)
     {
         alertReturnPhase = BattlePhase::ChooseAction;
-        battleMenuCmpt.reset();
+        battleMenuCmpt->reset();
         setNextPhase(BattlePhase::ConfirmAllOutAttack);
         return;
     }
@@ -440,7 +440,7 @@ void BattleController::setNextPhase(BattlePhase nextPhase)
     if (!pendingAlert.empty())
     {
         alertReturnPhase = nextPhase;
-        battleMenuCmpt.reset();
+        battleMenuCmpt->reset();
         phase = BattlePhase::ShowAlert;
     }
     else

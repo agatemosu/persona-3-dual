@@ -9,6 +9,10 @@
 class MenuHUDScreen : public UIScreen
 {
   public:
+    static void create();
+    static void destroy();
+    static MenuHUDScreen* getInstance();
+
     void load();
     void unload();
     void renderSprites() override;
@@ -16,6 +20,10 @@ class MenuHUDScreen : public UIScreen
     int onTouch(touchPosition* touch) override;
 
   private:
+    MenuHUDScreen() {};
+    ~MenuHUDScreen() {};
+    static MenuHUDScreen* instance;
+
     // NOTE: we can have max:
     // 1 moon
     // 1 day of the week

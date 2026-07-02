@@ -1,4 +1,6 @@
 #pragma once
+#include "components/menu/BattleMenuComponent.h"
+#include "components/ui/MenuHUDScreen.h"
 #include "controllers/CharacterController.h"
 #include "controllers/UIController.h"
 #include "environments/iwatodai_streets.h"
@@ -76,4 +78,6 @@ class IwatodaiStreetsView : public BaseView3D
 
     UIController* uiCtrl = UIController::getInstance();
     GraphicsController* graphicsCtrl = GraphicsController::getInstance();
+    BattleMenuComponent* battleMenuCmpt = BattleMenuComponent::getInstance();
+    MenuHUDScreen* menuHUDScreen = MenuHUDScreen::getInstance();
 };

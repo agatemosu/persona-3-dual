@@ -13,7 +13,7 @@ void BaseView::cleanup()
     characterAnimationCtrl->stop();
 
     // global components
-    pauseMenuCmpt.cancelSFX();
+    pauseMenuCmpt->cancelSFX();
     enableBillboards = true;
     enableCharacterAnim = true;
     enableDebugPrint = false;

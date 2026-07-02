@@ -8,6 +8,34 @@
 // dialogue
 #include "dialogue/demo_dialogue.h"
 
+PauseMenuComponent* PauseMenuComponent::instance = nullptr;
+
+void PauseMenuComponent::create()
+{
+    if (instance == nullptr)
+    {
+        instance = new PauseMenuComponent();
+    }
+}
+
+void PauseMenuComponent::destroy()
+{
+    if (instance != nullptr)
+    {
+        delete instance;
+    }
+    instance = nullptr;
+}
+
+PauseMenuComponent* PauseMenuComponent::getInstance()
+{
+    if (instance == nullptr)
+    {
+        create();
+    }
+    return instance;
+}
+
 DialogueController dialogueCtrl;
 
 void PauseMenuComponent::loadBg(int bgIndex)

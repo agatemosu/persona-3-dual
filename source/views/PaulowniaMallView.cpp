@@ -170,7 +170,7 @@ void PaulowniaMallView::init()
     PaulowniaMallView::setupEnvironment();
 
     // setup pause menu
-    pauseMenuCmpt.init(bgSharedSub1, &isPauseMenuActive);
+    pauseMenuCmpt->init(bgSharedSub1, &isPauseMenuActive);
 
     // setup UI
     // NOTE: bg 0 is the 3D view
@@ -183,8 +183,8 @@ void PaulowniaMallView::init()
     oamInit(&oamSub, SpriteMapping_1D_128, true);
 
     uiCtrl->setGraphics(bgSub, bgMain, &oamSub, nullptr);
-    uiCtrl->registerScreen(&menuHUDScreen, false);
-    uiCtrl->show(&menuHUDScreen, false);
+    uiCtrl->registerScreen(menuHUDScreen, false);
+    uiCtrl->show(menuHUDScreen, false);
 
     // setup view phases
     prevPauseState = false;
@@ -216,7 +216,7 @@ ViewState PaulowniaMallView::update()
         }
 
         // run
-        ViewState menuResult = pauseMenuCmpt.update(pressed);
+        ViewState menuResult = pauseMenuCmpt->update(pressed);
         if (menuResult != ViewState::KEEP_CURRENT)
         {
             musicCtrl->pause();
@@ -238,7 +238,7 @@ ViewState PaulowniaMallView::update()
         if (!prevEnvironmentState)
         {
             // render HUD
-            uiCtrl->show(&menuHUDScreen, false);
+            uiCtrl->show(menuHUDScreen, false);
             prevEnvironmentState = true;
         }
 
@@ -256,7 +256,7 @@ ViewState PaulowniaMallView::update()
         if (pressed & KEY_TOUCH)
         {
             touchRead(&touch);
-            if (menuHUDScreen.onTouch(&touch) == 1)
+            if (menuHUDScreen->onTouch(&touch) == 1)
             {
                 prevEnvironmentState = false;
                 phase = ViewPhase::Pause;

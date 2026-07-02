@@ -1,4 +1,5 @@
 #pragma once
+#include "components/menu/PauseMenuComponent.h"
 #include "controllers/AnimationController.h"
 #include "controllers/GraphicsController.h"
 #include "controllers/MusicController.h"
@@ -22,4 +23,6 @@ class BaseView
     MusicController* musicCtrl = MusicController::getInstance();
     VideoController* videoCtrl = VideoController::getInstance();
     AnimationController* characterAnimationCtrl = AnimationController::getInstance();
+    //global controllers
+    PauseMenuComponent* pauseMenuCmpt = PauseMenuComponent::getInstance();
 };
