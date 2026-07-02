@@ -3,7 +3,6 @@
 #include "components/menu/PauseMenuComponent.h"
 #include "components/ui/DialogueScreen.h"
 #include "components/ui/MenuHUDScreen.h"
-#include "controllers/AnimationController.h"
 #include "controllers/UIController.h"
 
 class PauseMenuComponent;
@@ -19,7 +18,6 @@ extern Save saveData;
 extern unsigned int** bitmapsCharacter;
 
 // controllers
-extern AnimationController characterAnimationCtrl;
 extern UIController uiCtrl;
 
 // components

@@ -188,16 +188,16 @@ void IwatodaiDormView::init()
 
     // setup character model
     std::string modelPath = fatBasePath + "models/";
-    characterAnimationCtrl.loadModel(
+    characterAnimationCtrl->loadModel(
         (modelPath + (saveData.femcMode ? "kotone/kotone.bin" : "makoto/makoto.bin")).c_str());
 
     if (saveData.femcMode)
     {
-        kotone_loadTextures(characterAnimationCtrl, (const unsigned int**)bitmapsCharacter);
+        kotone_loadTextures(*characterAnimationCtrl, (const unsigned int**)bitmapsCharacter);
     }
     else
     {
-        makoto_loadTextures(characterAnimationCtrl, (const unsigned int**)bitmapsCharacter);
+        makoto_loadTextures(*characterAnimationCtrl, (const unsigned int**)bitmapsCharacter);
     }
 
     // setup environment
@@ -375,7 +375,7 @@ ViewState IwatodaiDormView::update()
         glRotatef(charPos.facingAngle, 0.0f, 1.0f, 0.0f);
 
         // draw character
-        characterAnimationCtrl.render();
+        characterAnimationCtrl->render();
         glPopMatrix(1);
 
         glFlush(0);
@@ -404,7 +404,7 @@ ViewState IwatodaiDormView::update()
     }
 
     dialogueCtrl.update(keys);
-    characterAnimationCtrl.update();
+    characterAnimationCtrl->update();
     musicCtrl->update();
 
     return ViewState::KEEP_CURRENT;

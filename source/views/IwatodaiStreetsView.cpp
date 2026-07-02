@@ -142,16 +142,16 @@ void IwatodaiStreetsView::init()
 
     // setup character model
     std::string modelPath = fatBasePath + "models/";
-    characterAnimationCtrl.loadModel(
+    characterAnimationCtrl->loadModel(
         (modelPath + (saveData.femcMode ? "kotone/kotone.bin" : "makoto/makoto.bin")).c_str());
 
     if (saveData.femcMode)
     {
-        kotone_loadTextures(characterAnimationCtrl, (const unsigned int**)bitmapsCharacter);
+        kotone_loadTextures(*characterAnimationCtrl, (const unsigned int**)bitmapsCharacter);
     }
     else
     {
-        makoto_loadTextures(characterAnimationCtrl, (const unsigned int**)bitmapsCharacter);
+        makoto_loadTextures(*characterAnimationCtrl, (const unsigned int**)bitmapsCharacter);
     }
 
     // setup environment
@@ -341,7 +341,7 @@ ViewState IwatodaiStreetsView::update()
         CharacterPosition charPos = playerCtrl->isCharacterAt();
         glTranslatef(charPos.x, charPos.y, charPos.z);
         glRotatef(charPos.facingAngle, 0.0f, 1.0f, 0.0f);
-        characterAnimationCtrl.render();
+        characterAnimationCtrl->render();
         glPopMatrix(1);
 
         glFlush(0);
@@ -370,7 +370,7 @@ ViewState IwatodaiStreetsView::update()
 
     musicCtrl->update();
     battleController.update(pressed);
-    characterAnimationCtrl.update();
+    characterAnimationCtrl->update();
 
     return ViewState::KEEP_CURRENT;
 }

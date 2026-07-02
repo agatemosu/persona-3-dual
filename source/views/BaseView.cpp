@@ -10,7 +10,7 @@ void BaseView::cleanup()
     // global controllers
     videoCtrl->cleanup();
     musicCtrl->cleanup();
-    characterAnimationCtrl.stop();
+    characterAnimationCtrl->stop();
 
     // global components
     pauseMenuCmpt.cancelSFX();

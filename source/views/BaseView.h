@@ -1,4 +1,5 @@
 #pragma once
+#include "controllers/AnimationController.h"
 #include "controllers/GraphicsController.h"
 #include "controllers/MusicController.h"
 #include "controllers/VideoController.h"
@@ -21,4 +22,5 @@ class BaseView
     MusicController* musicCtrl = MusicController::getInstance();
     VideoController* videoCtrl = VideoController::getInstance();
     GraphicsController* graphicsCtrl = GraphicsController::getInstance();
+    AnimationController* characterAnimationCtrl = AnimationController::getInstance();
 };

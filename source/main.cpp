@@ -22,11 +22,7 @@
 #include "views/VideoView.h"
 
 // controllers
-#include "controllers/AnimationController.h"
-#include "controllers/GraphicsController.h"
-#include "controllers/MusicController.h"
 #include "controllers/SaveController.h"
-#include "controllers/VideoController.h"
 
 // components
 #include "components/menu/BattleMenuComponent.h"
@@ -58,7 +54,6 @@ std::string fatBasePath = "";
 Save saveData;
 
 // controllers
-AnimationController characterAnimationCtrl;
 UIController uiCtrl;
 
 // models

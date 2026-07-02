@@ -217,7 +217,7 @@ ViewState PauseMenuComponent::debugOptionSelected()
 
 ViewState PauseMenuComponent::characterAnimOptionSelected()
 {
-    characterAnimationCtrl.stop();
+    characterAnimationCtrl->stop();
 
     ViewState selectedView = ViewState::KEEP_CURRENT;
     switch (static_cast<CharacterAnimOption>(selectedOption))
@@ -226,99 +226,99 @@ ViewState PauseMenuComponent::characterAnimOptionSelected()
         enableCharacterAnim = !enableCharacterAnim;
         break;
     case CharacterAnimOption::ANIM_1:
-        characterAnimationCtrl.set(0, true);
+        characterAnimationCtrl->set(0, true);
         enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_2:
-        characterAnimationCtrl.set(1, true);
+        characterAnimationCtrl->set(1, true);
         enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_3:
-        characterAnimationCtrl.set(2, true);
+        characterAnimationCtrl->set(2, true);
         enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_4:
-        characterAnimationCtrl.set(3, true);
+        characterAnimationCtrl->set(3, true);
         enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_5:
-        characterAnimationCtrl.set(4, true);
+        characterAnimationCtrl->set(4, true);
         enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_6:
-        characterAnimationCtrl.set(5, true);
+        characterAnimationCtrl->set(5, true);
         enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_7:
-        characterAnimationCtrl.set(6, true);
+        characterAnimationCtrl->set(6, true);
         enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_8:
-        characterAnimationCtrl.set(7, true);
+        characterAnimationCtrl->set(7, true);
         enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_9:
-        characterAnimationCtrl.set(8, true);
+        characterAnimationCtrl->set(8, true);
         enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_10:
-        characterAnimationCtrl.set(9, true);
+        characterAnimationCtrl->set(9, true);
         enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_11:
-        characterAnimationCtrl.set(10, true);
+        characterAnimationCtrl->set(10, true);
         enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_12:
-        characterAnimationCtrl.set(11, true);
+        characterAnimationCtrl->set(11, true);
         enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_13:
-        characterAnimationCtrl.set(12, true);
+        characterAnimationCtrl->set(12, true);
         enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_14:
-        characterAnimationCtrl.set(13, true);
+        characterAnimationCtrl->set(13, true);
         enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_15:
-        characterAnimationCtrl.set(14, true);
+        characterAnimationCtrl->set(14, true);
         enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_16:
-        characterAnimationCtrl.set(15, true);
+        characterAnimationCtrl->set(15, true);
         enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_17:
-        characterAnimationCtrl.set(16, true);
+        characterAnimationCtrl->set(16, true);
         enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_18:
-        characterAnimationCtrl.set(17, true);
+        characterAnimationCtrl->set(17, true);
         enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_19:
-        characterAnimationCtrl.set(18, true);
+        characterAnimationCtrl->set(18, true);
         enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_20:
-        characterAnimationCtrl.set(19, true);
+        characterAnimationCtrl->set(19, true);
         enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_21:
-        characterAnimationCtrl.set(20, true);
+        characterAnimationCtrl->set(20, true);
         enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_22:
-        characterAnimationCtrl.set(21, true);
+        characterAnimationCtrl->set(21, true);
         enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_23:
-        characterAnimationCtrl.set(22, true);
+        characterAnimationCtrl->set(22, true);
         enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_24:
-        characterAnimationCtrl.set(23, true);
+        characterAnimationCtrl->set(23, true);
         enableCharacterAnim = false;
         break;
     default:
@@ -326,6 +326,6 @@ ViewState PauseMenuComponent::characterAnimOptionSelected()
     }
 
     *isActivePtr = false;
-    characterAnimationCtrl.play();
+    characterAnimationCtrl->play();
     return selectedView;
 }
