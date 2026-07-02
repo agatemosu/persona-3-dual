@@ -54,4 +54,5 @@ class PaulowniaMallView : public BaseView3D
     void setMusic();
 
     UIController* uiCtrl = UIController::getInstance();
+    GraphicsController* graphicsCtrl = GraphicsController::getInstance();
 };

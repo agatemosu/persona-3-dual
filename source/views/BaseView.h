@@ -21,6 +21,5 @@ class BaseView
     // global controllers
     MusicController* musicCtrl = MusicController::getInstance();
     VideoController* videoCtrl = VideoController::getInstance();
-    GraphicsController* graphicsCtrl = GraphicsController::getInstance();
     AnimationController* characterAnimationCtrl = AnimationController::getInstance();
 };

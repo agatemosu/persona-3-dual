@@ -46,4 +46,5 @@ class StationView : public BaseView3D
     const float characterFacingAngle = 180.0f;
 
     UIController* uiCtrl = UIController::getInstance();
+    GraphicsController* graphicsCtrl = GraphicsController::getInstance();
 };
