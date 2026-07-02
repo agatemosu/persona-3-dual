@@ -321,6 +321,7 @@ class CodeGenerator:
         s = self.scene
         out += [
             f'#include "{s}_dialogue.h"',
+            '#include "controllers/GraphicsController.h"',
             '#include "core/globals.h"',
             "#include <nds.h>",
             "",
