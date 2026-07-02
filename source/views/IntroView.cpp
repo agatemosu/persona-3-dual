@@ -72,15 +72,16 @@ void IntroView::init()
     std::string suffix = femc ? "FEMC" : "";
 
     GraphicAsset silhouette =
-        graphicsCtrl.loadGrit(bgPath + "silhouetteBackground" + suffix + "/silhouetteBackground" + suffix);
-    GraphicAsset room = graphicsCtrl.loadGrit(bgPath + "roomBackground" + suffix + "/roomBackground" + suffix);
-    GraphicAsset sky = graphicsCtrl.loadGrit(bgPath + "skyBackground" + suffix + "/skyBackground" + suffix);
-    GraphicAsset overlay = graphicsCtrl.loadGrit(bgPath + "overlayBackground" + suffix + "/overlayBackground" + suffix);
-    GraphicAsset skySub = graphicsCtrl.loadGrit(bgPath + "skyBackgroundSub" + suffix + "/skyBackgroundSub" + suffix);
+        graphicsCtrl->loadGrit(bgPath + "silhouetteBackground" + suffix + "/silhouetteBackground" + suffix);
+    GraphicAsset room = graphicsCtrl->loadGrit(bgPath + "roomBackground" + suffix + "/roomBackground" + suffix);
+    GraphicAsset sky = graphicsCtrl->loadGrit(bgPath + "skyBackground" + suffix + "/skyBackground" + suffix);
+    GraphicAsset overlay =
+        graphicsCtrl->loadGrit(bgPath + "overlayBackground" + suffix + "/overlayBackground" + suffix);
+    GraphicAsset skySub = graphicsCtrl->loadGrit(bgPath + "skyBackgroundSub" + suffix + "/skyBackgroundSub" + suffix);
 
-    GraphicAsset attribution = graphicsCtrl.loadGrit(bgPath + "attributionBackground/attributionBackground");
-    GraphicAsset logoLeft = graphicsCtrl.loadGrit(spritePath + "logoSpriteLeft/logoSpriteLeft");
-    GraphicAsset logoRight = graphicsCtrl.loadGrit(spritePath + "logoSpriteRight/logoSpriteRight");
+    GraphicAsset attribution = graphicsCtrl->loadGrit(bgPath + "attributionBackground/attributionBackground");
+    GraphicAsset logoLeft = graphicsCtrl->loadGrit(spritePath + "logoSpriteLeft/logoSpriteLeft");
+    GraphicAsset logoRight = graphicsCtrl->loadGrit(spritePath + "logoSpriteRight/logoSpriteRight");
 
     // copy graphics to vram
     dmaCopy(silhouette.tiles, bgGetGfxPtr(bg[0]), silhouette.tilesLen);
@@ -145,14 +146,14 @@ void IntroView::init()
     bgUpdate();
 
     // unload all graphics now that it's copied to vram
-    graphicsCtrl.unloadGrit(silhouette);
-    graphicsCtrl.unloadGrit(room);
-    graphicsCtrl.unloadGrit(sky);
-    graphicsCtrl.unloadGrit(overlay);
-    graphicsCtrl.unloadGrit(attribution);
-    graphicsCtrl.unloadGrit(skySub);
-    graphicsCtrl.unloadGrit(logoLeft);
-    graphicsCtrl.unloadGrit(logoRight);
+    graphicsCtrl->unloadGrit(silhouette);
+    graphicsCtrl->unloadGrit(room);
+    graphicsCtrl->unloadGrit(sky);
+    graphicsCtrl->unloadGrit(overlay);
+    graphicsCtrl->unloadGrit(attribution);
+    graphicsCtrl->unloadGrit(skySub);
+    graphicsCtrl->unloadGrit(logoLeft);
+    graphicsCtrl->unloadGrit(logoRight);
 
     // point to music
     musicCtrl->loadSFX(SFX_SELECT);

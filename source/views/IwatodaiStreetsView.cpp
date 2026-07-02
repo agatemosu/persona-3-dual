@@ -16,7 +16,7 @@
 
 static const unsigned int* loadEnvironmentBitmap(const std::string& path, GraphicAsset& asset)
 {
-    asset = graphicsCtrl.loadGrit(path);
+    asset = GraphicsController::getInstance()->loadGrit(path);
     return reinterpret_cast<const unsigned int*>(asset.tiles);
 }
 
@@ -93,7 +93,7 @@ void IwatodaiStreetsView::setupEnvironment()
     iwatodaiStreetsEnv.load((fatBasePath + "environments/iwatodai_streets/iwatodai_streets.bin").c_str(), bitmaps);
     for (int i = 0; i < IWATODAI_STREETS_TEX_COUNT; ++i)
     {
-        graphicsCtrl.unloadGrit(envTextures[i]);
+        graphicsCtrl->unloadGrit(envTextures[i]);
     }
 }
 

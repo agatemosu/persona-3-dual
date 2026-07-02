@@ -59,7 +59,6 @@ Save saveData;
 
 // controllers
 AnimationController characterAnimationCtrl;
-GraphicsController graphicsCtrl;
 UIController uiCtrl;
 
 // models
@@ -72,9 +71,9 @@ static unsigned int* bitmapsMakoto[MODEL_MAKOTO_TEX_COUNT] = {nullptr};
 static unsigned int* loadCharacterTexture(const std::string& name, bool isFemc)
 {
     std::string basePath = fatBasePath + "models/" + (isFemc ? "kotone/" : "makoto/");
-    GraphicAsset asset = graphicsCtrl.loadGrit(basePath + name);
+    GraphicAsset asset = GraphicsController::getInstance()->loadGrit(basePath + name);
     unsigned int* tiles = reinterpret_cast<unsigned int*>(asset.tiles);
-    // graphicsCtrl.unloadGrit(asset);
+    // GraphicsController::getInstance()->unloadGrit(asset);
     return tiles;
 }
 

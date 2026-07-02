@@ -1,5 +1,6 @@
 #pragma once
 #include "components/menu/BaseMenu.h"
+#include "controllers/GraphicsController.h"
 #include "dialogue/demo_dialogue.h"
 
 #define MENU_OPTIONS 8
@@ -166,6 +167,8 @@ class PauseMenuComponent : public BaseMenu
     ViewState sLinkOptionSelected();
     ViewState systemOptionSelected();
     ViewState characterAnimOptionSelected();
+
+    GraphicsController* graphicsCtrl = GraphicsController::getInstance();
 
   public:
     void init(int iBgSlot, bool* isActive, const std::string& iPauseMessage = "Pause") override;

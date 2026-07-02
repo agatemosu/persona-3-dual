@@ -44,7 +44,7 @@ void SignContractView::init()
 
     // load contract background from runtime assets
     GraphicAsset contractBg =
-        graphicsCtrl.loadGrit(fatBasePath + "graphics/SignContractView/backgrounds/contract/contract");
+        graphicsCtrl->loadGrit(fatBasePath + "graphics/SignContractView/backgrounds/contract/contract");
 
     dmaFillHalfWords(0, bgGetMapPtr(bg[0]), 8192);
     if (contractBg.tiles)
@@ -57,7 +57,7 @@ void SignContractView::init()
         dmaCopy(contractBg.pal, &VRAM_E_EXT_PALETTE[0][0], contractBg.palLen);
     vramSetBankE(VRAM_E_BG_EXT_PALETTE);
 
-    graphicsCtrl.unloadGrit(contractBg);
+    graphicsCtrl->unloadGrit(contractBg);
 
     // setup console
     consoleInit(&animatedConsole, 0, BgType_Text4bpp, BgSize_T_256x256, 5, 3, false, true);

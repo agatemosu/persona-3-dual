@@ -1,5 +1,6 @@
 #pragma once
 #include "components/ui/UIScreen.h"
+#include "controllers/GraphicsController.h"
 #include "core/enums.h"
 #include "core/globals.h"
 #include "core/structs.h"
@@ -32,4 +33,6 @@ class MenuHUDScreen : public UIScreen
     SpriteRegister slashSprite;
     bool bgLoaded;
     void renderBackground();
+
+    GraphicsController* graphicsCtrl = GraphicsController::getInstance();
 };

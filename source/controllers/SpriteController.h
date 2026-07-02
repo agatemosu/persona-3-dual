@@ -1,4 +1,5 @@
 #pragma once
+#include "controllers/GraphicsController.h"
 #include "core/enums.h"
 #include "core/structs.h"
 #include <nds.h>
@@ -26,4 +27,5 @@ class SpriteController
 
     std::vector<GraphicAsset> loadedAssets;
     bool switchSpriteImpl(SpriteType type, int spriteId, SpriteRegister* out);
+    GraphicsController* graphicsCtrl = GraphicsController::getInstance();
 };

@@ -14,7 +14,7 @@
 
 static const unsigned int* loadEnvironmentBitmap(const std::string& path, GraphicAsset& asset)
 {
-    asset = graphicsCtrl.loadGrit(path);
+    asset = GraphicsController::getInstance()->loadGrit(path);
     return reinterpret_cast<const unsigned int*>(asset.tiles);
 }
 
@@ -102,7 +102,7 @@ void PaulowniaMallView::setupEnvironment()
     paulowniaMallEnv.load((fatBasePath + "environments/paulownia_mall/paulownia_mall.bin").c_str(), bitmapsEnv);
     for (int i = 0; i < PAULOWNIA_MALL_TEX_COUNT; ++i)
     {
-        graphicsCtrl.unloadGrit(envTextures[i]);
+        graphicsCtrl->unloadGrit(envTextures[i]);
     }
 }
 

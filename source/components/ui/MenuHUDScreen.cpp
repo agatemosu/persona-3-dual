@@ -9,7 +9,7 @@ void MenuHUDScreen::renderBackground()
 
     std::string bgPath = fatBasePath + "graphics/MenuHUD/backgrounds/";
     GraphicAsset bgHUD =
-        graphicsCtrl.loadGrit(bgPath + (saveData.femcMode ? "menuHUDFEMC/menuHUDFEMC" : "menuHUD/menuHUD"));
+        graphicsCtrl->loadGrit(bgPath + (saveData.femcMode ? "menuHUDFEMC/menuHUDFEMC" : "menuHUD/menuHUD"));
 
     dmaCopy(bgHUD.tiles, bgGetGfxPtr(bgId), bgHUD.tilesLen);
     dmaCopy(bgHUD.map, bgGetMapPtr(bgId), bgHUD.mapLen);
@@ -17,7 +17,7 @@ void MenuHUDScreen::renderBackground()
     dmaCopy(bgHUD.pal, &VRAM_H_EXT_PALETTE[2][0], bgHUD.palLen);
     vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
 
-    graphicsCtrl.unloadGrit(bgHUD);
+    graphicsCtrl->unloadGrit(bgHUD);
     bgLoaded = true;
 }
 

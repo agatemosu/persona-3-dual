@@ -16,7 +16,7 @@
 
 const unsigned int* loadEnvironmentBitmap(const std::string& path, GraphicAsset& asset)
 {
-    asset = graphicsCtrl.loadGrit(path);
+    asset = GraphicsController::getInstance()->loadGrit(path);
     return reinterpret_cast<const unsigned int*>(asset.tiles);
 }
 
@@ -136,7 +136,7 @@ void IwatodaiDormView::setupEnvironment()
                                bitmapsEnv);
     for (int i = 0; i < IWATODAI_DORM_FLOOR_1_TEX_COUNT; ++i)
     {
-        graphicsCtrl.unloadGrit(envTextures[i]);
+        graphicsCtrl->unloadGrit(envTextures[i]);
     }
 }
 

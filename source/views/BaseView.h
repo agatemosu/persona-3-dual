@@ -1,4 +1,5 @@
 #pragma once
+#include "controllers/GraphicsController.h"
 #include "controllers/MusicController.h"
 #include "controllers/VideoController.h"
 #include "core/enums.h"
@@ -19,4 +20,5 @@ class BaseView
     // global controllers
     MusicController* musicCtrl = MusicController::getInstance();
     VideoController* videoCtrl = VideoController::getInstance();
+    GraphicsController* graphicsCtrl = GraphicsController::getInstance();
 };
