@@ -76,7 +76,7 @@ void MenuHUDScreen::load()
 {
     // load graphics
     bgLoaded = false;
-    spriteCtrl.spritePath = "graphics/MenuHUD/sprites/";
+    spriteCtrl->spritePath = "graphics/MenuHUD/sprites/";
 
     // setup sprites
     // moon
@@ -120,23 +120,23 @@ void MenuHUDScreen::load()
 
     // get sprites
     // moon
-    spriteCtrl.switchSprite(SpriteType::MOON, MoonSprite::MOON_22, &moonSprite);
+    spriteCtrl->switchSprite(SpriteType::MOON, MoonSprite::MOON_22, &moonSprite);
     // day of the week
-    spriteCtrl.switchSprite(SpriteType::DAY_OF_WEEK, DayOfWeekSprite::TUESDAY, &dayOfWeekSprite);
+    spriteCtrl->switchSprite(SpriteType::DAY_OF_WEEK, DayOfWeekSprite::TUESDAY, &dayOfWeekSprite);
     // numbers
-    spriteCtrl.switchSprite(SpriteType::DIGIT, DigitSprite::DIGIT_0, &numberSprites[0]);
-    spriteCtrl.switchSprite(SpriteType::DIGIT, DigitSprite::DIGIT_4, &numberSprites[1]);
-    spriteCtrl.switchSprite(SpriteType::DIGIT, DigitSprite::DIGIT_0, &numberSprites[2]);
-    spriteCtrl.switchSprite(SpriteType::DIGIT, DigitSprite::DIGIT_7, &numberSprites[3]);
+    spriteCtrl->switchSprite(SpriteType::DIGIT, DigitSprite::DIGIT_0, &numberSprites[0]);
+    spriteCtrl->switchSprite(SpriteType::DIGIT, DigitSprite::DIGIT_4, &numberSprites[1]);
+    spriteCtrl->switchSprite(SpriteType::DIGIT, DigitSprite::DIGIT_0, &numberSprites[2]);
+    spriteCtrl->switchSprite(SpriteType::DIGIT, DigitSprite::DIGIT_7, &numberSprites[3]);
     // time
-    spriteCtrl.switchSprite(SpriteType::TIME, TimeSprite::EARLY_MORNING_0_0, &timeSprites[0]);
-    spriteCtrl.switchSprite(SpriteType::TIME, TimeSprite::EARLY_MORNING_1_0, &timeSprites[1]);
-    spriteCtrl.switchSprite(SpriteType::TIME, TimeSprite::EARLY_MORNING_2_0, &timeSprites[2]);
-    spriteCtrl.switchSprite(SpriteType::TIME, TimeSprite::EARLY_MORNING_3_0, &timeSprites[3]);
+    spriteCtrl->switchSprite(SpriteType::TIME, TimeSprite::EARLY_MORNING_0_0, &timeSprites[0]);
+    spriteCtrl->switchSprite(SpriteType::TIME, TimeSprite::EARLY_MORNING_1_0, &timeSprites[1]);
+    spriteCtrl->switchSprite(SpriteType::TIME, TimeSprite::EARLY_MORNING_2_0, &timeSprites[2]);
+    spriteCtrl->switchSprite(SpriteType::TIME, TimeSprite::EARLY_MORNING_3_0, &timeSprites[3]);
     // skill level
-    spriteCtrl.switchSprite(SpriteType::SKILL_SPRITE, SkillSprite::SKILLS_LEVEL, &skillSprites[0]);
+    spriteCtrl->switchSprite(SpriteType::SKILL_SPRITE, SkillSprite::SKILLS_LEVEL, &skillSprites[0]);
     // slash
-    spriteCtrl.switchSprite(SpriteType::DIGIT, DigitSprite::SLASH, &slashSprite);
+    spriteCtrl->switchSprite(SpriteType::DIGIT, DigitSprite::SLASH, &slashSprite);
 
     // TODO: initialize any extra sprite registers for max-case arrays?
     // ...
@@ -167,5 +167,5 @@ void MenuHUDScreen::load()
 void MenuHUDScreen::unload()
 {
     // TODO: implement
-    spriteCtrl.unloadAll();
+    spriteCtrl->unloadAll();
 }

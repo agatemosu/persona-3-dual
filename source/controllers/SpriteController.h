@@ -7,6 +7,10 @@
 class SpriteController
 {
   public:
+    static void create();
+    static void destroy();
+    static SpriteController* getInstance();
+
     std::string spritePath;
     template <typename SpriteID> bool switchSprite(SpriteType type, SpriteID spriteId, SpriteRegister* out)
     {
@@ -16,6 +20,10 @@ class SpriteController
     void unloadAll();
 
   private:
+    SpriteController() {};
+    ~SpriteController() {};
+    static SpriteController* instance;
+
     std::vector<GraphicAsset> loadedAssets;
     bool switchSpriteImpl(SpriteType type, int spriteId, SpriteRegister* out);
 };

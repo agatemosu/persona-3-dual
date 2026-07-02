@@ -2,6 +2,34 @@
 #include "core/globals.h"
 #include "data/spriteDb.h"
 
+SpriteController* SpriteController::instance = nullptr;
+
+void SpriteController::create()
+{
+    if (instance == nullptr)
+    {
+        instance = new SpriteController();
+    }
+}
+
+void SpriteController::destroy()
+{
+    if (instance != nullptr)
+    {
+        delete instance;
+        instance = nullptr;
+    }
+}
+
+SpriteController* SpriteController::getInstance()
+{
+    if (instance == nullptr)
+    {
+        create();
+    }
+    return instance;
+}
+
 bool SpriteController::switchSpriteImpl(SpriteType type, int spriteId, SpriteRegister* out)
 {
     std::string filename = getSpriteFilename(type, spriteId);

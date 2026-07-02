@@ -59,7 +59,6 @@ Save saveData;
 
 // controllers
 AnimationController characterAnimationCtrl;
-SpriteController spriteCtrl;
 GraphicsController graphicsCtrl;
 UIController uiCtrl;
 

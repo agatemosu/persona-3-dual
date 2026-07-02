@@ -5,7 +5,6 @@
 #include "components/ui/MenuHUDScreen.h"
 #include "controllers/AnimationController.h"
 #include "controllers/GraphicsController.h"
-#include "controllers/SpriteController.h"
 #include "controllers/UIController.h"
 
 class PauseMenuComponent;
@@ -22,7 +21,6 @@ extern unsigned int** bitmapsCharacter;
 
 // controllers
 extern AnimationController characterAnimationCtrl;
-extern SpriteController spriteCtrl;
 extern GraphicsController graphicsCtrl;
 extern UIController uiCtrl;
 
