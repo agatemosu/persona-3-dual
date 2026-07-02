@@ -1,5 +1,6 @@
 #pragma once
 #include "controllers/CharacterController.h"
+#include "controllers/UIController.h"
 #include "environments/iwatodai_streets.h"
 #include "views/BaseView3D.h"
 #include <nds/arm9/console.h>
@@ -72,4 +73,6 @@ class IwatodaiStreetsView : public BaseView3D
     bool isBattleMenuActive = false;
 
     void setMusic();
+
+    UIController* uiCtrl = UIController::getInstance();
 };

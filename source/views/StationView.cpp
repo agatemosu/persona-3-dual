@@ -126,9 +126,9 @@ void StationView::init()
     // initialize sub sprite engine with 1D mapping, 128 byte boundry, external palette support
     oamInit(&oamSub, SpriteMapping_1D_128, true);
 
-    uiCtrl.setGraphics(bgSub, bgMain, &oamSub, nullptr);
-    uiCtrl.registerScreen(&menuHUDScreen, false);
-    uiCtrl.show(&menuHUDScreen, false);
+    uiCtrl->setGraphics(bgSub, bgMain, &oamSub, nullptr);
+    uiCtrl->registerScreen(&menuHUDScreen, false);
+    uiCtrl->show(&menuHUDScreen, false);
 
     // setup view phases
     prevPauseState = false;
@@ -155,7 +155,7 @@ ViewState StationView::update()
         if (!prevPauseState)
         {
             // TODO: display pause menu UI
-            uiCtrl.hideAll();
+            uiCtrl->hideAll();
             prevPauseState = true;
         }
 
@@ -182,7 +182,7 @@ ViewState StationView::update()
         if (!prevEnvironmentState)
         {
             // render HUD
-            uiCtrl.show(&menuHUDScreen, false);
+            uiCtrl->show(&menuHUDScreen, false);
             prevEnvironmentState = true;
         }
 
@@ -268,7 +268,7 @@ void StationView::cleanup()
     BaseView::cleanup();
 
     stationEnv.cleanup();
-    uiCtrl.cleanup();
+    uiCtrl->cleanup();
 
     delete playerCtrl;
     playerCtrl = nullptr;

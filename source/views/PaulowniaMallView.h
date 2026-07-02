@@ -2,6 +2,7 @@
 #include <nds/arm9/console.h>
 // controllers
 #include "controllers/CharacterController.h"
+#include "controllers/UIController.h"
 // environments
 #include "environments/paulownia_mall.h"
 
@@ -51,4 +52,6 @@ class PaulowniaMallView : public BaseView3D
     const float characterFacingAngle = 180;
 
     void setMusic();
+
+    UIController* uiCtrl = UIController::getInstance();
 };

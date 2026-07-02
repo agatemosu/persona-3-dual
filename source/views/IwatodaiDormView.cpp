@@ -219,10 +219,10 @@ void IwatodaiDormView::init()
     // initialize sub sprite engine with 1D mapping, 128 byte boundry, external palette support
     oamInit(&oamSub, SpriteMapping_1D_128, true);
 
-    uiCtrl.setGraphics(bgSub, bgMain, &oamSub, nullptr);
-    uiCtrl.registerScreen(&menuHUDScreen, false);
-    uiCtrl.registerScreen(&dialogueScreen, false);
-    uiCtrl.show(&menuHUDScreen, false);
+    uiCtrl->setGraphics(bgSub, bgMain, &oamSub, nullptr);
+    uiCtrl->registerScreen(&menuHUDScreen, false);
+    uiCtrl->registerScreen(&dialogueScreen, false);
+    uiCtrl->show(&menuHUDScreen, false);
 
     // setup view phases
     prevPauseState = false;
@@ -250,7 +250,7 @@ ViewState IwatodaiDormView::update()
         if (!prevPauseState)
         {
             // TODO: display pause menu UI
-            uiCtrl.hideAll();
+            uiCtrl->hideAll();
             prevPauseState = true;
         }
 
@@ -278,7 +278,7 @@ ViewState IwatodaiDormView::update()
         // set
         if (!isActive && !prevDialogueState)
         {
-            uiCtrl.show(&dialogueScreen, false);
+            uiCtrl->show(&dialogueScreen, false);
             demo_yukari_kenji_argument_load();
             dialogueCtrl.setLoader(demo_yukari_kenji_argument_load_bg);
             dialogueCtrl.start(demo_yukari_kenji_argument_first());
@@ -299,7 +299,7 @@ ViewState IwatodaiDormView::update()
         if (!prevEnvironmentState)
         {
             // render HUD
-            uiCtrl.show(&menuHUDScreen, false);
+            uiCtrl->show(&menuHUDScreen, false);
             prevEnvironmentState = true;
         }
 
@@ -417,7 +417,7 @@ void IwatodaiDormView::cleanup()
     // cleanup environment
     iwatodaiDormFloor1Env.cleanup();
     // reset ui
-    uiCtrl.cleanup();
+    uiCtrl->cleanup();
 
     // cleanup controllers
     delete playerCtrl;

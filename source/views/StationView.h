@@ -1,5 +1,6 @@
 #pragma once
 #include "controllers/CharacterController.h"
+#include "controllers/UIController.h"
 #include "environments/station.h"
 #include "views/BaseView3D.h"
 #include <nds/arm9/console.h>
@@ -43,4 +44,6 @@ class StationView : public BaseView3D
     const float height = 0.0f;
     const float angle = 1.5708f * 2; // 180 degrees (rad)
     const float characterFacingAngle = 180.0f;
+
+    UIController* uiCtrl = UIController::getInstance();
 };

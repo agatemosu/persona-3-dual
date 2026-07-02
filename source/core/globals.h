@@ -3,7 +3,6 @@
 #include "components/menu/PauseMenuComponent.h"
 #include "components/ui/DialogueScreen.h"
 #include "components/ui/MenuHUDScreen.h"
-#include "controllers/UIController.h"
 
 class PauseMenuComponent;
 class DialogueScreen;
@@ -16,9 +15,6 @@ extern int fpsTimer;
 extern std::string fatBasePath;
 extern Save saveData;
 extern unsigned int** bitmapsCharacter;
-
-// controllers
-extern UIController uiCtrl;
 
 // components
 extern PauseMenuComponent pauseMenuCmpt;

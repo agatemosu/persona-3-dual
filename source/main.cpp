@@ -53,9 +53,6 @@ int fpsTimer = 0;
 std::string fatBasePath = "";
 Save saveData;
 
-// controllers
-UIController uiCtrl;
-
 // models
 unsigned int** bitmapsCharacter = nullptr;
 

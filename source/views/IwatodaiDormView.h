@@ -3,6 +3,7 @@
 // controllers
 #include "controllers/CharacterController.h"
 #include "controllers/DialogueController.h"
+#include "controllers/UIController.h"
 // environments
 #include "environments/iwatodai_dorm_floor_1.h"
 
@@ -54,4 +55,6 @@ class IwatodaiDormView : public BaseView3D
     DialogueController dialogueCtrl;
 
     void setMusic();
+
+    UIController* uiCtrl = UIController::getInstance();
 };
