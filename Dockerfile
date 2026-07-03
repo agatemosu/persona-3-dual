@@ -16,26 +16,28 @@ LABEL description="Full build environment for Persona 3 Dual (NDS homebrew)"
 ENV DEBIAN_FRONTEND=noninteractive
 
 # System packages
-# ffmpeg       – video/audio asset conversion (used by the asset pipeline)
-# mtools       – FAT image creation (sdcard.img)
-# libblas3     – required by ffmpeg at runtime (update-alternatives symlink)
-# liblapack3   – same as above
+# ffmpeg        – video/audio asset conversion (used by the asset pipeline)
+# mtools        – FAT image creation (sdcard.img)
+# libblas3      – required by ffmpeg at runtime (update-alternatives symlink)
+# liblapack3    – same as above
 # python3 / pip – asset pipeline scripts
-# zip / gzip   – packaging release artifacts
-# git-lfs      – large file storage (LFS pointers resolved during CI checkout)
-# ccache      – compiler cache for faster rebuilds (CI manages cache via actions/cache)
+# zip / gzip    – packaging release artifacts
+# git-lfs       – large file storage (LFS pointers resolved during CI checkout)
+# ccache        – compiler cache for faster rebuilds (CI manages cache via actions/cache)
+# gdb-multiarch - debugger
 RUN apt-get update && apt-get install -y --no-install-recommends \
-        ffmpeg \
-        mtools \
-        libblas3 \
-        liblapack3 \
-        python3 \
-        python3-pip \
-        python3-venv \
-        zip \
-        gzip \
-        git-lfs \
-        ccache \
+    ffmpeg \
+    mtools \
+    libblas3 \
+    liblapack3 \
+    python3 \
+    python3-pip \
+    python3-venv \
+    zip \
+    gzip \
+    git-lfs \
+    ccache \
+    gdb-multiarch \
     && git lfs install --system \
     && rm -rf /var/lib/apt/lists/*
 

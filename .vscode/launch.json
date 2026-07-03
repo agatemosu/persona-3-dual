@@ -2,6 +2,45 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "[Docker] (gdb) Connect to melonDS",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/${workspaceFolderBasename}.elf",
+            "targetArchitecture": "arm",
+            "serverLaunchTimeout": 10000,
+            "stopAtEntry": true,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "miDebuggerPath": "/usr/bin/gdb-multiarch",
+            "miDebuggerServerAddress": "host.docker.internal:2345",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "customLaunchSetupCommands": [
+                {
+                    "text": "target remote host.docker.internal:2345",
+                    "description": "Connect to melonDS",
+                    "ignoreFailures": false
+                },
+                {
+                    "text": "symbol-file \"${workspaceFolder}/${workspaceFolderBasename}.elf\"",
+                    "description": "Force load symbols",
+                    "ignoreFailures": false
+                },
+                {
+                    "text": "set substitute-path /project \"${workspaceFolder}\"",
+                    "description": "Map Docker build path to local workspace",
+                    "ignoreFailures": false
+                }
+            ]
+        },
+        {
             "name": "(gdb) Launch melonDS",
             "type": "cppdbg",
             "request": "launch",
@@ -17,15 +56,14 @@
             "MIMode": "gdb",
             // OS specific paths
             "osx": {
-                "miDebuggerPath": "/opt/devkitpro/devkitARM/bin/arm-none-eabi-gdb"
+                "miDebuggerPath": "${env:DEVKITPRO}/devkitARM/bin/arm-none-eabi-gdb"
             },
             "linux": {
-                "miDebuggerPath": "/opt/devkitpro/devkitARM/bin/arm-none-eabi-gdb"
+                "miDebuggerPath": "${env:DEVKITPRO}/devkitARM/bin/arm-none-eabi-gdb"
             },
             "windows": {
-                "miDebuggerPath": "C:/devkitPro/devkitARM/bin/arm-none-eabi-gdb.exe"
+                "miDebuggerPath": "${env:DEVKITPRO}/devkitARM/bin/arm-none-eabi-gdb.exe"
             },
-
             "miDebuggerServerAddress": "localhost:2345",
             "setupCommands": [
                 {
