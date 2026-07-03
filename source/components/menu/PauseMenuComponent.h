@@ -2,6 +2,7 @@
 #include "components/menu/BaseMenu.h"
 #include "controllers/AnimationController.h"
 #include "controllers/GraphicsController.h"
+#include "core/globals.h"
 #include "dialogue/demo_dialogue.h"
 
 #define MENU_OPTIONS 8
@@ -181,6 +182,8 @@ class PauseMenuComponent : public BaseMenu
     static void destroy();
     static PauseMenuComponent* getInstance();
 
-    void init(int iBgSlot, bool* isActive, const std::string& iPauseMessage = "Pause") override;
+    void init(int iBgSlot,
+              bool* isActive = &Globals::isPauseMenuActive,
+              const std::string& iPauseMessage = "Pause") override;
     ViewState update(int keys) override;
 };

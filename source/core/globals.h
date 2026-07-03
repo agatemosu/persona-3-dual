@@ -10,8 +10,11 @@ extern std::string fatBasePath;
 extern Save saveData;
 extern unsigned int** bitmapsCharacter;
 
-// components
-extern bool enableBillboards;
-extern bool enableDebugPrint;
-extern bool enableCharacterAnim;
-extern bool isPauseMenuActive;
+class Globals
+{
+  public:
+    static bool enableBillboards;
+    static bool enableDebugPrint;
+    static bool enableCharacterAnim;
+    static bool isPauseMenuActive;
+};

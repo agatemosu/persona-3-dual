@@ -14,10 +14,10 @@ void BaseView::cleanup()
 
     // global components
     pauseMenuCmpt->cancelSFX();
-    enableBillboards = true;
-    enableCharacterAnim = true;
-    enableDebugPrint = false;
-    isPauseMenuActive = false;
+    Globals::enableBillboards = true;
+    Globals::enableCharacterAnim = true;
+    Globals::enableDebugPrint = false;
+    Globals::isPauseMenuActive = false;
 
     // disable blending globally to prevent ghosting across scenes
     REG_BLDCNT = 0;

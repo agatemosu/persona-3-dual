@@ -114,7 +114,7 @@ CameraPosition CharacterController::update(u32 keys)
     if (deltaX != 0.0f && deltaZ != 0.0f)
     {
         // set walking animation
-        if (enableCharacterAnim && (characterAnimationCtrl->getCurrentAnimIndex() != characterWalkAnim))
+        if (Globals::enableCharacterAnim && (characterAnimationCtrl->getCurrentAnimIndex() != characterWalkAnim))
         {
             characterAnimationCtrl->set(characterWalkAnim, true);
         }
@@ -127,7 +127,7 @@ CameraPosition CharacterController::update(u32 keys)
     else
     {
         // set idle animation
-        if (enableCharacterAnim && (characterAnimationCtrl->getCurrentAnimIndex() != characterIdleAnim))
+        if (Globals::enableCharacterAnim && (characterAnimationCtrl->getCurrentAnimIndex() != characterIdleAnim))
         {
             characterAnimationCtrl->set(characterIdleAnim, true);
         }

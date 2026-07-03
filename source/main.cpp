@@ -66,12 +66,6 @@ static unsigned int* loadCharacterTexture(const std::string& name, bool isFemc)
     return tiles;
 }
 
-// components
-bool enableBillboards = true;
-bool enableCharacterAnim = true;
-bool enableDebugPrint = false;
-bool isPauseMenuActive = false;
-
 BaseView* currentView = nullptr;
 bool prevFemcMode;
 
@@ -185,6 +179,11 @@ int main(int argc, char* argv[])
     PersonaDb::Initialize();
     EnemyDb::Initialize();
     CharacterProfileDb::Initialize();
+    //Setup globals
+    Globals::enableDebugPrint = false;
+    Globals::enableBillboards = true;
+    Globals::enableCharacterAnim = true;
+    Globals::isPauseMenuActive = false;
 
     // seed random using DS hardware timer
     TIMER0_CR = TIMER_ENABLE | TIMER_DIV_1;

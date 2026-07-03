@@ -23,6 +23,6 @@ class BaseView
     MusicController* musicCtrl = MusicController::getInstance();
     VideoController* videoCtrl = VideoController::getInstance();
     AnimationController* characterAnimationCtrl = AnimationController::getInstance();
-    //global controllers
+    //global components
     PauseMenuComponent* pauseMenuCmpt = PauseMenuComponent::getInstance();
 };

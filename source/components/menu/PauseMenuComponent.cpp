@@ -228,12 +228,12 @@ ViewState PauseMenuComponent::debugOptionSelected()
         selectedView = ViewState::KEEP_CURRENT;
         break;
     case DebugOption::TOGGLE_BILLBOARDS:
-        enableBillboards = !enableBillboards;
+        Globals::enableBillboards = !Globals::enableBillboards;
         *isActivePtr = false;
         selectedView = ViewState::KEEP_CURRENT;
         break;
     case DebugOption::TOGGLE_DEBUG_PRINT:
-        enableDebugPrint = true;
+        Globals::enableDebugPrint = !Globals::enableDebugPrint;
         *isActivePtr = false;
         selectedView = ViewState::KEEP_CURRENT;
         break;
@@ -251,103 +251,103 @@ ViewState PauseMenuComponent::characterAnimOptionSelected()
     switch (static_cast<CharacterAnimOption>(selectedOption))
     {
     case CharacterAnimOption::TOGGLE_AUTO_ANIM:
-        enableCharacterAnim = !enableCharacterAnim;
+        Globals::enableCharacterAnim = !Globals::enableCharacterAnim;
         break;
     case CharacterAnimOption::ANIM_1:
         characterAnimationCtrl->set(0, true);
-        enableCharacterAnim = false;
+        Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_2:
         characterAnimationCtrl->set(1, true);
-        enableCharacterAnim = false;
+        Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_3:
         characterAnimationCtrl->set(2, true);
-        enableCharacterAnim = false;
+        Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_4:
         characterAnimationCtrl->set(3, true);
-        enableCharacterAnim = false;
+        Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_5:
         characterAnimationCtrl->set(4, true);
-        enableCharacterAnim = false;
+        Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_6:
         characterAnimationCtrl->set(5, true);
-        enableCharacterAnim = false;
+        Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_7:
         characterAnimationCtrl->set(6, true);
-        enableCharacterAnim = false;
+        Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_8:
         characterAnimationCtrl->set(7, true);
-        enableCharacterAnim = false;
+        Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_9:
         characterAnimationCtrl->set(8, true);
-        enableCharacterAnim = false;
+        Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_10:
         characterAnimationCtrl->set(9, true);
-        enableCharacterAnim = false;
+        Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_11:
         characterAnimationCtrl->set(10, true);
-        enableCharacterAnim = false;
+        Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_12:
         characterAnimationCtrl->set(11, true);
-        enableCharacterAnim = false;
+        Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_13:
         characterAnimationCtrl->set(12, true);
-        enableCharacterAnim = false;
+        Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_14:
         characterAnimationCtrl->set(13, true);
-        enableCharacterAnim = false;
+        Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_15:
         characterAnimationCtrl->set(14, true);
-        enableCharacterAnim = false;
+        Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_16:
         characterAnimationCtrl->set(15, true);
-        enableCharacterAnim = false;
+        Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_17:
         characterAnimationCtrl->set(16, true);
-        enableCharacterAnim = false;
+        Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_18:
         characterAnimationCtrl->set(17, true);
-        enableCharacterAnim = false;
+        Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_19:
         characterAnimationCtrl->set(18, true);
-        enableCharacterAnim = false;
+        Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_20:
         characterAnimationCtrl->set(19, true);
-        enableCharacterAnim = false;
+        Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_21:
         characterAnimationCtrl->set(20, true);
-        enableCharacterAnim = false;
+        Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_22:
         characterAnimationCtrl->set(21, true);
-        enableCharacterAnim = false;
+        Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_23:
         characterAnimationCtrl->set(22, true);
-        enableCharacterAnim = false;
+        Globals::enableCharacterAnim = false;
         break;
     case CharacterAnimOption::ANIM_24:
         characterAnimationCtrl->set(23, true);
-        enableCharacterAnim = false;
+        Globals::enableCharacterAnim = false;
         break;
     default:
         break;

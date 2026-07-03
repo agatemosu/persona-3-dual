@@ -170,7 +170,7 @@ void PaulowniaMallView::init()
     PaulowniaMallView::setupEnvironment();
 
     // setup pause menu
-    pauseMenuCmpt->init(bgSharedSub1, &isPauseMenuActive);
+    pauseMenuCmpt->init(bgSharedSub1);
 
     // setup UI
     // NOTE: bg 0 is the 3D view
@@ -302,7 +302,7 @@ ViewState PaulowniaMallView::update()
         // draw environment
         glPushMatrix();
         paulowniaMallEnv.draw();
-        paulowniaMallEnv.drawBillboards(enableBillboards, // billboards face camera
+        paulowniaMallEnv.drawBillboards(Globals::enableBillboards, // billboards face camera
                                         camPos.cameraX,
                                         camPos.cameraY,
                                         camPos.cameraZ);
@@ -322,7 +322,7 @@ ViewState PaulowniaMallView::update()
         glFlush(0);
 
         // print coordinates (64x64 area from 0,0 to 64,64)
-        if (enableDebugPrint)
+        if (Globals::enableDebugPrint)
         {
             iprintf("\x1b[19;0H\033[31mTouch x = %04X, %04X\n", touch.rawx, touch.px);
             iprintf("\x1b[20;0HTouch y = %04X, %04X\n", touch.rawy, touch.py);
