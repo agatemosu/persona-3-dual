@@ -14,5 +14,8 @@
                 "ms-vscode.cpptools"
             ]
         }
-    }
+    },
+    // mount to /project
+    "workspaceMount": "source=${localWorkspaceFolder},target=/project,type=bind,consistency=cached",
+    "workspaceFolder": "/project"
 }
