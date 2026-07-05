@@ -61,5 +61,23 @@ ENV PATH="/root/.venv/bin:$PATH"
 # Mount your repo here:  -v "$(pwd)":/project
 WORKDIR /project
 
+# Add aigis user so we don't run as root on dev container
+RUN useradd -m aigis
+RUN chown -R aigis:aigis /opt/devkitpro
+
+# Give sudo access to aigis
+RUN echo "aigis ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/aigis \
+    && chmod 0440 /etc/sudoers.d/aigis \
+    && visudo -c -f /etc/sudoers.d/aigis \
+    && rm -rf /var/lib/apt/lists/*
+
+USER aigis
+
+# venv for aigis
+RUN python3 -m venv $HOME/.venv \
+    && $HOME/.venv/bin/pip install --upgrade pip \
+    && $HOME/.venv/bin/pip install -r /tmp/requirements.txt
+ENV PATH="/home/aigis/.venv/bin:$PATH"
+
 # Default: drop into a shell so developers can run make, explore, debug, etc.
 CMD ["/bin/bash"]

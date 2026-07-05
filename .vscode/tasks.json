@@ -22,58 +22,6 @@
                 "clean"
             ],
             "problemMatcher": []
-        },
-        {
-            "label": "gdb-debug",
-            "type": "process",
-            "command": "melonDS",
-            // For this to work, Windows needs to know where melonDS.exe lives.
-            // 1. Extract melonDS to a permanent folder (e.g., C:\Emulators\melonDS\)
-            // 2. Search Windows for "Environment Variables" -> Edit system environment variables.
-            // 3. Click "Environment Variables...", find "Path" in the top list, and click Edit.
-            // 4. Click New, paste your folder path, and hit OK.
-            // 5. RESTART VS CODE so it can see the new path.
-            "windows": {
-                "command": "melonDS",
-                "args": [
-                    "${workspaceFolder}\\${workspaceFolderBasename}.nds"
-                ]
-            },
-            "linux": {
-                "command": "melonDS",
-                "args": [
-                    "${workspaceFolder}/${workspaceFolderBasename}.nds"
-                ]
-            },
-            "osx": {
-                "command": "open",
-                "args": [
-                    "-a",
-                    "melonDS",
-                    "${workspaceFolder}/${workspaceFolderBasename}.nds"
-                ]
-            },
-            "dependsOn": [
-                "make debug"
-            ],
-            "problemMatcher": []
-        },
-        {
-            "label": "stop-emulation",
-            "type": "process",
-            "command": "killall",
-            "args": [
-                "melonDS"
-            ],
-            "windows": {
-                "command": "taskkill",
-                "args": [
-                    "/IM",
-                    "melonDS.exe",
-                    "/F"
-                ]
-            },
-            "problemMatcher": []
         }
     ]
 }
