@@ -8,18 +8,14 @@ A Nintendo DS demake of **Persona 3**, developed in C++ using devkitPro. Based o
 ![Last Commit](https://img.shields.io/github/last-commit/p3d-project/persona-3-dual?style=flat-square&color=green)
 ![License](https://img.shields.io/github/license/p3d-project/persona-3-dual?style=flat-square)
 
-[![C++](https://img.shields.io/badge/C++-%2300599C.svg?logo=c%2B%2B&logoColor=white)](#)
-[![Python](https://img.shields.io/badge/python-3670A0?logo=python&logoColor=white)](#)
+![C++](https://img.shields.io/badge/C++-%2300599C.svg?logo=c%2B%2B&logoColor=white)
+![Python](https://img.shields.io/badge/python-3670A0?logo=python&logoColor=white)
 ![Platform](https://img.shields.io/badge/platform-Nintendo%20DS-red?style=flat-square)
 ![Architecture](https://img.shields.io/badge/architecture-ARM9/ARM7-blue)
 
 [![Discord](https://img.shields.io/discord/1498850477545357482?label=Discord&logo=discord&style=flat-square&color=5865F2)](https://discord.gg/CQnkc5gS6a)
 
-
-
-
-
-[![IMAGE ALT TEXT](http://img.youtube.com/vi/4RW8ppcPK6o/0.jpg)](http://www.youtube.com/watch?v=4RW8ppcPK6o "Persona 3 Dual (First Look)")
+[![Persona 3 Dual First Look Video](http://img.youtube.com/vi/4RW8ppcPK6o/0.jpg)](http://www.youtube.com/watch?v=4RW8ppcPK6o "Persona 3 Dual (First Look)")
 
 ---
 
@@ -37,6 +33,7 @@ The game requires FAT filesystem support to load assets at runtime. Currently, w
 1. Download `persona-3-dual.nds` and `sdcard.img.gz` from the latest release, & decompress `sdcard.img.gz` **Developers**: Build the project with `make` - this produces both `persona-3-dual.nds` and `sdcard.img`.
 2. In melonDS, go to **Settings → DLDI** and enable DLDI.
 3. Set the SD card image path to the generated `sdcard.img`.
+
 > **Do NOT enable "Sync SD card to folder"**. This will wipe the contents of the folder!
 
 Now, you can open melonDS and load the `persona-3-dual.nds` ROM!
@@ -60,6 +57,7 @@ Requires [TWiLight Menu++](https://wiki.ds-homebrew.com/twilightmenu/) with DLDI
        └── ...
    ```
 5. Launch the game through TWiLight Menu++ as normal.
+
 ---
 
 ## Team Onboarding & Setup

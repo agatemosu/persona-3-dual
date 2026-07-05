@@ -6,6 +6,7 @@ persona-3-dual.lst
 # Ignore the contents, but keep the folders structure
 /build/*
 !/build/.gitkeep
+/docs/doxygen/*
 
 # source
 /source/dialogue/*
